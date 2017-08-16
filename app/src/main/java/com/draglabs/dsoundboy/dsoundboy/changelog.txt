@@ -1,0 +1,14 @@
+// VERSION 1.0 //
+Created 14 August 2017 for Drag Labs by Daniel Avrukin
+// // // // // //
+v1.17.08.14
+    -
+v1.17.08.15
+    - added logos
+        - when pressed on MainActivity, open http://draglabs.com in browser
+    - added Chronometer to measure recording time
+        - start/stop button to start/stop time, clear resets it
+        - counter of clicks allows Chronometer to resume
+    - red record button shows up when the app is recording and goes away when it isn't and when it's been reset
+    - added activity to add recording info for the band
+        - needs to better save and transfer data to the parent activity

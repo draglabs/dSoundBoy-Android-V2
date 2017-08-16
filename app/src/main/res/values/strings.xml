@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">dSoundBoy</string>
+    <string name="title_activity_contact">Contact</string>
+    <string name="title_activity_about">About</string>
+    <string name="send">Send</string>
+    <string name="submit">Submit</string>
+    <string name="copyright_brand_name">DragLabs (C) 2017</string>
+    <string name="copyright_brand_link">draglabs.com</string>
+    <string name="send_email">Email Address</string>
+    <string name="send_subject">Subject</string>
+    <string name="send_body">Message</string>
+    <string name="feedback_email_title">Tell us what you think!</string>
+    <string name="reset">Reset</string>
+    <string name="start_stop">Start/Stop</string>
+    <string name="band_info">Enter Band and/or Recording Info</string>
+    <string name="title_activity_enter_info">Band Recording Info</string>
+    <string name="email">Email</string>
+    <string name="description">Description</string>
+    <string name="artist_name">Artist Name</string>
+    <string name="venue">Venue</string>
+    <string name="save">Save</string>
+    <string name="title_activity_test">Test</string>
+</resources>
