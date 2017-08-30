@@ -1,2 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <bool name="button_submit_enabled">false</bool>
+    <bool name="button_start_stop_enabled">false</bool>
+    <bool name="button_reset_enabled">false</bool>
+
+    <integer name="activity_main_launch_count">0</integer>
+</resources>

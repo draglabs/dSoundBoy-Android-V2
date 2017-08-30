@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class EnterInfo extends AppCompatActivity {
 
@@ -20,6 +21,8 @@ public class EnterInfo extends AppCompatActivity {
     private String descriptionText;
     private String artistNameText;
     private String venueText;
+
+    private BandInfo bandInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,13 +44,25 @@ public class EnterInfo extends AppCompatActivity {
         artistNameText = artistName.getText().toString();
         venueText = venue.getText().toString();
 
+        bandInfo = new BandInfo(emailText, descriptionText, artistNameText, venueText);
+
         Intent sendBandInfo = new Intent(this, MainActivity.class);
+        //Intent sendBandInfo = getSupportParentActivityIntent();
+        sendBandInfo.putExtra("callingClass", "EnterInfo");
         sendBandInfo.putExtra("emailText", emailText);
         sendBandInfo.putExtra("descriptionText", descriptionText);
         sendBandInfo.putExtra("artistNameText", artistNameText);
         sendBandInfo.putExtra("venueText", venueText);
 
+        Toast.makeText(this, "Band Data Saved.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Go back and click \"Submit\" when done recording.", Toast.LENGTH_SHORT).show();
+        startActivity(sendBandInfo);
         //MainActivity.setBandInfo(emailText, descriptionText, artistNameText, venueText);
     }
+
+    /*public static BandInfo getBandInfo() {
+        return BandInfo;
+        //return bandInfo;
+    }*/
 
 }

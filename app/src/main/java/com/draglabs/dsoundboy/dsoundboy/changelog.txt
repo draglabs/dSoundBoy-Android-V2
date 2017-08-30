@@ -12,3 +12,70 @@ v1.17.08.15
     - red record button shows up when the app is recording and goes away when it isn't and when it's been reset
     - added activity to add recording info for the band
         - needs to better save and transfer data to the parent activity
+v1.17.08.16
+    - finally added to github
+        - git@github.com:draglabs/dSoundBoy-Android-V2.git
+    - finally fixed sending values from EnterInfo to MainActivity
+        - When clicking "Save" in EnterInfo, launches new Intent which goes to MainActivity
+            - MainActivity re-launches, and gets its launching intent which is EnterInfo
+            - Once started recording, unless it happens in the background, if go to EnterInfo, then recording will stop
+                - Solution is to disable the start/stop and reset buttons until band info has been entered, and then disable the enter info button
+                    - However any attributes won't be saved between these two so there has to be a values file that is edited with a boolean flag
+                        - Set "enterInfoClicked" to false at start --> clickEnterInfo - enable Start/Stop and Reset, set "enterInfoClicked" to true, disable EnterInfo button
+                        - Need three flags: submit, start/stop, reset
+                            - Stored in strings.xml
+v1.17.08.23
+    - fixing various issues
+        - intent hopefully passes info
+        - sharedpreferences doesn't really work because it doesn't save the info, and I can't figure it out why even though I'm following all the guides
+            - two ideas:
+                - have an integer that counts how many times the MainActivity has been loaded, if it's odd then the buttons are enabled, and vice-versa
+                - store enabled/disabled booleans and keep those to say which buttons are enabled and which are disabled
+    - added LoginActivity that will later implement Facebook authentication
+    - will add recording capabilities, maybe in FileUtils.java, or in a recorder class
+        - hopefully it won't require weird or special inheritance stuff
+        - Recorder.java
+            - instantiate the class
+            - RequestPermission() is giving trouble because it needs to access an Activity and it's not taking MainActivity.this in
+    - review button statuses ***
+V1.17.08.25
+    - turns out that you can't pause and resume recordings, you can only start and stop them
+        - so then I'll have to re-implement the start/stop functionality
+            - maybe join the recordings? or just submit all of them with original start times
+    - kinda records, saves on phone, haven't tested recording yet, large file size
+    - continue to review button statuses and activity switches
+    - emulator doesn't run, but adb to phone works
+    - adding AWS capabilities
+        - https://docs.aws.amazon.com/mobile/sdkforandroid/developerguide/setup.html
+        - cognito
+        - Facebook Federated Authentication: https://docs.aws.amazon.com/cognito/latest/developerguide/facebook.html
+v1.17.08.29
+    - fucking manifest mergers not working
+        - fixed by deleting all "replace"s?
+    - annoying Facebook API that isn't compatible with 26.0.1 but only works with 25.3.1 which can't be found
+        - was fixed? ./gradlew -q dependencies app:dependencies --configuration compile
+    - adding and improving Facebook authentication features
+        - adding button into LoginActivity, and a TextView that shows the login results
+        - doesn't work yet
+        - read to do in LoginActivity
+v1.17.08.30
+    - Facebook authentication works
+    - next: make LoginActivity the default activity
+        - clicking "Continue" in LoginActivity takes to MainActivity
+            - on getIntent(), check calling/upper class
+                - if it's LoginActivity, then turn recording button off and enter info buttons on
+                - if it's EnterInfo, then turn recording button on and login button off
+    - detail: start recording timer only when it's enabled, not when app is opened
+    - important to clean code
+    - instead of with SharedPreferences, send data with Extras via Intents !*!*!*!*!*!*!*!*!*!*!*!*!
+        - button flow:
+            - login --> enter info --> start/stop --> submit
+                - don't want to have to log in on app open if already logged in
+    - future for implementation:
+        - get Facebook ID and integrate with recordings
+        - make sure recording works well
+            - file formats, sizes, locations, names, etc
+        - upload to S3
+        - download/view/share recordings
+        - send support emails
+

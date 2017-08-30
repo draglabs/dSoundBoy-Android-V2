@@ -1,0 +1,6 @@
+git commit -m {message}
+git push -u origin master
+git pull
+
+show dependency trees: ./gradlew {module-name}:dependencies
+help clean dependencies?: ./gradlew -q dependencies {module-name}:dependencies --configuration compile
