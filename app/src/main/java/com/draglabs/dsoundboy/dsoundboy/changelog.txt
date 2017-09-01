@@ -78,4 +78,16 @@ v1.17.08.30
         - upload to S3
         - download/view/share recordings
         - send support emails
+v1.17.08.31
+    - https://stackoverflow.com/questions/29531118/access-token-removed-in-facebook-android-sdk-4-0
+        - https://stackoverflow.com/a/38570546
+        - new way to check if Facebook credentials are stored, and to enable EnterInfo button if they are
+    - next is to make sure recordings get saved into the correct folder and are playable
+        - added screen to show recordings
+            - needs button to play recordings
+                - maybe a progress and stop button
+        - recording name is the user id
+    - next is to add Cognito functionality with S3 credentials once audio is recorded
+    - next is to join Jam
+
 

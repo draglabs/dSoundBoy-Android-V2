@@ -37,11 +37,13 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,12 +155,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });*/
 
         continueButton = (Button)findViewById(R.id.continue_to_MainActivity_Button);
-        if (accessToken == null) {
+        if (Profile.getCurrentProfile() == null) {
             loginResultText.setText("Not yet logged in.");
             continueButton.setEnabled(false);
             mEmailSignInButton.setEnabled(true);
         } else {
-            loginResultText.setText("User ID: + " + accessToken.getUserId() + "\nAuth Token: " + accessToken.getToken());
+            loginResultText.setText("User ID: + " + accessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + accessToken.getCurrentAccessToken().getToken());
             continueButton.setEnabled(true);
             mEmailSignInButton.setEnabled(false);
         }

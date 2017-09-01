@@ -19,6 +19,8 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.facebook.Profile;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -70,6 +72,8 @@ public class Recorder {
     private String pathname;
 
     private Activity thatMainActivity;
+
+    //private final String FACEBOOK_USER_ID = Profile.getCurrentProfile().getId();
 
     public Recorder(Context context, String[] bandData, Activity thatMainActivity) {
         this.context = context;
@@ -142,12 +146,12 @@ public class Recorder {
         }
     }
 
-    public void startRecording() {
+    public void startRecording() { // TODO: recording name is the Facebook user id
         if (checkPermissions()) {
             //String EXTENSION = ".pcm";
             pathname = createAudioPathname(bandData, EXTENSION);
 
-            audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings" + pathname;
+            audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/" + pathname;
 
             startTime = new Date();
             String testString = "startTime.toString(): " + startTime.toString() + ", startTime.getTime(): " + startTime.getTime();

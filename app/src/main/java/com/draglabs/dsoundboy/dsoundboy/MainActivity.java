@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     private ImageView recordingImage;
     private Button enterInfo;
     private ToggleButton login;
+    private Button viewRecordings;
 
     private String emailText;
     private String descriptionText;
@@ -99,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         enterInfo = (Button)findViewById(R.id.enter_info);
         enterInfo.setEnabled(false);
         login = (ToggleButton)findViewById(R.id.login_activity_button);
+        viewRecordings = (Button)findViewById(R.id.button_view_recordings);
 
         // TODO: FIX! WHY ISN'T THIS WORKING?!?!?!?!?!
         //sharedPreferencesEditor.putInt(getResources().getResourceName(R.integer.activity_main_launch_count), 1);
@@ -135,10 +137,12 @@ public class MainActivity extends AppCompatActivity {
                 login.setEnabled(false); // necessary?
             }
         }
-        System.out.println(AccessToken.getCurrentAccessToken());
+        Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
+        //System.out.println(AccessToken.getCurrentAccessToken());
         if (AccessToken.getCurrentAccessToken() != null) {
             login.setEnabled(true); // necessary?
             login.setChecked(true);
+            enterInfo.setEnabled(true);
         }
     }
 
@@ -226,6 +230,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void clickViewRecordings(View view) {
+        Intent intent = new Intent(this, ListOfRecordings.class);
+        startActivity(intent);
+    }
+
     private void setBandInfo() {
         /*Intent enterInfoIntent = getIntent();
         this.emailText = enterInfoIntent.getStringExtra("emailText");
@@ -297,4 +306,5 @@ public class MainActivity extends AppCompatActivity {
             buttonToToggle.setEnabled(false);
         }
     }
+
 }
