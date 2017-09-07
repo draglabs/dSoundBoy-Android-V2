@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -20,6 +22,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Base64;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,6 +35,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.services.cognitoidentity.model.Credentials;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -44,8 +50,13 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -85,6 +96,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private TextView loginResultText;
 
     private Button continueButton;
+
+    private AWSutils awsUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -154,20 +167,35 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });*/
 
+        /*try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo("com.draglabs.dsoundbody.dsoundboy", PackageManager.GET_SIGNATURES);
+            for (Signature signature : packageInfo.signatures) {
+                MessageDigest messageDigest = MessageDigest.getInstance("SHA");
+                messageDigest.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(messageDigest.digest()), Base64.DEFAULT);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }*/
+
         continueButton = (Button)findViewById(R.id.continue_to_MainActivity_Button);
         if (Profile.getCurrentProfile() == null) {
             loginResultText.setText("Not yet logged in.");
             continueButton.setEnabled(false);
             mEmailSignInButton.setEnabled(true);
         } else {
-            loginResultText.setText("User ID: + " + accessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + accessToken.getCurrentAccessToken().getToken());
+            awsUtils = new AWSutils(this); // TODO: use this in uploader instead of here?; reference somehow CredentialsProvider
+            loginResultText.setText("User ID: + " + AccessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + AccessToken.getCurrentAccessToken().getToken());
             continueButton.setEnabled(true);
             mEmailSignInButton.setEnabled(false);
         }
     }
 
     public void clickFacebookLogin(View view) {
-        facebookLoginButton.setReadPermissions("email");
+        //facebookLoginButton.setReadPermissions("email");
+        facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
         facebookLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -195,6 +223,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     public void clickContinueButton(View view) {
+        APIutils.authenticateUser();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("callingClass", "LoginActivity"); // DO IT THIS WAY, SEND BOOL VALUES THROUGH THIS INSTEAD OF SHAREDPREFERENCES!!!!!!!!!
         /*intent.putExtra("enterInfoEnabled", true);

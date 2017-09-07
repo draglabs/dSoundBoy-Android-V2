@@ -3,15 +3,14 @@ package com.draglabs.dsoundboy.dsoundboy;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -20,15 +19,11 @@ import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
-import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.viralypatel.sharedpreferenceshelper.lib.SharedPreferencesHelper;
-
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
     private Button enterInfo;
     private ToggleButton login;
     private Button viewRecordings;
+    private Button createJam;
+    private Button joinJam;
 
     private String emailText;
     private String descriptionText;
@@ -63,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Recorder recorder;
 
+    private LocationManager locationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
         //SharedPreferences.Editor sharedPreferencesEditor = getPreferences(MODE_PRIVATE).edit();
         bundle = getIntent().getExtras();
         sharedPreferencesHelper = new SharedPreferencesHelper(this);
+        locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+
 
         FacebookSdk.setApplicationId("147689855771285");
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -101,6 +102,8 @@ public class MainActivity extends AppCompatActivity {
         enterInfo.setEnabled(false);
         login = (ToggleButton)findViewById(R.id.login_activity_button);
         viewRecordings = (Button)findViewById(R.id.button_view_recordings);
+        createJam = (Button)findViewById(R.id.button_create_jam);
+        joinJam = (Button)findViewById(R.id.button_join_jam);
 
         // TODO: FIX! WHY ISN'T THIS WORKING?!?!?!?!?!
         //sharedPreferencesEditor.putInt(getResources().getResourceName(R.integer.activity_main_launch_count), 1);
@@ -173,6 +176,10 @@ public class MainActivity extends AppCompatActivity {
         // TODO: finalize recording, close all buffers
         // TODO: go through folder to see which recording were from the current session, and upload all of those
         setBandInfo();
+
+        String pathname = null;
+        int resultCodeUpload = APIutils.uploadToS3(pathname);
+        int resultCodeJamSolo = APIutils.soloUpload(Profile.getCurrentProfile().getId());
     }
 
     public void clickStartStop(View view) {
@@ -233,6 +240,18 @@ public class MainActivity extends AppCompatActivity {
     public void clickViewRecordings(View view) {
         Intent intent = new Intent(this, ListOfRecordings.class);
         startActivity(intent);
+    }
+
+    public void clickCreateJam(View view) {
+        Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
+
+        int resultCodeStartJam = APIutils.startJam();
+    }
+
+    public void clickJoinJam(View view) {
+        Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
+
+        int resultCodeJoinJam = APIutils.joinJam();
     }
 
     private void setBandInfo() {

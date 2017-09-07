@@ -1,4 +1,8 @@
 <resources>
+
+    <!-- Strings related to buttons -->
+    <!-- Strings related to activities -->
+
     <string name="app_name">dSoundBoy</string>
     <string name="title_activity_contact">Contact</string>
     <string name="title_activity_about">About</string>
@@ -25,6 +29,8 @@
     <string name="currently_recording_light_description">Currently Recording Light</string>
     <string name="continue_to_MainActivity_button">Continue</string>
     <string name="go_to_recordings_list">View Recordings</string>
+    <string name="create_jam">Create Jam</string>
+    <string name="join_jam">Join Jam</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

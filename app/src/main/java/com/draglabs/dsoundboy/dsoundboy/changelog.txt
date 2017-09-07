@@ -89,5 +89,21 @@ v1.17.08.31
         - recording name is the user id
     - next is to add Cognito functionality with S3 credentials once audio is recorded
     - next is to join Jam
-
-
+v1.17.09.18
+    - added Create and Join Jam buttons
+        - functionality not yet implemented, shows Snackbar
+        - check button layouts on activity, seem off, can't figure out why constraints there are wonky
+    - recording note:
+        - no start/pause recording, only start and submit (upload) when buttons are pressed, maybe reset though
+        - name recording after Facebook ID
+            - two user IDs? one from Shyam and one from Facebook?
+    - add documentation/instructions screen for app?
+    - fix playing recordings and buttons therein in ListOfRecordings
+    - finished Cognito sync, and can get all credentials now, have yet to test
+        - rather than have the AWSutils initializer in LoginActivity, have it in the recorder while submit?
+            - make sure Cognito user has rights to access and upload to S3 bucket !*!*!*!*!*!*
+    - need to authenticate user with Shyam, and do other things with API
+        - add Exit Jam button and work with "enabled"s
+        - show list of collaborators
+            - launch activity - Jam View
+        - GPS location, etc

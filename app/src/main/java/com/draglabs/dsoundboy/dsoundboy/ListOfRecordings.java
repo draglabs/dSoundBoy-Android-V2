@@ -95,8 +95,8 @@ public class ListOfRecordings extends AppCompatActivity {
                     // show pause
                     newRow.removeView(play);
                     newRow.addView(pause);
-                    Uri uri = new Uri.fromFile(new File((String)item));
-                    playTrack(null); // TODO: buttons not visible?
+                    Uri uri = Uri.fromFile(new File((String)item));
+                    playTrack(uri); // TODO: buttons not visible?
                 } else {
                     // show play
                     newRow.removeView(pause);

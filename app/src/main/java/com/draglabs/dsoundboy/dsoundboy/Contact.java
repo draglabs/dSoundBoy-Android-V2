@@ -60,7 +60,7 @@ public class Contact extends AppCompatActivity {
         Toast.makeText(this, email + "\n" + subject + "\n" + body, Toast.LENGTH_LONG).show();
 
         // TODO: append [ANDROID] to subject line
-        HTTPutils.sendEmail(email, "[ANDROID] " + subject, body);
+        APIutils.sendEmail(email, "[ANDROID] " + subject, body);
         // TODO: send to Shyam a JSON object with HTTP POST
     }
 }
