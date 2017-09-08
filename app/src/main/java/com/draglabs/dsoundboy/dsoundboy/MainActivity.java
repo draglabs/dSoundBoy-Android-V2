@@ -245,7 +245,11 @@ public class MainActivity extends AppCompatActivity {
     public void clickCreateJam(View view) {
         Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
 
-        int resultCodeStartJam = APIutils.startJam();
+        //LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        String provider = LocationManager.GPS_PROVIDER;
+        //locationManager.requestLocationUpdates(provider, 5000, 10, this);
+        Location location = new Location(provider);
+        int resultCodeStartJam = APIutils.startJam(location);
     }
 
     public void clickJoinJam(View view) {

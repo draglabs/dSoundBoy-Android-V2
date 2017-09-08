@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy;
 
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
 
@@ -110,11 +111,32 @@ public class APIutils {
         return 0;
     }
 
-    public static int startJam() {
+    public static int startJam(Location location) {
+        String userID = Profile.getCurrentProfile().getId();
+        String jamLocation;
+        String jamName;
+        double jamLatitude = location.getLatitude();
+        double jamLongitude = location.getLongitude();
+
+        int resultCode;
+        String jamID;
+        String jamPIN;
+        String jamStartTime;
+        String jamEndTime;
+
+        String error;
         return 0;
     }
 
     public static int joinJam() {
+        String userID = Profile.getCurrentProfile().getId();
+        int pin;
+
+        int resultCode;
+        String jamStartTime;
+        String jamEndTime;
+
+        String error;
         return 0;
     }
 
@@ -124,6 +146,8 @@ public class APIutils {
     }
 
     public static int exitJam() {
+        String userID = Profile.getCurrentProfile().getId();
+        String jamID;
         return 0;
     }
 
@@ -215,5 +239,10 @@ public class APIutils {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    private static Location getCurrentLocation() {
+        //LocationManager locationManager = (LocationManager)getSystem
+        return null;
     }
 }
