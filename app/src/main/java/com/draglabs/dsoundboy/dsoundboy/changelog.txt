@@ -89,7 +89,7 @@ v1.17.08.31
         - recording name is the user id
     - next is to add Cognito functionality with S3 credentials once audio is recorded
     - next is to join Jam
-v1.17.09.18
+v1.17.09.08
     - added Create and Join Jam buttons
         - functionality not yet implemented, shows Snackbar
         - check button layouts on activity, seem off, can't figure out why constraints there are wonky
@@ -107,3 +107,10 @@ v1.17.09.18
         - show list of collaborators
             - launch activity - Jam View
         - GPS location, etc
+v1.17.09.11
+    - need to add certification to connect to server
+        - https://developer.android.com/training/articles/security-config.html
+        - using this library for post: http://loopj.com/android-async-http/
+    - need to fix facebook authentication
+        - not getting app id
+            - https://freakycoder.com/android-notes-24-how-to-facebook-login-and-get-user-information-8d6df0350f1c

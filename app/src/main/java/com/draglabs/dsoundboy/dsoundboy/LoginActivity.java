@@ -102,6 +102,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        /*FacebookSdk.setApplicationId("147689855771285");
+        FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);*/
+
         setContentView(R.layout.activity_login);
 
         Toast.makeText(this, "Email login currently unavailable. Please login with Facebook only at this time.", Toast.LENGTH_LONG).show();
@@ -186,7 +191,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             continueButton.setEnabled(false);
             mEmailSignInButton.setEnabled(true);
         } else {
-            awsUtils = new AWSutils(this); // TODO: use this in uploader instead of here?; reference somehow CredentialsProvider
+            //awsUtils = new AWSutils(this); // TODO: use this in uploader instead of here?; reference somehow CredentialsProvider
             loginResultText.setText("User ID: + " + AccessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + AccessToken.getCurrentAccessToken().getToken());
             continueButton.setEnabled(true);
             mEmailSignInButton.setEnabled(false);

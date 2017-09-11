@@ -3,13 +3,21 @@ package com.draglabs.dsoundboy.dsoundboy;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
+import android.support.design.widget.Snackbar;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.google.gson.Gson;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.protocol.HttpProcessor;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +37,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import cz.msebera.android.httpclient.Header;
 import retrofit2.Retrofit;
 
 /**
@@ -37,7 +46,7 @@ import retrofit2.Retrofit;
 
 public class APIutils {
 
-    private static final String END_POINT = "http://api.draglabs.com";
+    private static final String END_POINT = "https://api.draglabs.com";
     private static final String API_VERSION = "/v1.01";
 
     private static final String POST_EMAIL_URL = "";
@@ -52,6 +61,8 @@ public class APIutils {
     private static final String GET_COLLABORATORS = END_POINT + API_VERSION + "/jam/collaborators";
     private static final String GET_USER_ACTIVITY = END_POINT + API_VERSION + "/user/activity/id";
     private static final String NOTIFY_USER = END_POINT + API_VERSION + "/jam/notifyuser";
+
+    private static AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
 
 
     public static int sendEmail(String email, String subject, String message) {
@@ -101,9 +112,36 @@ public class APIutils {
         Gson gson = new Gson();
         String json = gson.toJson(jsonObject);
 
-        return sendPOST2(AUTHENTICATE_USER, json);
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("facebook_id", facebookID);
+        requestParams.put("access_token", facebookAccessToken);
+
+        post(AUTHENTICATE_USER, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                if (statusCode == 200) {
+                    System.out.println(headers);
+                    Log.v("response: ", response.toString());
+                    try {
+                        System.out.println(response.getJSONObject(0).getString("user_id"));
+                        System.out.println(response.getJSONObject(1).getString("first_name"));
+                        System.out.println(response.getJSONObject(2).getString("last_name"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        //return sendPOST2(AUTHENTICATE_USER, json);
 
         //List<NameValuePair> urlParameters = new ArrayList<>();
+        return null;
     }
 
     public static int soloUpload(String uniqueID) {
@@ -140,7 +178,7 @@ public class APIutils {
         return 0;
     }
 
-    public static int jamRecordingUpload(String uniqueID, String jamID) {
+    public static int jamRecordingUpload(String uniqueID, String jamID, String pathname) { // convert through binary data and multi-part upload
         String newPOST = JAM_RECORDING_UPLOAD + "/" + uniqueID + "/jamid/" + jamID;
         return 0;
     }
@@ -152,15 +190,21 @@ public class APIutils {
     }
 
     public static int getCollaborators() {
+        String jsonData = "";
+
         return 0;
     }
 
     public static int getUserActivity(String uniqueID) {
         String newPOST = GET_USER_ACTIVITY + "/" + uniqueID;
+        String jsonData = "";
+        sendPOST2(newPOST, jsonData);
         return 0;
     }
 
     public static int notifyUser() {
+        String jsonData = "";
+        sendPOST2(NOTIFY_USER, jsonData);
         return 0;
     }
 
@@ -239,6 +283,16 @@ public class APIutils {
             e.printStackTrace();
         }
         return "error";
+    }
+
+    private static String post(String url, RequestParams requestParams, AsyncHttpResponseHandler asyncHttpResponseHandler) {
+        asyncHttpClient.post(url, requestParams, asyncHttpResponseHandler);
+
+        return "Done.";
+    }
+
+    private static void get(String url, RequestParams requestParams, AsyncHttpResponseHandler asyncHttpResponseHandler) {
+        asyncHttpClient.get(url, requestParams, asyncHttpResponseHandler);
     }
 
     private static Location getCurrentLocation() {

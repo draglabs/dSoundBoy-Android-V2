@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
@@ -21,6 +22,7 @@ import android.widget.ToggleButton;
 
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
+import com.facebook.LoggingBehavior;
 import com.facebook.Profile;
 import com.facebook.appevents.AppEventsLogger;
 import com.viralypatel.sharedpreferenceshelper.lib.SharedPreferencesHelper;
@@ -65,7 +67,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        FacebookSdk.setApplicationId("147689855771285");
+        FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);
+
+        Log.v("App ID and App Name: ", FacebookSdk.getApplicationId() + "; " + FacebookSdk.getApplicationName());
+
         setContentView(R.layout.activity_main);
+
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //SharedPreferences sharedPreferences = this.getSharedPreferences("com.draglabs.dsoundboy.dsoundboy", Context.MODE_PRIVATE);
         sharedPreferencesEditor = sharedPreferences.edit();
@@ -74,10 +84,10 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferencesHelper = new SharedPreferencesHelper(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-
-        FacebookSdk.setApplicationId("147689855771285");
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(this);
+        if (BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true);
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+        }
         //AccessToken.setCurrentAccessToken(null);
         //Profile.setCurrentProfile(null);
 
