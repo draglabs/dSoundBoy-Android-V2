@@ -72,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(this);
         AppEventsLogger.activateApp(this);
 
+        if (BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true);
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
+        }
+
         Log.v("App ID and App Name: ", FacebookSdk.getApplicationId() + "; " + FacebookSdk.getApplicationName());
 
         setContentView(R.layout.activity_main);
@@ -84,10 +89,6 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferencesHelper = new SharedPreferencesHelper(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-        if (BuildConfig.DEBUG) {
-            FacebookSdk.setIsDebugEnabled(true);
-            FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS);
-        }
         //AccessToken.setCurrentAccessToken(null);
         //Profile.setCurrentProfile(null);
 
@@ -188,8 +189,8 @@ public class MainActivity extends AppCompatActivity {
         setBandInfo();
 
         String pathname = null;
-        int resultCodeUpload = APIutils.uploadToS3(pathname);
-        int resultCodeJamSolo = APIutils.soloUpload(Profile.getCurrentProfile().getId());
+        //int resultCodeUpload = APIutils.uploadToS3(pathname);
+        //int resultCodeJamSolo = APIutils.soloUpload(Profile.getCurrentProfile().getId()); // TODO: GET UNIQUE ID
     }
 
     public void clickStartStop(View view) {
@@ -259,13 +260,13 @@ public class MainActivity extends AppCompatActivity {
         String provider = LocationManager.GPS_PROVIDER;
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
-        int resultCodeStartJam = APIutils.startJam(location);
+        //int resultCodeStartJam = APIutils.startJam(location);
     }
 
     public void clickJoinJam(View view) {
         Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
 
-        int resultCodeJoinJam = APIutils.joinJam();
+        //int resultCodeJoinJam = APIutils.joinJam();
     }
 
     private void setBandInfo() {

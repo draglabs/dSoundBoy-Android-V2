@@ -114,3 +114,8 @@ v1.17.09.11
     - need to fix facebook authentication
         - not getting app id
             - https://freakycoder.com/android-notes-24-how-to-facebook-login-and-get-user-information-8d6df0350f1c
+    - not using HTTPS, don't have TLS yet
+        - using HTTP, getting JSON response as object
+    - need to find a way to set the API's userID
+        - RETURN RESPONSES SOMEHOW
+        - NEED TO PARSE JSONS !*!*!*!*!*!*!*!*!
