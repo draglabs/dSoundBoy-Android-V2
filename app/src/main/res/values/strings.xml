@@ -49,6 +49,17 @@
     <string name="fb_login_protocol_scheme">fb147689855771285</string>
     <string name="facebook_app_name">dSoundBoy</string>
 
+    <!-- Strings related to Shyam's API -->
+    <string name="authenticate_user">Authenticate User</string>
+    <string name="solo_upload_recording">Solo Upload Recording</string>
+    <string name="start_jam">Start Jam</string>
+    <!-- "join jam defined above -->
+    <string name="jam_recording_upload">Jam Recording Upload</string>
+    <string name="exit_jam">Exit Jam</string>
+    <string name="get_collaborators">Get Collaborators</string>
+    <string name="get_user_activity">Get User Activity</string>
+    <string name="notify_user">Notify User</string>
+
     <!-- Strings related to ListOfRecordings -->
     <string name="title_activity_list_of_recordings">List of Recordings</string>
     <string name="large_text">

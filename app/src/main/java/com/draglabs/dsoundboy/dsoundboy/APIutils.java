@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy;
 
+import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Looper;
@@ -75,6 +76,7 @@ public class APIutils {
             Log.v("Status Code: ", statusCode + "");
             Log.v("Headers: ", headers.toString());
             Log.v("Response: ", response.toString());
+
             // TODO: Somehow save or pass information, maybe put back into each method and return it?
         }
 
