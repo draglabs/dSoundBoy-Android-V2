@@ -19,14 +19,18 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.draglabs.dsoundboy.dsoundboy.BuildConfig;
+import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Acessories.Recorder;
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 import com.facebook.AccessToken;
 import com.facebook.FacebookSdk;
 import com.facebook.LoggingBehavior;
@@ -37,7 +41,7 @@ import com.viralypatel.sharedpreferenceshelper.lib.SharedPreferencesHelper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CallbackListener {
 
     private Button about;
     private Button contact;
@@ -53,12 +57,15 @@ public class MainActivity extends AppCompatActivity {
     private Button viewRecordings;
     private Button createJam;
     private Button joinJam;
+    private Button exitJam;
+    private EditText jamPINtext;
 
     private String emailText;
     private String descriptionText;
     private String artistNameText;
     private String venueText;
     private String[] bandInfo;
+    private String jamID;
 
     private Intent enterInfoIntent;
 
@@ -73,6 +80,10 @@ public class MainActivity extends AppCompatActivity {
     private Recorder recorder;
 
     private LocationManager locationManager;
+
+    private String uniqueUserID;
+
+    private PrefUtils prefUtils;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -104,6 +115,8 @@ public class MainActivity extends AppCompatActivity {
         Log.v("App ID and App Name: ", FacebookSdk.getApplicationId() + "; " + FacebookSdk.getApplicationName());
 
         setContentView(R.layout.activity_main);
+
+        prefUtils = new PrefUtils(this);
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         //SharedPreferences sharedPreferences = this.getSharedPreferences("com.draglabs.dsoundboy.dsoundboy", Context.MODE_PRIVATE);
@@ -138,17 +151,12 @@ public class MainActivity extends AppCompatActivity {
         login = (ToggleButton)findViewById(R.id.login_activity_button);
         viewRecordings = (Button)findViewById(R.id.button_view_recordings);
         createJam = (Button)findViewById(R.id.button_create_jam);
+        createJam.setEnabled(false);
         joinJam = (Button)findViewById(R.id.button_join_jam);
-
-        // TODO: FIX! WHY ISN'T THIS WORKING?!?!?!?!?!
-        //sharedPreferencesEditor.putInt(getResources().getResourceName(R.integer.activity_main_launch_count), 1);
-        sharedPreferencesEditor.putInt("activity_main_launch_count", 1);
-        sharedPreferencesEditor.apply();
-        //sharedPreferencesHelper.putInt(getResources().getResourceName(R.integer.activity_main_launch_count), 1);
-        activityMainViewCount = getResources().getInteger(R.integer.activity_main_launch_count);
-        Toast.makeText(this, "value: " + activityMainViewCount, Toast.LENGTH_LONG).show();
-
-        // check activity_main_launch_count values
+        joinJam.setEnabled(false);
+        exitJam = (Button)findViewById(R.id.button_exit_jam);
+        exitJam.setEnabled(false);
+        jamPINtext = (EditText)findViewById(R.id.text_jam_pin);
 
         setBandInfo();
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?
@@ -166,6 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 submit.setEnabled(false);
                 login.setEnabled(false); // necessary?
                 login.setChecked(true);
+                uniqueUserID = getIntent().getStringExtra("uniqueUserID");
             }
             if (callingClass.equals("EnterInfo")) {
                 enterInfo.setEnabled(false);
@@ -173,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
                 reset.setEnabled(false);
                 submit.setEnabled(false);
                 login.setEnabled(false); // necessary?
+                createJam.setEnabled(true);
+                joinJam.setEnabled(true);
             }
         }
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
@@ -181,8 +192,12 @@ public class MainActivity extends AppCompatActivity {
             login.setEnabled(true); // necessary?
             login.setChecked(true);
             enterInfo.setEnabled(true);
+            /*createJam.setEnabled(true);
+            joinJam.setEnabled(true);*/
         }
     }
+
+    // TODO: show pin code under start and join jam buttons
 
     /**
      * A native method that is implemented by the 'native-lib' native library,
@@ -284,7 +299,38 @@ public class MainActivity extends AppCompatActivity {
         String provider = LocationManager.GPS_PROVIDER;
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
-        //int resultCodeStartJam = APIutils.startJam(location);
+        APIutils.startJam(this, uniqueUserID, "Test", "Test Jam", location);
+        jamPINtext.setText(prefUtils.getJamPIN());
+    }
+
+    public void uniqueUserIDset() {
+        String uniqueUserID = prefUtils.getUniqueUserID();
+        Log.v("Unique User ID (MA): ", uniqueUserID + "");
+        // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
+    }
+
+    public void jamIDset() {
+        Log.v("Jam ID: ", prefUtils.getJamID() + "");
+    }
+
+    public void jamPINset() {
+        Log.v("Jam PIN: ", prefUtils.getJamPIN() + "");
+    }
+
+    public void jamStartTimeSet() {
+        Log.v("Jam Start Time: ", prefUtils.getJamStartTime() + "");
+    }
+
+    public void jamEndTimeSet() {
+        Log.v("Jam End Time: ", prefUtils.getJamEndTime() + "");
+    }
+
+    public void getCollaboratorsSet() {
+        Log.v("Collaborators: ", prefUtils.getCollaborators() + "");
+    }
+
+    public void getUserActivitySet() {
+        Log.v("User Activity: ", prefUtils.getUserActivity() + "");
     }
 
     public void clickJoinJam(View view) {

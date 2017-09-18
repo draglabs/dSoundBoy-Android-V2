@@ -93,6 +93,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private PrefUtils prefUtils;
 
+    private String uniqueUserID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -228,10 +230,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         prefUtils = new PrefUtils(this);
         prefUtils.addListener(this);
         uniqueUserIDset();
+        uniqueUserID = prefUtils.getUniqueUserID();
 
         Snackbar.make(view, "Unique ID: " + prefUtils.getUniqueUserID(), Snackbar.LENGTH_LONG).show();
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("callingClass", "LoginActivity"); // DO IT THIS WAY, SEND BOOL VALUES THROUGH THIS INSTEAD OF SHAREDPREFERENCES!!!!!!!!!
+        intent.putExtra("uniqueUserID", uniqueUserID);
         /*intent.putExtra("enterInfoEnabled", true);
         intent.putExtra("startStopEnabled", false);
         intent.putExtra("resetEnabled", false);

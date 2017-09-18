@@ -128,3 +128,6 @@ v1.17.09.18
     - organized additionally with additional packages
         - added callback interface
             - finally returns unique user id
+    - added "exit jam" button
+    - added edittext with jam info
+    - moved around buttons

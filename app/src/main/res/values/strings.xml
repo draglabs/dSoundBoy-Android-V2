@@ -67,6 +67,7 @@
     <string name="get_collaborators">Get Collaborators</string>
     <string name="get_user_activity">Get User Activity</string>
     <string name="notify_user">Notify User</string>
+    <string name="jam_pin">Jam PIN</string>
 
     <!-- Strings related to ListOfRecordings -->
     <string name="title_activity_list_of_recordings">List of Recordings</string>

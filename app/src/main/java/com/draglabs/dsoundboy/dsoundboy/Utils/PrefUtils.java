@@ -29,6 +29,8 @@ public class PrefUtils {
     private final String COLLABORATORS = "collaborators";
     private final String USER_ACTIVITY = "user_activity";
 
+    // TODO: add data for "Enter Band And/Or Recording Info"
+
     public PrefUtils(Activity activity) {
         this.activity = activity;
         callbacks = new ArrayList<>();
