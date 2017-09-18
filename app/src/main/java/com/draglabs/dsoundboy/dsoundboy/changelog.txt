@@ -119,3 +119,12 @@ v1.17.09.11
     - need to find a way to set the API's userID
         - RETURN RESPONSES SOMEHOW
         - NEED TO PARSE JSONS !*!*!*!*!*!*!*!*!
+v1.17.09.18
+    - jsons are being parsed
+    - upgraded to Android Studio 3
+        - now using JDK 1.8
+    - removed c++ native code because it can't find the files on the flash drive that were previously on the ssd
+    - hoping that new PrefUtils allows SharedPreferences to work
+    - organized additionally with additional packages
+        - added callback interface
+            - finally returns unique user id

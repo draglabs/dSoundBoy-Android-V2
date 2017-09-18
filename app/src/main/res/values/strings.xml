@@ -43,9 +43,17 @@
     <string name="error_field_required">This field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions." </string>
+    <string name="log_in">Log In</string>
+    <string name="logged_in">Logged In</string>
+    <string name="under_construction">UNDER CONSTRUCTION</string>
+    <string name="not_yet_logged_in">Not yet logged in.</string>
+    <string name="login_attempt_canceled">Login attempt canceled.</string>
+    <string name="login_attempt_failed">Login attempt failed.</string>
+
 
     <!-- Strings related to Facebook Authentication -->
     <string name="facebook_app_id">147689855771285</string>
+    <string name="com.facebook.sdk.ApplicationId">147689855771285</string>
     <string name="fb_login_protocol_scheme">fb147689855771285</string>
     <string name="facebook_app_name">dSoundBoy</string>
 
@@ -121,7 +129,7 @@
 
         "Component elevations.\n\n"
 
-        "The resting elevation for a component type is consistent across apps (e.g., FAB elevation "
+        "The resting elevation for a component name is consistent across apps (e.g., FAB elevation "
         "does not vary from 6dp in one app to 16dp in another app).\n"
         "Components may have different resting elevations across platforms, depending on the depth "
         "of the environment (e.g., TV has a greater depth than mobile or desktop).\n\n"
