@@ -19,7 +19,7 @@ import com.draglabs.dsoundboy.dsoundboy.R;
 
 import java.io.File;
 
-public class ListOfRecordings extends AppCompatActivity {
+public class ListOfRecordingsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private FloatingActionButton fab;

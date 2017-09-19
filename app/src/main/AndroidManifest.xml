@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.About"
+            android:name=".Activities.AboutActivity"
             android:label="@string/title_activity_about"
             android:parentActivityName=".Activities.MainActivity">
 
@@ -49,7 +49,7 @@
                 android:value=".Activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.Contact"
+            android:name=".Activities.ContactActivity"
             android:label="@string/title_activity_contact"
             android:parentActivityName=".Activities.MainActivity">
 
@@ -59,7 +59,7 @@
                 android:value=".Activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.EnterInfo"
+            android:name=".Activities.EnterInfoActivity"
             android:label="@string/title_activity_enter_info"
             android:parentActivityName=".Activities.MainActivity">
             <meta-data
@@ -123,7 +123,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".Activities.ListOfRecordings"
+            android:name=".Activities.ListOfRecordingsActivity"
             android:label="@string/title_activity_list_of_recordings"
             android:parentActivityName=".Activities.MainActivity"
             android:theme="@style/AppTheme.NoActionBar">

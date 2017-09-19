@@ -131,3 +131,5 @@ v1.17.09.18
     - added "exit jam" button
     - added edittext with jam info
     - moved around buttons
+v1.17.09.19
+    - saves entered band data

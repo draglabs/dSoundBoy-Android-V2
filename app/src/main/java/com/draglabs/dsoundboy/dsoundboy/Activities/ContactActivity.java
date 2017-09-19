@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 
-public class Contact extends AppCompatActivity {
+public class ContactActivity extends AppCompatActivity {
 
     private Intent intent;
     private TextView contact;

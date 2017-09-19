@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.draglabs.dsoundboy.dsoundboy.R;
 
-public class About extends AppCompatActivity {
+public class AboutActivity extends AppCompatActivity {
 
     private Intent intent;
     private TextView about;

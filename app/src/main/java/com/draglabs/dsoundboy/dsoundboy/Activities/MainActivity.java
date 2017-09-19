@@ -133,17 +133,17 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         contact = (Button)findViewById(R.id.contact);
         submit = (Button)findViewById(R.id.submit);
         //submit.setEnabled(false);
-        toggleButton(submit);
+        //toggleButton(submit);
         chronometer = (Chronometer)findViewById(R.id.chronometer);
         //chronometer.setFormat("HH:MM:SS:ss");
         startStop = (Button)findViewById(R.id.start_stop);
         startStopClickCount = 0;
         //startStop.setEnabled(false);
-        toggleButton(startStop);
+        //toggleButton(startStop);
         logoLink = (ImageButton)findViewById(R.id.logo_link);
         reset = (Button)findViewById(R.id.clear);
         //reset.setEnabled(false);
-        toggleButton(reset);
+        //toggleButton(reset);
         recordingImage = (ImageView)findViewById(R.id.recording_image);
         recordingImage.setVisibility(View.INVISIBLE);
         enterInfo = (Button)findViewById(R.id.enter_info);
@@ -176,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
                 login.setChecked(true);
                 uniqueUserID = getIntent().getStringExtra("uniqueUserID");
             }
-            if (callingClass.equals("EnterInfo")) {
+            if (callingClass.equals("EnterInfoActivity")) {
                 enterInfo.setEnabled(false);
                 startStop.setEnabled(true);
                 reset.setEnabled(false);
@@ -211,12 +211,12 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     }*/
 
     public void clickAbout(View view) {
-        Intent intent = new Intent(this, About.class);
+        Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 
     public void clickContact(View view) {
-        Intent intent = new Intent(this, Contact.class);
+        Intent intent = new Intent(this, ContactActivity.class);
         startActivity(intent);
     }
 
@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     public void clickEnterInfo(View view) {
         // TODO: intent to open new activity with text fields; not necessary to record; will set title to default
         startStop.setEnabled(true);
-        enterInfoIntent = new Intent(this, EnterInfo.class);
+        enterInfoIntent = new Intent(this, EnterInfoActivity.class);
         startActivity(enterInfoIntent);
     }
 
@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     }
 
     public void clickViewRecordings(View view) {
-        Intent intent = new Intent(this, ListOfRecordings.class);
+        Intent intent = new Intent(this, ListOfRecordingsActivity.class);
         startActivity(intent);
     }
 
@@ -352,7 +352,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
             this.descriptionText = bundle.getString("descriptionText");
             this.artistNameText = bundle.getString("artistNameText");
             this.venueText = bundle.getString("venueText");
-            //BandInfo bandInfo = EnterInfo.getBandInfo();
+            //BandInfo bandInfo = EnterInfoActivity.getBandInfo();
 
             Toast.makeText(this, emailText + "\n" + descriptionText + "\n" + artistNameText + "\n" + venueText, Toast.LENGTH_LONG).show();
         }
@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         return new String[]{_0, _1, _2, _3};
     }
 
-    private int testButtonValue(Button buttonToTest) {
+    /*private int testButtonValue(Button buttonToTest) {
         if (buttonToTest.getText().equals("Start/Stop")) {
             return R.bool.button_start_stop_enabled;
         }
@@ -409,6 +409,6 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
             setButtonValue(buttonToToggle, false);
             buttonToToggle.setEnabled(false);
         }
-    }
+    }*/
 
 }

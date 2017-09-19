@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.draglabs.dsoundboy.dsoundboy.Acessories.BandInfo;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 
 import java.util.ArrayList;
@@ -263,5 +264,120 @@ public class PrefUtils {
         editor.remove("fb_profileURL");
         editor.apply(); // This line is IMPORTANT !!!
         Log.d("PrefUtils: ", "Facebook User Info Cleared");
+    }
+
+    public static void setArtistEmail(Activity activity, String artistEmail) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("artist_email", artistEmail);
+        editor.apply();
+        Log.d("Artist Email: ", artistEmail);
+    }
+
+    public static String getArtistEmail(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.contains("artist_email")) {
+            String artistEmail = prefs.getString("artist_email", null);
+            Log.d("Artist Email: ", artistEmail);
+            return artistEmail;
+        } else {
+            return "Enter an artist email.";
+        }
+    }
+
+    public static void setRecordingDescription(Activity activity, String recordingDescription) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("recording_description", recordingDescription);
+        editor.apply();
+        Log.d("Recording Description: ", recordingDescription);
+    }
+
+    public static String getRecordingDescription(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.contains("recording_description")) {
+            String recordingDescription = prefs.getString("recording_description", null);
+            Log.d("Recording Description: ", recordingDescription);
+            return recordingDescription;
+        } else {
+            return "Enter a recording description.";
+        }
+    }
+
+    public static void setArtistName(Activity activity, String artistName) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("artist_name", artistName);
+        editor.apply();
+        Log.d("Artist Name: ", artistName);
+    }
+
+    public static String getArtistName(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.contains("artist_name")) {
+            String artistName = prefs.getString("artist_name", null);
+            Log.d("Artist Name: ", artistName);
+            return artistName;
+        } else {
+            return "Enter an artist name.";
+        }
+    }
+
+    public static void setRecordingVenue(Activity activity, String recordingVenue) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("recording_venue", recordingVenue);
+        editor.apply();
+        Log.d("Recording Venue: ", recordingVenue);
+    }
+
+    public static String getRecordingVenue(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        if (prefs.contains("recording_venue")) {
+            String recordingVenue = prefs.getString("recording_venue", null);
+            Log.d("Recording Venue: ", recordingVenue);
+            return recordingVenue;
+        } else {
+            return "Enter a recording venue";
+        }
+    }
+
+    public static void setBandInfo(Activity activity, String artistEmail, String recordingDescription, String artistName, String recordingVenue) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("artist_email", artistEmail);
+        editor.putString("recording_description", recordingDescription);
+        editor.putString("artist_name", artistName);
+        editor.putString("recording_venue", recordingVenue);
+        editor.apply();
+        Log.d("Artist Email: ", artistEmail);
+        Log.d("Recording Description: ", recordingDescription);
+        Log.d("Artist Name: ", artistName);
+        Log.d("Recording Venue: ", recordingVenue);
+    }
+
+    public static void setBandInfo(Activity activity, BandInfo bandInfo) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("artist_email", bandInfo.getArtistEmail());
+        editor.putString("recording_description", bandInfo.getRecordingDescription());
+        editor.putString("artist_name", bandInfo.getArtistName());
+        editor.putString("recording_venue", bandInfo.getRecordingVenue());
+        editor.apply();
+        Log.d("Artist Email: ", bandInfo.getArtistEmail());
+        Log.d("Recording Description: ", bandInfo.getRecordingDescription());
+        Log.d("Artist Name: ", bandInfo.getArtistName());
+        Log.d("Recording Venue: ", bandInfo.getRecordingVenue());
+    }
+
+    public static String getBandInfo(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+
+        String artistEmail = "{Artist Email: " + prefs.getString("artist_email", null) + "}\n";
+        String recordingDescription = "{Recording Description: " + prefs.getString("recording_description", null) + "}\n";
+        String artistName = "{Artist Name: " + prefs.getString("artist_name", null) + "}\n";
+        String recordingVenue = "{Recording Venue: " + prefs.getString("recording_venue", null) + "}";
+
+        return artistEmail + recordingDescription + artistName + recordingVenue;
     }
 }
