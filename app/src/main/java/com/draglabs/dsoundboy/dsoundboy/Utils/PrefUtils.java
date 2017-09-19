@@ -114,6 +114,14 @@ public class PrefUtils {
         return sharedPreferences.getString(JAM_PIN, null);
     }
 
+    public boolean hasJamPIN() {
+        if (getJamPIN() != null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public void clearJamPIN() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -131,6 +139,14 @@ public class PrefUtils {
     public String getUniqueUserID() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         return sharedPreferences.getString(UNIQUE_USER_ID, null);
+    }
+
+    public boolean hasUniqueUserID() { // TODO: rename isAuthorized?
+        if (getUniqueUserID() != null) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void clearUniqueUserID() {

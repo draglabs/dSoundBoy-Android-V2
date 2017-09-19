@@ -133,3 +133,11 @@ v1.17.09.18
     - moved around buttons
 v1.17.09.19
     - saves entered band data
+    - still need to get jam id, tells me "400 missing information", can't figure out what it is
+    - gps coordinates not yet retrieved
+    - need to check recording file size
+    - need to change playback buttons so that the text line is a button itself
+    - still need send email api
+    - starting a jam works
+        - error was calling uniqueID without it being intialized
+        - next is need to save jamPIN in preferences

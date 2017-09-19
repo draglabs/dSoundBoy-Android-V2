@@ -195,6 +195,16 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
             /*createJam.setEnabled(true);
             joinJam.setEnabled(true);*/
         }
+
+        if (prefUtils.hasUniqueUserID()) {
+            createJam.setEnabled(true);
+            joinJam.setEnabled(true);
+        }
+
+        if (prefUtils.hasJamPIN()) {
+            jamPINtext.setText(prefUtils.getJamPIN());
+            exitJam.setEnabled(true);
+        }
     }
 
     // TODO: show pin code under start and join jam buttons
@@ -299,8 +309,16 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         String provider = LocationManager.GPS_PROVIDER;
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
-        APIutils.startJam(this, uniqueUserID, "Test", "Test Jam", location);
-        jamPINtext.setText(prefUtils.getJamPIN());
+        APIutils.startJam(this, prefUtils.getUniqueUserID(), "Test", "Test Jam", location);
+        String jamPIN = prefUtils.getJamPIN();
+        jamPINtext.setText(jamPIN);
+        Log.v("Jam PIN: ", jamPIN);
+        exitJam.setEnabled(true);
+    }
+
+    public void clickExitJam(View view) {
+        jamPINtext.setText(getString(R.string.jam_pin));
+        APIutils.exitJam(prefUtils.getUniqueUserID(), prefUtils.getJamID());
     }
 
     public void uniqueUserIDset() {
