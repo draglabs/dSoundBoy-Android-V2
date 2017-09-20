@@ -282,7 +282,8 @@ public class Recorder {
     private String createAudioPathname(String bandName, String description, String venue, String email, Date date) {
         // format: BAND-NAME_GENRE-NAME_VENUE_EMAIL_DAY-MONTH-YEAR_HOUR:MINUTE:SECOND:MILLISECOND
         Locale currentLocale = Locale.getDefault();
-        String pattern = "dd-MM-yyyy_HH:mm:ss:SSS";
+        //String pattern = "dd-MM-yyyy_HH:mm:ss:SSS";
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, currentLocale);
         String dateString = simpleDateFormat.format(date);
 
@@ -314,5 +315,9 @@ public class Recorder {
         int result = ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE);
         int result1 = ContextCompat.checkSelfPermission(context, RECORD_AUDIO);
         return ((result == PackageManager.PERMISSION_GRANTED) && (result1 == PackageManager.PERMISSION_GRANTED));
+    }
+
+    public String getAudioSavePathInDevice() {
+        return audioSavePathInDevice;
     }
 }

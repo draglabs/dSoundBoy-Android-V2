@@ -40,6 +40,7 @@ import com.viralypatel.sharedpreferenceshelper.lib.SharedPreferencesHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 
 public class MainActivity extends AppCompatActivity implements CallbackListener {
 
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     private Button joinJam;
     private Button exitJam;
     private EditText jamPINtext;
+    //private Button start; // is still startStop
+    private Button stop;
 
     private String emailText;
     private String descriptionText;
@@ -82,8 +85,15 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     private LocationManager locationManager;
 
     private String uniqueUserID;
+    private int jamPIN;
 
     private PrefUtils prefUtils;
+
+    private String recordingPath;
+    private Date recordingStartTime;
+    private String recordingStartTimeServer;
+    private Date recordingEndTime;
+    private String recordingEndTimeServer;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -157,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         exitJam = (Button)findViewById(R.id.button_exit_jam);
         exitJam.setEnabled(false);
         jamPINtext = (EditText)findViewById(R.id.text_jam_pin);
+        stop = (Button)findViewById(R.id.stop);
 
         setBandInfo();
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?
@@ -170,6 +181,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
                 //enterInfo.setEnabled(getIntent().getBooleanExtra());
                 enterInfo.setEnabled(true);
                 startStop.setEnabled(false);
+                stop.setEnabled(false);
                 reset.setEnabled(false);
                 submit.setEnabled(false);
                 login.setEnabled(false); // necessary?
@@ -199,11 +211,13 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         if (prefUtils.hasUniqueUserID()) {
             createJam.setEnabled(true);
             joinJam.setEnabled(true);
+            this.uniqueUserID = prefUtils.getUniqueUserID();
         }
 
         if (prefUtils.hasJamPIN()) {
             jamPINtext.setText(prefUtils.getJamPIN());
             exitJam.setEnabled(true);
+            this.jamPIN = Integer.parseInt(prefUtils.getJamPIN());
         }
     }
 
@@ -237,9 +251,15 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         // TODO: go through folder to see which recording were from the current session, and upload all of those
         setBandInfo();
 
-        String pathname = null;
-        //int resultCodeUpload = APIutils.uploadToS3(pathname);
-        //int resultCodeJamSolo = APIutils.soloUpload(Profile.getCurrentProfile().getId()); // TODO: GET UNIQUE ID
+        this.recordingPath = recorder.getAudioSavePathInDevice();
+        // TODO: SET CORRECT RECORDING PATH, START, AND END TIME
+        APIutils.jamRecordingUpload(
+                prefUtils.getUniqueUserID(),
+                prefUtils.getJamID(),
+                PrefUtils.getRecordingVenue(this),
+                recordingPath, PrefUtils.getRecordingDescription(this),
+                recordingStartTime, recordingEndTime,
+                view);
     }
 
     public void clickStartStop(View view) {
@@ -267,11 +287,38 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
             submit.setEnabled(true);
             // TODO: stop recording program
         }
+    } // TODO: SET TO SINGULAR START AND SINGULAR STOP
+
+    public void clickStart(View view) { // MAKE INTO A LARGE TOGGLE BUTTON? WITH TWO IMAGES FOR EACH MODE
+        recordingStartTime = new Date();
+        reset.setEnabled(true);
+        submit.setEnabled(false);
+
+        Toast.makeText(this, "Started recording.", Toast.LENGTH_LONG).show();
+
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
+        recorder.startRecording();
+        recordingImage.setVisibility(View.VISIBLE);
+        stop.setEnabled(true);
     }
 
-    public void clickReset(View view) {
-        // TODO: when to save recordings
+    public void clickStop(View view) {
+        recordingEndTime = new Date();
+        recorder.stopRecording();
+        chronometer.stop();
+
+        Toast.makeText(this, "Stopped recording.", Toast.LENGTH_LONG).show();
+
+        recordingImage.setVisibility(View.INVISIBLE);
+        submit.setEnabled(true);
+        startStop.setEnabled(true);
+    }
+
+    public void clickReset(View view) { // IF IT IS RESET, IT IS NOT DELETED. FILE IS STILL THERE. ADD THIS INTO DOCUMENTATION FOR APP
         recorder.resetRecording();
+
+        Toast.makeText(this, "Reset recording.", Toast.LENGTH_LONG).show();
 
         chronometer.stop();
         recordingImage.setVisibility(View.INVISIBLE);
@@ -309,9 +356,11 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         String provider = LocationManager.GPS_PROVIDER;
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
-        APIutils.startJam(this, prefUtils.getUniqueUserID(), "Test", "Test Jam", location);
+        APIutils.startJam(this, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(this), PrefUtils.getRecordingDescription(this), location);
         String jamPIN = prefUtils.getJamPIN();
         jamPINtext.setText(jamPIN);
+        recordingStartTimeServer = prefUtils.getJamStartTime();
+        recordingEndTimeServer = prefUtils.getJamEndTime();
         Log.v("Jam PIN: ", jamPIN);
         exitJam.setEnabled(true);
     }
@@ -354,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     public void clickJoinJam(View view) {
         Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
 
+        APIutils.joinJam(this, prefUtils.getUniqueUserID(), Integer.parseInt(jamPINtext.getText().toString()));
         //int resultCodeJoinJam = APIutils.joinJam();
     }
 

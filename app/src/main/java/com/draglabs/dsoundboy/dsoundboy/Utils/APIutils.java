@@ -2,7 +2,9 @@ package com.draglabs.dsoundboy.dsoundboy.Utils;
 
 import android.app.Activity;
 import android.location.Location;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 
 import com.draglabs.dsoundboy.dsoundboy.Acessories.Email;
 import com.draglabs.dsoundboy.dsoundboy.Acessories.Strings;
@@ -52,7 +54,7 @@ public class APIutils {
     private static final String SOLO_UPLOAD_RECORDING = END_POINT + API_VERSION + "/soloupload/id";
     private static final String START_JAM = END_POINT + API_VERSION + "/jam/start";
     private static final String JOIN_JAM = END_POINT + API_VERSION + "/jam/join";
-    private static final String JAM_RECORDING_UPLOAD = END_POINT + API_VERSION + "/jam/upload/uniqueid";
+    private static final String JAM_RECORDING_UPLOAD = END_POINT + API_VERSION + "/jam/upload/userid";
     private static final String EXIT_JAM = END_POINT + API_VERSION + "/jam/exit";
     private static final String GET_COLLABORATORS = END_POINT + API_VERSION + "/jam/collaborators";
     private static final String GET_USER_ACTIVITY = END_POINT + API_VERSION + "/user/activity/id";
@@ -302,9 +304,11 @@ public class APIutils {
         });
     }
 
-    public static void jamRecordingUpload(String uniqueID, String jamID, String filename, String path, String notes, Date startTime, Date endTime) { // convert through binary data and multi-part upload
+    public static void jamRecordingUpload(String uniqueID, String jamID, String filename, String path, String notes, Date startTime, Date endTime, View view) { // convert through binary data and multi-part upload
         String newPOST = JAM_RECORDING_UPLOAD + "/" + uniqueID + "/jamid/" + jamID;
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US); // TODO: SAVE/ACCESS START/END TIMES
+
+        Log.d("newPOST: ", newPOST);
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("user_id", uniqueID);
@@ -313,6 +317,13 @@ public class APIutils {
         requestParams.put("notes", notes);
         requestParams.put("startTime", dateFormat.format(startTime));
         requestParams.put("endTime", dateFormat.format(endTime));
+        //String string = uniqueID + "\n" + jamID + "\n" + filename + "\n" + notes + "\n" + startTime + "\n" + endTime;
+        Snackbar.make(view, uniqueID, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, jamID, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, filename, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, notes, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, startTime.toString(), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, endTime.toString(), Snackbar.LENGTH_LONG).show();
 
         upload("audioFile", path, newPOST, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -326,6 +337,7 @@ public class APIutils {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                Snackbar.make(view, "Recording uploaded.", Snackbar.LENGTH_LONG).show();
             }
 
             @Override
