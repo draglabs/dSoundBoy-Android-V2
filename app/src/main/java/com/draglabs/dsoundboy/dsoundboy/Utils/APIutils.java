@@ -312,7 +312,7 @@ public class APIutils {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("user_id", uniqueID);
-        requestParams.put("jamid", jamID);
+        requestParams.put("jamid", jamID); // TODO: do something when there is error, not just give dummy response **!!**!!
         requestParams.put("fileName", filename);
         requestParams.put("notes", notes);
         requestParams.put("startTime", dateFormat.format(startTime));

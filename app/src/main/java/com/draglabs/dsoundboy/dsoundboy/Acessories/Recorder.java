@@ -152,7 +152,7 @@ public class Recorder {
 
             audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/" + pathname;
 
-            startTime = new Date();
+            startTime = new Date(); // TODO: FILE NAMES NOT BEING SET PROPERLY
             String testString = "startTime.toString(): " + startTime.toString() + ", startTime.getTime(): " + startTime.getTime();
             Toast.makeText(context, testString, Toast.LENGTH_LONG).show();
             System.out.println(testString);
