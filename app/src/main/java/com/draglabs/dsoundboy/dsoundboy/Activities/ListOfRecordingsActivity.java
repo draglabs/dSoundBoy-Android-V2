@@ -1,119 +1,165 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
+import com.draglabs.dsoundboy.dsoundboy.Acessories.Strings;
 import com.draglabs.dsoundboy.dsoundboy.R;
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+
+import org.apache.http.NameValuePair;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ListOfRecordingsActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
-    private FloatingActionButton fab;
+    private FloatingActionButton fab; // TODO: selected items will be sent as zip in an email, view jams
     private TableLayout tableLayout;
     private int clickCount;
     private String[] listOfFiles;
     private MediaPlayer mediaPlayer;
+    private HashMap userActivity;
+    private boolean isPlaying = false;
+    private boolean isInitiallyPlaying = false;
 
+    private ArrayList<Object> selectedItems;
+    private ArrayList<String> jamIDs;
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_of_recordings);
         toolbar = (Toolbar)findViewById(R.id.toolbar);
+        tableLayout = (TableLayout)findViewById(R.id.table_recordings);
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         clickCount = 0;
 
-        tableLayout = (TableLayout)findViewById(R.id.table_recordings);
-        //addRowToTable(new RadioButton(this), 0);
+        userActivity = new HashMap();
+        setUserActivityURLs();
 
         listOfFiles = listFilesInDirectory();
         addRowsToTable(listOfFiles);
 
         mediaPlayer = new MediaPlayer();
+
+        selectedItems = new ArrayList<>();
+        jamIDs = new ArrayList<>();
     }
 
     private void addRowsToTable(Object[] items) {
-        for (int i = 0; i < items.length; i++) {
+        int i = 0;
+        for (Object id : userActivity.keySet()) { // STREAMING ONES FIRST
+            addRowToTable(userActivity.get(id), i);
+            i++;
+        }
 
-            addRowToTable(items[i], i);
+        int j = i;
+        i = 0;
 
-            /*TableRow row = new TableRow(this);
-            TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT); // check later
-            row.setLayoutParams(layoutParams);
-
-            row.addView((View)items[i]);
-
-            tableLayout.addView(row, i);*/
+        for (; j < items.length; j++) { // LOCAL ONES SECOND
+            addRowToTable(items[i], j);
+            i++;
         }
     }
 
     private void addRowToTable(final Object item, int index) {
-
         final TableRow newRow = new TableRow(this);
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT); // check later
         newRow.setLayoutParams(layoutParams);
 
         CheckBox checkBox = new CheckBox(this); // TODO: select if checked
         TextView textView = new TextView(this);
+        ToggleButton toggleButton = new ToggleButton(this);
+        //toggleButton.setOnClickListener(playStop);
 
         final ImageButton play = new ImageButton(this);
         final ImageButton pause = new ImageButton(this);
         final ImageButton previous = new ImageButton(this);
 
-        //textView.setText("Hello, world");
-        textView.setText((String)item);
+        String itemAsString = (String)item;
+
+        textView.setText(itemAsString); // TODO: make text scrollable in constrained width of textview
+        toggleButton.setText(itemAsString);
         newRow.addView(checkBox);
-        newRow.addView(textView);
-        //newRow.addView((View)item);
+        //newRow.addView(textView);
+        newRow.addView(toggleButton);
+
         play.setImageResource(android.R.drawable.ic_media_play);
         pause.setImageResource(android.R.drawable.ic_media_pause);
         previous.setImageResource(android.R.drawable.ic_media_previous);
 
-        newRow.addView(play);
+        /*newRow.addView(play);
 
-        View.OnClickListener playPauseRecordingListener = new View.OnClickListener() {
-            public void onClick(View view) {
-                if (clickCount % 2 == 0) {
-                    // show pause
-                    newRow.removeView(play);
-                    newRow.addView(pause);
-                    Uri uri = Uri.fromFile(new File((String)item));
-                    playTrack(uri); // TODO: buttons not visible?
-                } else {
-                    // show play
-                    newRow.removeView(pause);
-                    newRow.addView(play);
-                    pauseTrack();
-                }
-                newRow.addView(previous);
-                clickCount++;
+        View.OnClickListener playPauseRecordingListener = view -> {
+            if (clickCount % 2 == 0) {
+                // show pause
+                newRow.removeView(play);
+                newRow.addView(pause);
+                Uri uri = Uri.fromFile(new File((String)item));
+                playTrack(uri); // TODO: buttons not visible?
+            } else {
+                // show play
+                newRow.removeView(pause);
+                newRow.addView(play);
+                pauseTrack();
             }
+            newRow.addView(previous);
+            clickCount++;
         };
 
-        View.OnClickListener resetRecordingListener = new View.OnClickListener() {
-            public void onClick(View view) {
-                restartTrack();
-            }
-        };
+        View.OnClickListener resetRecordingListener = view -> restartTrack();
 
         play.setOnClickListener(playPauseRecordingListener);
         pause.setOnClickListener(playPauseRecordingListener);
-        previous.setOnClickListener(resetRecordingListener);
+        previous.setOnClickListener(resetRecordingListener);*/
+
+        View.OnClickListener playStopRecordingListener = view -> {
+            if (!toggleButton.isChecked()) {
+                toggleButton.setText("Playing track");
+                if (!itemAsString.startsWith("http")) {
+                    Uri uri = Uri.fromFile(new File(itemAsString));
+                    playTrack(uri);
+                } else {
+                    streamURLplay(itemAsString);
+                }
+            } else {
+                stopTrack(mediaPlayer);
+            }
+        };
+        toggleButton.setOnClickListener(playStopRecordingListener);
 
         tableLayout.addView(newRow, index); // TODO: Play, add play button
     }
@@ -132,27 +178,113 @@ public class ListOfRecordingsActivity extends AppCompatActivity {
         return new String[]{"No saved recordings."};
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void setUserActivityURLs() {
+        PrefUtils prefUtils = new PrefUtils(this);
+        APIutils.getUserActivity(this, prefUtils.getUniqueUserID(), Strings.jsonTypes.RECORDINGS.type());
+
+        // TODO: renew prefUtils whenever a change is made, because the old one is still in memory
+        prefUtils = new PrefUtils(this);
+        String userActivityData = prefUtils.getUserActivity();
+        //Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        //Map<String, Object> stringObjectMap = gson.fromJson(userActivity, new TypeToken<Map<String ,Object>>(){}.getType());
+        //stringObjectMap.forEach((x, y) -> System.out.println(""));
+        Log.d("User Activity: ", userActivityData);
+        try {
+            JSONObject jsonObject = new JSONObject(userActivityData);
+            JSONArray recordings = jsonObject.getJSONArray("recordings");
+            for (int i = 0; i < recordings.length(); i++) {
+                JSONObject recording = recordings.getJSONObject(i);
+                String recordingID = recording.getString("_id"); // add values to arraylist or other data structure? maybe key-value
+                String recordingUrl = recording.getString("s3url");
+                userActivity.put(recordingID, recordingUrl);
+                /*for (Object id : userActivity.keySet()) {
+                    String url = userActivity.get(id);
+                }*/ // USE LATER WHEN GETTING
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setUserActivityJamIDs() {
+        PrefUtils prefUtils = new PrefUtils(this);
+        APIutils.getUserActivity(this, prefUtils.getUniqueUserID(), Strings.jsonTypes.JAMS.type());
+
+        prefUtils = new PrefUtils(this);
+        String jamIDs = prefUtils.getUserActivity();
+
+        Log.d("Jam IDs: ", jamIDs);
+
+        try {
+            JSONArray jsonArray = new JSONArray(jamIDs);
+            for (int i = 0; i < jsonArray.length(); i++) {
+                this.jamIDs.add(jsonArray.getJSONObject(i).getString(Strings.jsonTypes.JAM_ID.type()));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private View.OnClickListener playStop = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        }
+    };
+
+
+    private MediaPlayer streamURLplay(String url) {
+        MediaPlayer mediaPlayer = new MediaPlayer();
+        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        try {
+            mediaPlayer.setDataSource(url);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaPlayer.prepareAsync();
+        mediaPlayer.start();
+        return mediaPlayer;
+    }
+
+    private void streamURLstop(MediaPlayer mediaPlayer) {
+        mediaPlayer.stop();
+        mediaPlayer.release();
+    }
+
     public void clickFab(View view) {
         fab = (FloatingActionButton)findViewById(R.id.fab);
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+
+        String jamID = ""; // get this from the one that is checked
+
+        APIutils.notifyUser(jamID);
         // TODO: on selected list items, submit to server; filename: {userID_2017-08-31_13:02:45:384.pcm}
     }
 
     private void playTrack(Uri uri) {
+        stopTrack(mediaPlayer);
+
         if (!mediaPlayer.isPlaying()) {
             mediaPlayer = MediaPlayer.create(this, uri);
-        } else {
         }
+
+        mediaPlayer.prepareAsync();
         mediaPlayer.start();
     }
 
     private void pauseTrack() {
         mediaPlayer.pause();
-
     }
 
     private void restartTrack() {
         mediaPlayer.reset();
         mediaPlayer.start();
+    }
+
+    private void stopTrack(MediaPlayer mediaPlayer) {
+        mediaPlayer.stop();
+        mediaPlayer.reset();
+        mediaPlayer.release();
     }
 }

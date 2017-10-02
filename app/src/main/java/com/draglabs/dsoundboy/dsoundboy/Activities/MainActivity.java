@@ -1,5 +1,7 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
+import android.app.Activity;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,9 +11,12 @@ import android.content.pm.Signature;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Base64;
@@ -94,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
     private String recordingStartTimeServer;
     private Date recordingEndTime;
     private String recordingEndTimeServer;
+
+    private NotificationManager notificationManager;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -251,7 +258,40 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         // TODO: go through folder to see which recording were from the current session, and upload all of those
         setBandInfo();
 
-        this.recordingPath = recorder.getAudioSavePathInDevice();
+        if (recordingStartTime == null) {
+            recordingStartTime = new Date();
+        }
+        if (recordingEndTime == null) {
+            recordingEndTime = new Date();
+        }
+
+        int id = 1;
+        notificationManager = (NotificationManager)getSystemService(Context.NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(this);
+        notificationCompatBuilder.setContentTitle("Recording Upload").setContentText("Upload in progress").setSmallIcon(R.drawable.drag_labs_logo);
+        Handler handler = new Handler(Looper.getMainLooper());
+        Runnable runnable = new Thread(() -> {
+            for (int i = 0; i < 100; i += 5) {
+                notificationCompatBuilder.setProgress(100, i, false);
+                notificationManager.notify(id, notificationCompatBuilder.build());
+
+                recordingPath = recorder.getAudioSavePathInDevice();
+                APIutils.jamRecordingUpload(
+                        prefUtils.getUniqueUserID(),
+                        prefUtils.getJamID(),
+                        PrefUtils.getRecordingVenue(getThisActivity()),
+                        recordingPath, PrefUtils.getRecordingDescription(getThisActivity()),
+                        recordingStartTimeServer, recordingEndTimeServer,
+                        view);
+
+                notificationCompatBuilder.setContentText("Upload complete").setProgress(0, 0, false);
+                notificationManager.notify(id, notificationCompatBuilder.build());
+            }
+
+        });
+        handler.post(runnable);
+
+        /*this.recordingPath = recorder.getAudioSavePathInDevice();
         // TODO: SET CORRECT RECORDING PATH, START, AND END TIME
         APIutils.jamRecordingUpload(
                 prefUtils.getUniqueUserID(),
@@ -259,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
                 PrefUtils.getRecordingVenue(this),
                 recordingPath, PrefUtils.getRecordingDescription(this),
                 recordingStartTime, recordingEndTime,
-                view);
+                view);*/
     }
 
     public void clickStartStop(View view) {
@@ -270,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         //recorder.startStopRecording(startStopClickCount, chronometer, recordingImage);
         if (startStopClickCount % 2 != 0) {
             //recorder.startStopRecording(startStopClickCount, chronometer, recordingImage);
-            recorder.startRecording();
+            recorder.startRecording(this);
 
             Toast.makeText(this, "Started recording.", Toast.LENGTH_LONG).show();
             chronometer.start();
@@ -298,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
 
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        recorder.startRecording();
+        recorder.startRecording(this);
         recordingImage.setVisibility(View.VISIBLE);
         stop.setEnabled(true);
     }
@@ -356,13 +396,18 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         String provider = LocationManager.GPS_PROVIDER;
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
+        prefUtils = new PrefUtils(this);
         APIutils.startJam(this, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(this), PrefUtils.getRecordingDescription(this), location);
         String jamPIN = prefUtils.getJamPIN();
+        if (prefUtils.hasJamPIN()) { // what did I want to do here?
+            Log.v("Jam PIN: ", jamPIN); // TODO: SHOW JSON RESPONSE IF ERROR AS INDEFINITE SNACKBAR OR TOAST
+        } else {
+
+        }
         jamPINtext.setText(jamPIN);
         recordingStartTimeServer = prefUtils.getJamStartTime();
         recordingEndTimeServer = prefUtils.getJamEndTime();
-        Log.v("Jam PIN: ", jamPIN);
-        exitJam.setEnabled(true);
+        exitJam.setEnabled(true); // TODO: fix lack of jam pin refreshes, maybe the callback occurs after the display is updated
     }
 
     public void clickExitJam(View view) {
@@ -374,6 +419,12 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         String uniqueUserID = prefUtils.getUniqueUserID();
         Log.v("Unique User ID (MA): ", uniqueUserID + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
+    }
+
+    public void clickJoinJam(View view) {
+        Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
+
+        APIutils.joinJam(this, prefUtils.getUniqueUserID(), Integer.parseInt(jamPINtext.getText().toString()));
     }
 
     public void jamIDset() {
@@ -400,13 +451,6 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         Log.v("User Activity: ", prefUtils.getUserActivity() + "");
     }
 
-    public void clickJoinJam(View view) {
-        Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
-
-        APIutils.joinJam(this, prefUtils.getUniqueUserID(), Integer.parseInt(jamPINtext.getText().toString()));
-        //int resultCodeJoinJam = APIutils.joinJam();
-    }
-
     private void setBandInfo() {
         /*Intent enterInfoIntent = getIntent();
         this.emailText = enterInfoIntent.getStringExtra("emailText");
@@ -430,6 +474,9 @@ public class MainActivity extends AppCompatActivity implements CallbackListener 
         return new String[]{_0, _1, _2, _3};
     }
 
+    private Activity getThisActivity() {
+        return this;
+    }
     /*private int testButtonValue(Button buttonToTest) {
         if (buttonToTest.getText().equals("Start/Stop")) {
             return R.bool.button_start_stop_enabled;

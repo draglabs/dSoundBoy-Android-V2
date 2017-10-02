@@ -8,6 +8,8 @@ import android.util.Log;
 import com.draglabs.dsoundboy.dsoundboy.Acessories.BandInfo;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 
+import org.json.JSONArray;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -88,6 +90,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_ID, jamID);
         editor.apply();
+        jamIDset();
     }
 
     public String getJamID() {
@@ -107,6 +110,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_PIN, jamPIN);
         editor.apply();
+        jamPINset();
     }
 
     public String getJamPIN() {
@@ -134,6 +138,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(UNIQUE_USER_ID, uniqueUserID);
         editor.apply();
+        uniqueUserIDset();
     }
 
     public String getUniqueUserID() {
@@ -161,6 +166,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_START_TIME, jamStartTime);
         editor.apply();
+        jamStartTimeSet();
     }
 
     public String getJamStartTime() {
@@ -180,6 +186,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(COLLABORATORS, collaborators);
         editor.apply();
+        getCollaboratorsSet();
     }
 
     public String getCollaborators() {
@@ -199,11 +206,14 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(USER_ACTIVITY, userActivity);
         editor.apply();
+        getUserActivitySet();
     }
 
     public String getUserActivity() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        return sharedPreferences.getString(USER_ACTIVITY, null);
+        String userActivity = sharedPreferences.getString(USER_ACTIVITY, null);
+        Log.d("User Activity: ", userActivity);
+        return userActivity;
     }
 
     public void clearUserActivity() {
@@ -218,6 +228,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_END_TIME, jamEndTime);
         editor.apply();
+        jamEndTimeSet();
     }
 
     public String getJamEndTime() {

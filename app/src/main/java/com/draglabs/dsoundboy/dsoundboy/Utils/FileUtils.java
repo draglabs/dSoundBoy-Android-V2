@@ -197,9 +197,15 @@ class FileUtils {
                     JSONArray recordings = jsonObject.getJSONArray("recordings");
                     JSONArray jams = jsonObject.getJSONArray("jams");
 
-                    String recordingsString = recordings.toString();
-                    String jamsString = jams.toString();
-                    return recordingsString + "\n" + jamsString;
+                    if (data.equals(Strings.jsonTypes.RECORDINGS.type())) {
+                        return recordings.toString(); // TODO: maybe the recordings list is empty so nothing is being shown? arrange for that check
+                    } else if (data.equals(Strings.jsonTypes.JAMS.type())) {
+                        return jams.toString();
+                    } else {
+                        String recordingsString = recordings.toString();
+                        String jamsString = jams.toString();
+                        return recordingsString + "\n" + jamsString;
+                    }
                 } else if (code == 400) {
                     return code + ": " + jsonObject.getString("error");
                 } else {

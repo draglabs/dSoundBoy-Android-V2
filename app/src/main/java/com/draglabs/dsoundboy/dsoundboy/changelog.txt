@@ -142,3 +142,7 @@ v1.17.09.19
         - error was calling uniqueID without it being intialized
         - next is need to save jamPIN in preferences
     - uploads audio files
+v1.17.09.20
+    - changed recording type to hopefully take up less space
+v1.17.09.25
+    - created Atlassian JIRA account for progress

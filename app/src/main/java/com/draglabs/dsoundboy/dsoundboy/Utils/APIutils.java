@@ -354,6 +354,55 @@ public class APIutils {
         });
     }
 
+    public static void jamRecordingUpload(String uniqueID, String jamID, String filename, String path, String notes, String startTime, String endTime, View view) { // convert through binary data and multi-part upload
+        String newPOST = JAM_RECORDING_UPLOAD + "/" + uniqueID + "/jamid/" + jamID;
+
+        Log.d("newPOST: ", newPOST);
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("user_id", uniqueID);
+        requestParams.put("jamid", jamID); // TODO: do something when there is error, not just give dummy response **!!**!!
+        requestParams.put("fileName", filename);
+        requestParams.put("notes", notes);
+        requestParams.put("startTime", startTime);
+        requestParams.put("endTime", endTime);
+        //String string = uniqueID + "\n" + jamID + "\n" + filename + "\n" + notes + "\n" + startTime + "\n" + endTime;
+        Snackbar.make(view, uniqueID, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, jamID, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, filename, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, notes, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, startTime.toString(), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, endTime.toString(), Snackbar.LENGTH_LONG).show();
+
+        upload("audioFile", path, newPOST, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.v("Status Code: ", statusCode + "");
+                Log.v("Headers: ", Arrays.toString(headers));
+                Log.v("Response: ", response.toString());
+                try {
+                    String message = FileUtils.getJsonObject(Strings.JAM_RECORDING_UPLOAD, response, Strings.jsonTypes.MESSAGE.type());
+                    Log.v("Response Message: ", message);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Snackbar.make(view, "Recording uploaded.", Snackbar.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                if (headers != null && throwable != null && response != null) {
+                    Log.v("Status Code: ", statusCode + "\n");
+                    Log.v("Headers: ", Arrays.toString(headers) + "");
+                    Log.v("Throwable: ", throwable.getMessage());
+                    Log.v("Response: ", response.toString());
+                } else {
+                    Log.v("Reason: ", "Other Failure.");
+                }
+            }
+        });
+    }
+
     public static void exitJam(String uniqueID, String jamID) {
         RequestParams requestParams = new RequestParams();
         requestParams.put("user_id", uniqueID);
@@ -423,7 +472,7 @@ public class APIutils {
         });
     }
 
-    public static void getUserActivity(Activity activity, String uniqueID, String jamID) {
+    public static void getUserActivity(Activity activity, String uniqueID, String type) {
         String newPOST = GET_USER_ACTIVITY + "/" + uniqueID;
         // TODO: add date as part of the request header
 
@@ -431,18 +480,24 @@ public class APIutils {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("user_id", uniqueID);
-        requestParams.put("jam_id", jamID);
+        //requestParams.put("jam_id", jamID);
 
-        post(GET_USER_ACTIVITY, requestParams, new JsonHttpResponseHandler() {
+        post(newPOST, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("Response: ", response.toString());
                 try {
-                    String userActivity = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, Strings.jsonTypes.MESSAGE.type());
-                    Log.v("User Activity: ", userActivity);
-                    prefUtils.saveUserActivity(userActivity);
+                    if (type.equals(Strings.jsonTypes.RECORDINGS.type())) {
+                        String recordings = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, type);
+                        Log.v("Recordings: ", recordings);
+                        prefUtils.saveUserActivity(recordings);
+                    } else if (type.equals(Strings.jsonTypes.JAMS.type())){
+                        String jams = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, type);
+                        Log.v("Jams: ", jams);
+                        prefUtils.saveUserActivity(jams);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -525,6 +580,7 @@ public class APIutils {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
-        asyncHttpClient.post(url, requestParams, asyncHttpResponseHandler);
+
+        asyncHttpClient.post(url, requestParams, asyncHttpResponseHandler); // too many prints in the logger
     }
 }

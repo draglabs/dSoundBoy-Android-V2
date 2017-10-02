@@ -17,6 +17,8 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -52,12 +54,12 @@ public class Recorder {
 
     private String[] bandData;
 
-    private static final int RECORDER_AUDIO_SOURCE = MediaRecorder.AudioSource.MIC;
+    private static final int RECORDER_AUDIO_SOURCE = MediaRecorder.AudioSource.DEFAULT;
     private static final int RECORDING_ENCODING_BIT_RATE = 24;
     private static final int RECORDER_SAMPLE_RATE = 44100;
     private static final int RECORDER_CHANNELS = AudioFormat.CHANNEL_IN_MONO;
-    private static final int RECORDER_OUTPUT_FORMAT = MediaRecorder.OutputFormat.MPEG_4;
-    @RequiresApi(LOLLIPOP) private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_PCM_FLOAT;
+    private static final int RECORDER_OUTPUT_FORMAT = MediaRecorder.OutputFormat.AAC_ADTS;
+    @RequiresApi(LOLLIPOP) private static final int RECORDER_AUDIO_ENCODING = AudioFormat.ENCODING_DEFAULT;
     private AudioRecord audioRecord;
     private Thread recordingThread;
     private boolean isRecording = false;
@@ -65,7 +67,7 @@ public class Recorder {
     private final int bufferElementsToRec = 1024;
     private final int bytesPerElement = 2;
 
-    private final String EXTENSION = ".pcm";
+    private final String EXTENSION = ".aac";
     private String pathname;
 
     private Activity thatMainActivity;
@@ -145,10 +147,16 @@ public class Recorder {
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public void startRecording() { // TODO: recording name is the Facebook user id
+    public void startRecording(Activity activity) { // TODO: recording name is the Facebook user id
         if (checkPermissions()) {
             //String EXTENSION = ".pcm";
-            pathname = createAudioPathname(bandData, EXTENSION);
+            //pathname = createAudioPathname(bandData, EXTENSION);
+            pathname = createAudioPathname(
+                    PrefUtils.getArtistName(activity),
+                    PrefUtils.getRecordingDescription(activity),
+                    PrefUtils.getRecordingVenue(activity),
+                    PrefUtils.getArtistEmail(activity),
+                    new Date()) + EXTENSION;
 
             audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/" + pathname;
 
