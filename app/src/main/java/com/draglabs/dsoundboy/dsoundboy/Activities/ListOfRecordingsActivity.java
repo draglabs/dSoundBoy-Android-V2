@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -68,7 +69,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity {
         clickCount = 0;
 
         userActivity = new HashMap();
-        setUserActivityURLs();
+        setUserActivityURLs(); // TODO: CRASHES HERE
 
         listOfFiles = listFilesInDirectory();
         addRowsToTable(listOfFiles);
@@ -77,6 +78,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity {
 
         selectedItems = new ArrayList<>();
         jamIDs = new ArrayList<>();
+        setUserActivityJamIDs();
     }
 
     private void addRowsToTable(Object[] items) {
@@ -146,7 +148,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity {
         pause.setOnClickListener(playPauseRecordingListener);
         previous.setOnClickListener(resetRecordingListener);*/
 
-        View.OnClickListener playStopRecordingListener = view -> {
+        toggleButton.setOnClickListener(view -> {
             if (!toggleButton.isChecked()) {
                 toggleButton.setText("Playing track");
                 if (!itemAsString.startsWith("http")) {
@@ -158,8 +160,15 @@ public class ListOfRecordingsActivity extends AppCompatActivity {
             } else {
                 stopTrack(mediaPlayer);
             }
-        };
-        toggleButton.setOnClickListener(playStopRecordingListener);
+        });
+
+        checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
+            if (b == true) {
+
+            } else {
+
+            }
+        });
 
         tableLayout.addView(newRow, index); // TODO: Play, add play button
     }
@@ -185,7 +194,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity {
 
         // TODO: renew prefUtils whenever a change is made, because the old one is still in memory
         prefUtils = new PrefUtils(this);
-        String userActivityData = prefUtils.getUserActivity();
+        String userActivityData = prefUtils.getUserActivity(); // TODO: CRASHES HERE
         //Gson gson = new GsonBuilder().setPrettyPrinting().create();
         //Map<String, Object> stringObjectMap = gson.fromJson(userActivity, new TypeToken<Map<String ,Object>>(){}.getType());
         //stringObjectMap.forEach((x, y) -> System.out.println(""));
