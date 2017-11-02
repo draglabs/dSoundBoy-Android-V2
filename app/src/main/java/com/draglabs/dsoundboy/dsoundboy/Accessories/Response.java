@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Acessories;
+package com.draglabs.dsoundboy.dsoundboy.Accessories;
 
 import org.json.JSONObject;
 

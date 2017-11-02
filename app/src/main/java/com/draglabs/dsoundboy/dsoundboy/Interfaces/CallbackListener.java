@@ -21,4 +21,7 @@ public interface CallbackListener {
 
     // GetUserActivity
     void getUserActivitySet();
+
+    // GetJamDetails
+    void getJamDetailsSet();
 }

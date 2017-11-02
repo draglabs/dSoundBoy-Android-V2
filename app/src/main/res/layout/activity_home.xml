@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorDLBackground">
+
+    <ImageView
+        android:id="@+id/inner_circle"
+        android:layout_width="242dp"
+        android:layout_height="285dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/outer_circle"
+        app:layout_constraintEnd_toEndOf="@+id/outer_circle"
+        app:layout_constraintStart_toStartOf="@+id/outer_circle"
+        app:layout_constraintTop_toTopOf="@+id/outer_circle"
+        app:srcCompat="@drawable/oval" />
+
+    <ImageView
+        android:id="@+id/outer_circle"
+        android:layout_width="346dp"
+        android:layout_height="345dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription='"oval_copy"'
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.053"
+        app:srcCompat="@drawable/oval_copy_2x" />
+
+    <TextView
+        android:id="@+id/chronometer_text"
+        android:layout_width="142dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="00:00"
+        android:textAlignment="center"
+        android:textColor="@color/colorDLTextWhite"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toBottomOf="@+id/inner_circle"
+        app:layout_constraintEnd_toEndOf="@+id/inner_circle"
+        app:layout_constraintStart_toStartOf="@+id/inner_circle"
+        app:layout_constraintTop_toBottomOf="@+id/record_button"
+        app:layout_constraintVertical_bias="0.903" />
+
+    <ImageButton
+        android:id="@+id/record_button"
+        android:layout_width="84dp"
+        android:layout_height="81dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="68dp"
+        android:background="@color/cardview_shadow_end_color"
+        android:backgroundTint="@color/cardview_shadow_end_color"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@+id/inner_circle"
+        app:layout_constraintStart_toStartOf="@+id/inner_circle"
+        app:layout_constraintTop_toTopOf="@+id/inner_circle"
+        app:srcCompat="@drawable/recording" />
+
+    <ImageButton
+        android:id="@+id/rec_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/com_facebook_auth_dialog_cancel_background"
+        android:backgroundTint="@color/cardview_shadow_end_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/outer_circle"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/rec" />
+
+    <ImageButton
+        android:id="@+id/join_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/com_facebook_auth_dialog_cancel_background"
+        android:backgroundTint="@color/cardview_shadow_end_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/rec_button"
+        app:layout_constraintTop_toBottomOf="@+id/outer_circle"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/join" />
+
+    <TextView
+        android:id="@+id/rec_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/rec"
+        android:textAlignment="center"
+        android:textColor="@color/colorDLTextWhite"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/rec_button"
+        app:layout_constraintEnd_toEndOf="@+id/rec_button"
+        app:layout_constraintStart_toStartOf="@+id/rec_button"
+        app:layout_constraintTop_toTopOf="@+id/rec_button" />
+
+    <TextView
+        android:id="@+id/join_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/join"
+        android:textColor="@color/colorDLTextWhite"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="@+id/join_button"
+        app:layout_constraintEnd_toEndOf="@+id/join_button"
+        app:layout_constraintStart_toStartOf="@+id/join_button"
+        app:layout_constraintTop_toTopOf="@+id/join_button" />
+
+</android.support.constraint.ConstraintLayout>

@@ -5,10 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.draglabs.dsoundboy.dsoundboy.Acessories.BandInfo;
+import com.draglabs.dsoundboy.dsoundboy.Accessories.BandInfo;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
-
-import org.json.JSONArray;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +29,7 @@ public class PrefUtils {
     private final String JAM_END_TIME = "jam_end_time";
     private final String COLLABORATORS = "collaborators";
     private final String USER_ACTIVITY = "user_activity";
+    private final String JAM_DETAILS = "jam_details";
 
     // TODO: add data for "Enter Band And/Or Recording Info"
 
@@ -82,6 +81,12 @@ public class PrefUtils {
     public void getUserActivitySet() {
         for (CallbackListener callback : callbacks) {
             callback.getUserActivitySet();
+        }
+    }
+
+    public void getJamDetailsSet() {
+        for (CallbackListener callback : callbacks) {
+            callback.getJamDetailsSet();
         }
     }
 
@@ -207,12 +212,13 @@ public class PrefUtils {
         editor.putString(USER_ACTIVITY, userActivity);
         editor.apply();
         getUserActivitySet();
+        Log.d("Saved User Activity: ", userActivity);
     }
 
     public String getUserActivity() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         String userActivity = sharedPreferences.getString(USER_ACTIVITY, null);
-        Log.d("User Activity: ", userActivity);
+        Log.d("Gotten User Activity: ", userActivity); // 3558, 1356(5424), 1433(5732)
         return userActivity;
     }
 
@@ -221,6 +227,21 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.remove(USER_ACTIVITY);
         editor.apply();
+    }
+
+    public String getJamDetails() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        String jamDetails = sharedPreferences.getString(JAM_DETAILS, null);
+        Log.d("Jam Details: ", jamDetails);
+        return jamDetails;
+    }
+
+    public void saveJamDetails(String jamDetails) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(JAM_DETAILS, jamDetails);
+        editor.apply();
+        getJamDetailsSet();
     }
 
     public void saveJamEndTime(String jamEndTime) {

@@ -42,7 +42,9 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
 import com.facebook.Profile;
+import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -134,8 +136,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         //mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        //FacebookSdk.sdkInitialize(getApplicationContext()); // TODO: necessary? deprecated
-        //AppEventsLogger.activateApp(this); // TODO: maybe add to MainActivity? OOOHHH because when clicking the button, none of this is happening
+        FacebookSdk.sdkInitialize(getApplicationContext()); // TODO: necessary? deprecated
+        AppEventsLogger.activateApp(this); // TODO: maybe add to MainActivity? OOOHHH because when clicking the button, none of this is happening
         loginResultText = (TextView)findViewById(R.id.login_result_text);
         facebookLoginButton = (LoginButton)findViewById(R.id.facebook_login_button);
         callbackManager = CallbackManager.Factory.create();
@@ -143,7 +145,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken currentAccessToken) {
                 // set the access token using currentAccessToken when it's loaded or set
-                //accessToken = currentAccessToken;
+                accessToken = currentAccessToken;
             }
         };
         // if the access token is available already, assign it
@@ -233,7 +235,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         uniqueUserID = prefUtils.getUniqueUserID();
 
         Snackbar.make(view, "Unique ID: " + prefUtils.getUniqueUserID(), Snackbar.LENGTH_LONG).show();
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, HomeActivity.class);
         intent.putExtra("callingClass", "LoginActivity"); // DO IT THIS WAY, SEND BOOL VALUES THROUGH THIS INSTEAD OF SHAREDPREFERENCES!!!!!!!!!
         intent.putExtra("uniqueUserID", uniqueUserID);
         /*intent.putExtra("enterInfoEnabled", true);
@@ -272,6 +274,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     public void getUserActivitySet() {
         Log.v("User Activity: ", prefUtils.getUserActivity() + "");
 
+    }
+
+    public void getJamDetailsSet() {
+        Log.v("Jam Details: ", prefUtils.getJamDetails() + "");
     }
 
     @Override

@@ -1,8 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Acessories;
-
-import android.app.Service;
-import android.content.Intent;
-import android.media.MediaPlayer;
+package com.draglabs.dsoundboy.dsoundboy.Accessories;
 
 /**
  * https://developer.android.com/guide/topics/media/mediaplayer.html

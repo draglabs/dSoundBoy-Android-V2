@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DragLabs">
+        <attr name="colorTextPrimary" format="color|reference" />
+        <attr name="windowBackground" format="color|reference" />
+    </declare-styleable>
+
+</resources>

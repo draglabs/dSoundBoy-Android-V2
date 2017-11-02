@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Acessories;
+package com.draglabs.dsoundboy.dsoundboy.Accessories;
 
 /**
  * Created by davrukin on 9/12/17.
@@ -16,6 +16,7 @@ public final class Strings {
     public static final String GET_COLLABORATORS = "Get Collaborators";
     public static final String GET_USER_ACTIVITY = "Get User Activity";
     public static final String NOTIFY_USER = "Notify User";
+    public static final String GET_JAM_DETAILS = "Get Jam Details";
 
     public enum jsonTypes {
         CODE("code"),
@@ -33,7 +34,8 @@ public final class Strings {
         FILENAME("fileName"),
         NOTES("notes"),
         RECORDING_ID("_id"),
-        JAMS("jams");
+        JAMS("jams"),
+        DATA("data");
 
         private final String name;
 

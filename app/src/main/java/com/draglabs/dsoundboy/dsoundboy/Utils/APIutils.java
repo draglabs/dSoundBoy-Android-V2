@@ -1,14 +1,15 @@
 package com.draglabs.dsoundboy.dsoundboy.Utils;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.location.Location;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
-import com.draglabs.dsoundboy.dsoundboy.Acessories.Email;
-import com.draglabs.dsoundboy.dsoundboy.Acessories.Strings;
-import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
+import com.draglabs.dsoundboy.dsoundboy.Accessories.Email;
+import com.draglabs.dsoundboy.dsoundboy.Accessories.Strings;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.google.gson.Gson;
@@ -36,6 +37,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HeaderElement;
+import cz.msebera.android.httpclient.ParseException;
 
 /**
  * Created by davrukin on 8/14/17.
@@ -59,44 +62,12 @@ public class APIutils {
     private static final String GET_COLLABORATORS = END_POINT + API_VERSION + "/jam/collaborators";
     private static final String GET_USER_ACTIVITY = END_POINT + API_VERSION + "/user/activity/id";
     private static final String NOTIFY_USER = END_POINT + API_VERSION + "/jam/notifyuser";
+    private static final String GET_JAM_DETIALS = END_POINT + API_VERSION + "/user/jam-details?jamId=";
+    private static final String GENERATE_XML = "http://54.153.93.94" + "/v1/generateXML/";
+    private static final String COMPRESS = END_POINT + API_VERSION + "/jam/archive";
 
     private static final AsyncHttpClient asyncHttpClient = new AsyncHttpClient(true, 80, 433);
-    private static final JsonHttpResponseHandler jsonHttpResponseHandler = new JsonHttpResponseHandler() {
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-            Log.v("Status Code: ", statusCode + "");
-            Log.v("Headers: ", Arrays.toString(headers));
-            Log.v("Response: ", response.toString());
 
-            // TODO: Somehow save or pass information, maybe put back into each method and return it?
-        }
-
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-            Log.v("Status Code: ", statusCode + "");
-            Log.v("Headers: ", Arrays.toString(headers));
-            Log.v("Response: ", response.toString());
-                /*try {
-                    System.out.println(response.getJSONObject(0).getString("user_id"));
-                    System.out.println(response.getJSONObject(1).getString("first_name"));
-                    System.out.println(response.getJSONObject(2).getString("last_name"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
-        }
-
-        @Override
-        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
-            if (headers != null && throwable != null && response != null) {
-                Log.v("Status Code: ", statusCode + "\n");
-                Log.v("Headers: ", Arrays.toString(headers) + "");
-                Log.v("Throwable: ", throwable.getMessage());
-                Log.v("Response: ", response.toString());
-            } else {
-                Log.v("Reason: ", "Other Failure.");
-            }
-        }
-    };
 
     public static int sendEmail(String email, String subject, String message) {
         try {
@@ -443,7 +414,7 @@ public class APIutils {
         requestParams.put("user_id", uniqueID);
         requestParams.put("jam_id", jamID);
 
-        post(GET_COLLABORATORS, requestParams, new JsonHttpResponseHandler() {
+        get(GET_COLLABORATORS, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
@@ -472,24 +443,38 @@ public class APIutils {
         });
     }
 
-    public static void getUserActivity(Activity activity, String uniqueID, String type) {
-        String newPOST = GET_USER_ACTIVITY + "/" + uniqueID;
+    public static void getUserActivity(Activity activity, String uniqueID, Context context) {
+        //String newPOST = GET_USER_ACTIVITY + "/" + uniqueID;
+        String newPOST = GET_USER_ACTIVITY + "/";
         // TODO: add date as part of the request header
-
-        final PrefUtils prefUtils = new PrefUtils(activity);
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("user_id", uniqueID);
         //requestParams.put("jam_id", jamID);
+        Header[] headers = new Header[]{new Header() {
+            @Override
+            public String getName() {
+                return "user_id";
+            }
 
-        post(newPOST, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public String getValue() {
+                return uniqueID;
+            }
+
+            @Override
+            public HeaderElement[] getElements() throws ParseException {
+                return new HeaderElement[0];
+            }
+        }};
+        get(context, newPOST, headers, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("Response: ", response.toString());
                 try {
-                    if (type.equals(Strings.jsonTypes.RECORDINGS.type())) {
+                    /*if (type.equals(Strings.jsonTypes.RECORDINGS.type())) {
                         String recordings = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, type);
                         Log.v("Recordings: ", recordings);
                         prefUtils.saveUserActivity(recordings);
@@ -497,7 +482,10 @@ public class APIutils {
                         String jams = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, type);
                         Log.v("Jams: ", jams);
                         prefUtils.saveUserActivity(jams);
-                    }
+                    }*/
+                    String jams = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, Strings.jsonTypes.JAMS.type());
+                    Log.v("Jams: ", jams);
+                    new PrefUtils(activity).saveUserActivity(jams);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -517,12 +505,78 @@ public class APIutils {
         });
     }
 
-    public static void notifyUser(String jamID) {
+    public static void getJamDetails(String userID, String jamID, Activity activity, Context context) {
+        final PrefUtils prefUtils = new PrefUtils(activity);
+
+        RequestParams requestParams = new RequestParams();
+        Header[] headers = new Header[]{new Header() {
+            @Override
+            public String getName() {
+                return "user_id";
+            }
+
+            @Override
+            public String getValue() {
+                return userID;
+            }
+
+            @Override
+            public HeaderElement[] getElements() throws ParseException {
+                return new HeaderElement[0];
+            }
+        }, new Header() {
+            @Override
+            public String getName() {
+                return "jam_id";
+            }
+
+            @Override
+            public String getValue() {
+                return jamID;
+            }
+
+            @Override
+            public HeaderElement[] getElements() throws ParseException {
+                return new HeaderElement[0];
+            }
+        }};
+
+        get(context, GET_JAM_DETIALS, headers, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.v("Status Code: ", statusCode + "");
+                Log.v("Headers: ", Arrays.toString(headers));
+                Log.v("Response: ", response.toString());
+                try {
+                    String jamDetails = FileUtils.getJsonObject(Strings.GET_JAM_DETAILS, response, Strings.jsonTypes.DATA.type());
+                    Log.v("Jam Details: ", jamDetails);
+                    new PrefUtils(activity).saveJamDetails(jamDetails); // TODO: enable later
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                if (headers != null && throwable != null && response != null) {
+                    Log.v("Status Code: ", statusCode + "\n");
+                    Log.v("Headers: ", Arrays.toString(headers) + "");
+                    Log.v("Throwable: ", throwable.getMessage());
+                    Log.v("Response: ", response.toString());
+                } else {
+                    Log.v("Reason: ", "Other Failure.");
+                }
+            }
+        });
+    }
+
+    public static void notifyUser(String jamID, Context context) {
         RequestParams requestParams = new RequestParams("jam_id", jamID);
 
         post(NOTIFY_USER, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.v("Function: ", "Notify User");
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("Response: ", response.toString());
@@ -532,6 +586,7 @@ public class APIutils {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+                createDialog(context, jamID, "Notify User", "User Notified");
             }
 
             @Override
@@ -544,18 +599,100 @@ public class APIutils {
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
+                createNotifyUserErrorDialog(jamID, context);
             }
         });
     }
 
+    public static void generateXML(String jamID, JSONObject jamDetails, Context context) {
+        RequestParams requestParams = new RequestParams("jamid", jamID);
+
+        post(GENERATE_XML + jamID, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+               Log.v("Function: ", "Generate XML");
+               Log.v("Status Code: ", statusCode + "");
+               Log.v("Headers: ", Arrays.toString(headers));
+               Log.v("Response: ", response.toString());
+               createDialog(context, jamID, "Generate XML", response.toString());
+           }
+
+           @Override
+           public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                if (headers != null && throwable != null && response != null) {
+                   Log.v("Status Code: ", statusCode + "\n");
+                   Log.v("Headers: ", Arrays.toString(headers) + "");
+                   Log.v("Throwable: ", throwable.getMessage());
+                   Log.v("Response: ", response.toString());
+               } else {
+                   Log.v("Reason: ", "Other Failure.");
+               }
+               createDialog(context, jamID, "Failure", response.toString());
+           }
+        });
+    }
+
+    public static void compress(String jamID, String userID, JSONObject jamDetails, Context context) {
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("jam_id", jamID);
+        requestParams.put("user_id", userID);
+
+        post(COMPRESS, requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.v("Function: ", "Compress");
+                Log.v("Status Code: ", statusCode + "");
+                Log.v("Headers: ", Arrays.toString(headers));
+                Log.v("Response: ", response.toString());
+                createDialog(context, jamID, "Compress", response.toString());
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject response) {
+                if (headers != null && throwable != null && response != null) {
+                    Log.v("Status Code: ", statusCode + "\n");
+                    Log.v("Headers: ", Arrays.toString(headers) + "");
+                    Log.v("Throwable: ", throwable.getMessage());
+                    Log.v("Response: ", response.toString());
+                } else {
+                    Log.v("Reason: ", "Other Failure.");
+                }
+                createDialog(context, jamID, "Failure", response.toString());
+            }
+        });
+    }
+
+    private static void createNotifyUserErrorDialog(String jamID, Context context) { // to notify user with email
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage("Please check it").setTitle("Invalid Jam ID");
+        builder.setNegativeButton("Okay", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+    private static void createDialog(Context context, String jamID, String title, String message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setMessage(message).setTitle(title);
+        builder.setNeutralButton("Okay", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
     private static String post(String url, RequestParams requestParams, AsyncHttpResponseHandler asyncHttpResponseHandler) {
         asyncHttpClient.post(url, requestParams, asyncHttpResponseHandler);
-
         return "Done with POST.";
     }
 
-    private static void get(String url, RequestParams requestParams, AsyncHttpResponseHandler asyncHttpResponseHandler) {
+    private static String get(String url, RequestParams requestParams, AsyncHttpResponseHandler asyncHttpResponseHandler) {
         asyncHttpClient.get(url, requestParams, asyncHttpResponseHandler);
+
+        return "Done with GET.";
+    }
+
+    private static String get(Context context, String url, Header[] headers, RequestParams requestParams, AsyncHttpResponseHandler asyncHttpResponseHandler) {
+        asyncHttpClient.get(context, url, headers, requestParams, asyncHttpResponseHandler);
+
+        return "Done with GET.";
     }
 
     private static RequestParams createRequestParamsForUpload(String filename, String path) {

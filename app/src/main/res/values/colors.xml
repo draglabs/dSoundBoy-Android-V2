@@ -2,5 +2,16 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#ff4081</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="colorDLRed1">#A82424</color>
+    <color name="colorDLRed2">#A01021</color>
+    <color name="colorDLRed3">#570202</color>
+    <color name="colorDLRed4">#6D0000</color>
+    <color name="colorDLBlack">#000000</color>
+    <color name="colorDLTextWhite">#D8D8D8</color>
+    <color name="colorDLDateYellow">#F59120</color>
+    <color name="colorDLBackground">#212F3E</color>
+    <color name="colorDLFillGrey">#D9031425</color> <!-- 87% opacity -->
+
 </resources>

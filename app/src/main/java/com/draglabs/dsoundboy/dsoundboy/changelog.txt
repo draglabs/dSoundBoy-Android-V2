@@ -146,3 +146,10 @@ v1.17.09.20
     - changed recording type to hopefully take up less space
 v1.17.09.25
     - created Atlassian JIRA account for progress
+v1.17.10.20
+    - Changed FileUtils and APIUtils to only take Jams from getUserActivity because the Recordings field is no longer available
+    - Added getJamDetails capabilities, currently buggy, and need better implementation
+    - Added headers to getUserActivity in APIUtils
+    - Some weird issue with callbacks and app crashing before it can get the user activity
+        - Test added a working JamID
+            -

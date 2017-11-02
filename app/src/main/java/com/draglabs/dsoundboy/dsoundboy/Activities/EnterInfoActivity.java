@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Acessories.BandInfo;
+import com.draglabs.dsoundboy.dsoundboy.Accessories.BandInfo;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 

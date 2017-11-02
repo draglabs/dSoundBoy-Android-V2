@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Acessories;
+package com.draglabs.dsoundboy.dsoundboy.Accessories;
 
 /**
  * Created by davrukin on 8/14/17.

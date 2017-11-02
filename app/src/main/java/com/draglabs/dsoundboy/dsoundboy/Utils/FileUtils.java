@@ -1,6 +1,8 @@
 package com.draglabs.dsoundboy.dsoundboy.Utils;
 
-import com.draglabs.dsoundboy.dsoundboy.Acessories.Strings;
+import android.util.Log;
+
+import com.draglabs.dsoundboy.dsoundboy.Accessories.Strings;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -194,10 +196,10 @@ class FileUtils {
                 }
             case Strings.GET_USER_ACTIVITY: // json type doesn't matter
                 if (code == 200) {
-                    JSONArray recordings = jsonObject.getJSONArray("recordings");
+                    //JSONArray recordings = jsonObject.getJSONArray("recordings"); // doesn't exist anymore
                     JSONArray jams = jsonObject.getJSONArray("jams");
-
-                    if (data.equals(Strings.jsonTypes.RECORDINGS.type())) {
+                    Log.v("Jams: ", jams.toString());
+                    /*if (data.equals(Strings.jsonTypes.RECORDINGS.type())) {
                         return recordings.toString(); // TODO: maybe the recordings list is empty so nothing is being shown? arrange for that check
                     } else if (data.equals(Strings.jsonTypes.JAMS.type())) {
                         return jams.toString();
@@ -205,11 +207,19 @@ class FileUtils {
                         String recordingsString = recordings.toString();
                         String jamsString = jams.toString();
                         return recordingsString + "\n" + jamsString;
-                    }
+                    }*/
+                    return jams.toString();
                 } else if (code == 400) {
                     return code + ": " + jsonObject.getString("error");
                 } else {
                     return standardError;
+                }
+            case Strings.GET_JAM_DETAILS:
+                if (code == 200) {
+                    JSONArray jamDetails = jsonObject.getJSONArray("Enter Name Here"); // TODO: What's the name of the array?
+                    return jamDetails.toString();
+                } else if (code == 400) {
+                    return code + ": " + jsonObject.getString("error");
                 }
             case Strings.NOTIFY_USER:
                 if (code == 200) {
