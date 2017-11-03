@@ -35,6 +35,12 @@
     <string name="join_jam">Join Jam</string>
     <string name="rec">Rec</string>
     <string name="join">Join</string>
+    <string name="inner_circle_description">Inner Circle</string>
+    <string name="outer_circle_description">Outer Circle</string>
+    <string name="chronometer_description">Chronometer</string>
+    <string name="record_button_description">Record Button</string>
+    <string name="rec_button_description">Rec Button</string>
+    <string name="join_button_description">Join Button</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -53,7 +59,6 @@
     <string name="not_yet_logged_in">Not yet logged in.</string>
     <string name="login_attempt_canceled">Login attempt canceled.</string>
     <string name="login_attempt_failed">Login attempt failed.</string>
-
 
     <!-- Strings related to Facebook Authentication -->
     <string name="facebook_app_id">147689855771285</string>

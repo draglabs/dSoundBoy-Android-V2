@@ -100,36 +100,25 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
         prefUtils = new PrefUtils(this);
-
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-        //AccessToken.setCurrentAccessToken(null);
-        //Profile.setCurrentProfile(null);
+        //about = (Button)findViewById(R.id.about);
+        //contact = (Button)findViewById(R.id.contact);
+        //submit = (Button)findViewById(R.id.submit);
 
-        about = (Button)findViewById(R.id.about);
-        contact = (Button)findViewById(R.id.contact);
-        submit = (Button)findViewById(R.id.submit);
-        //submit.setEnabled(false);
-        //toggleButton(submit);
         chronometer = (Chronometer)findViewById(R.id.chronometer);
         //chronometer.setFormat("HH:MM:SS:ss");
-        startStop = (Button)findViewById(R.id.start_stop);
-        startStopClickCount = 0;
-        //startStop.setEnabled(false);
-        //toggleButton(startStop);
         logoLink = (ImageButton)findViewById(R.id.logo_link);
-        reset = (Button)findViewById(R.id.clear);
-        //reset.setEnabled(false);
-        //toggleButton(reset);
-        recordingImage = (ImageView)findViewById(R.id.recording_image);
-        recordingImage.setVisibility(View.INVISIBLE);
+
+        //recordingImage = (ImageView)findViewById(R.id.recording_image);
+        //recordingImage.setVisibility(View.INVISIBLE);
+
         enterInfo = (Button)findViewById(R.id.enter_info);
         enterInfo.setEnabled(false);
-        login = (ToggleButton)findViewById(R.id.login_activity_button);
+
         viewRecordings = (Button)findViewById(R.id.button_view_recordings);
         createJam = (Button)findViewById(R.id.button_create_jam);
         createJam.setEnabled(false);
@@ -144,69 +133,9 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?
         recorder = new Recorder(this, bandInfo, this);
 
-        String callingClass = null;
-        if (getIntent().getStringExtra("callingClass") != null) {
-            callingClass = getIntent().getStringExtra("callingClass");
-
-            if (callingClass.equals("LoginActivity")) {
-                //enterInfo.setEnabled(getIntent().getBooleanExtra());
-                enterInfo.setEnabled(true);
-                startStop.setEnabled(false);
-                stop.setEnabled(false);
-                reset.setEnabled(false);
-                submit.setEnabled(false);
-                login.setEnabled(false); // necessary?
-                login.setChecked(true);
-                uniqueUserID = getIntent().getStringExtra("uniqueUserID");
-            }
-            if (callingClass.equals("EnterInfoActivity")) {
-                enterInfo.setEnabled(false);
-                startStop.setEnabled(true);
-                reset.setEnabled(false);
-                submit.setEnabled(false);
-                login.setEnabled(false); // necessary?
-                createJam.setEnabled(true);
-                joinJam.setEnabled(true);
-            }
-        }
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
         //System.out.println(AccessToken.getCurrentAccessToken());
-        if (AccessToken.getCurrentAccessToken() != null) {
-            login.setEnabled(true); // necessary?
-            login.setChecked(true);
-            enterInfo.setEnabled(true);
-            /*createJam.setEnabled(true);
-            joinJam.setEnabled(true);*/
-        }
-
-        if (prefUtils.hasUniqueUserID()) {
-            createJam.setEnabled(true);
-            joinJam.setEnabled(true);
-            this.uniqueUserID = prefUtils.getUniqueUserID();
-        } else {
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
-        }
-
-        if (prefUtils.hasJamPIN()) {
-            jamPINtext.setText(prefUtils.getJamPIN());
-            exitJam.setEnabled(true);
-            this.jamPIN = Integer.parseInt(prefUtils.getJamPIN());
-        }
     }
-
-    // TODO: show pin code under start and join jam buttons
-
-    /**
-     * A native method that is implemented by the 'native-lib' native library,
-     * which is packaged with this application.
-     */
-    //public native String stringFromJNI();
-
-    // Used to load the 'native-lib' library on application startup.
-    /*static {
-        System.loadLibrary("native-lib");
-    }*/
 
     public void clickAbout(View view) {
         Intent intent = new Intent(this, AboutActivity.class);
@@ -246,8 +175,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
                 APIutils.jamRecordingUpload(
                         prefUtils.getUniqueUserID(),
                         prefUtils.getJamID(),
-                        PrefUtils.getRecordingVenue(getThisActivity()),
-                        recordingPath, PrefUtils.getRecordingDescription(getThisActivity()),
+                        PrefUtils.getRecordingVenue(this),
+                        recordingPath, PrefUtils.getRecordingDescription(this),
                         recordingStartTimeServer, recordingEndTimeServer,
                         view);
 
@@ -258,43 +187,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         });
         handler.post(runnable);
 
-        /*this.recordingPath = recorder.getAudioSavePathInDevice();
         // TODO: SET CORRECT RECORDING PATH, START, AND END TIME
-        APIutils.jamRecordingUpload(
-                prefUtils.getUniqueUserID(),
-                prefUtils.getJamID(),
-                PrefUtils.getRecordingVenue(this),
-                recordingPath, PrefUtils.getRecordingDescription(this),
-                recordingStartTime, recordingEndTime,
-                view);*/
     }
-
-    public void clickStartStop(View view) {
-        startStopClickCount++;
-        reset.setEnabled(true);
-        submit.setEnabled(true);
-        // TODO: uncomment following line once Recorder object is added here and comment out lines after
-        //recorder.startStopRecording(startStopClickCount, chronometer, recordingImage);
-        if (startStopClickCount % 2 != 0) {
-            //recorder.startStopRecording(startStopClickCount, chronometer, recordingImage);
-            recorder.startRecording(this);
-
-            Toast.makeText(this, "Started recording.", Toast.LENGTH_LONG).show();
-            chronometer.start();
-            recordingImage.setVisibility(View.VISIBLE);
-            submit.setEnabled(false);
-            // TODO: start recording program, append to file if started again
-        } else {
-            //recorder.startStopRecording(startStopClickCount, chronometer, recordingImage);
-            recorder.stopRecording();
-
-            Toast.makeText(this, "Stopped recording.", Toast.LENGTH_LONG).show();
-            chronometer.stop();
-            recordingImage.setVisibility(View.INVISIBLE);
-            submit.setEnabled(true);
-            // TODO: stop recording program
-        }
-    } // TODO: SET TO SINGULAR START AND SINGULAR STOP
 
     public void clickStart(View view) { // MAKE INTO A LARGE TOGGLE BUTTON? WITH TWO IMAGES FOR EACH MODE
         recordingStartTime = new Date();
@@ -323,17 +217,9 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         recordingImage.setVisibility(View.INVISIBLE);
         submit.setEnabled(true);
         startStop.setEnabled(true);
-    }
 
-    public void clickReset(View view) { // IF IT IS RESET, IT IS NOT DELETED. FILE IS STILL THERE. ADD THIS INTO DOCUMENTATION FOR APP
-        recorder.resetRecording();
+        clickSubmit(view);
 
-        Toast.makeText(this, "Reset recording.", Toast.LENGTH_LONG).show();
-
-        chronometer.stop();
-        recordingImage.setVisibility(View.INVISIBLE);
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        startStopClickCount++;
     }
 
     public void clickLogoLink(View view) {
@@ -440,57 +326,4 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     private String[] createArray(String _0, String _1, String _2, String _3) {
         return new String[]{_0, _1, _2, _3};
     }
-
-    private Activity getThisActivity() {
-        return this;
-    }
-    /*private int testButtonValue(Button buttonToTest) {
-        if (buttonToTest.getText().equals("Start/Stop")) {
-            return R.bool.button_start_stop_enabled;
-        }
-        if (buttonToTest.getText().equals("Reset")) {
-            return R.bool.button_reset_enabled;
-        }
-        if (buttonToTest.getText().equals("Submit")) {
-            return R.bool.button_reset_enabled;
-        }
-        else {
-            return 0;
-        }
-    }
-
-    private void setButtonValue(Button buttonToSet, boolean value) {
-        //SharedPreferences sharedPreferences = this.getSharedPreferences("com.draglabs.dsoundbody.dsoundboy", Context.MODE_PRIVATE);
-        //SharedPreferences.Editor sharedPreferencesEditor = sharedPreferences.edit();
-        if (buttonToSet.getText().equals("Start/Stop")) {
-            String buttonValueName = this.getResources().getResourceEntryName(R.bool.button_start_stop_enabled);
-            //sharedPreferencesEditor.putBoolean(R.bool.button_start_stop_enabled, value);
-            sharedPreferencesEditor.putBoolean(buttonValueName, value);
-            sharedPreferencesEditor.apply();
-        }
-        if (buttonToSet.getText().equals("Reset")) {
-            String buttonValueName = this.getResources().getResourceEntryName(R.bool.button_reset_enabled);
-            boolean buttonValue = this.getResources().getBoolean(R.bool.button_reset_enabled);
-            //sharedPreferencesEditor.putBoolean(buttonValue, value);
-            sharedPreferencesEditor.putBoolean(buttonValueName, value);
-            sharedPreferencesEditor.apply();
-        }
-        if (buttonToSet.getText().equals("Submit")) {
-            String buttonValueName = this.getResources().getResourceEntryName(R.bool.button_submit_enabled);
-            sharedPreferencesEditor.putBoolean(buttonValueName, value);
-            sharedPreferencesEditor.apply();
-        }
-    }
-
-    private void toggleButton(Button buttonToToggle) {
-        if (testButtonValue(buttonToToggle) == 0 && !buttonToToggle.isEnabled()) {
-            setButtonValue(buttonToToggle, true);
-            buttonToToggle.setEnabled(true);
-        }
-        else {
-            setButtonValue(buttonToToggle, false);
-            buttonToToggle.setEnabled(false);
-        }
-    }*/
-
 }

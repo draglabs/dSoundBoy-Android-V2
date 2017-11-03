@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Activities;
+package com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities;
 
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -29,6 +29,11 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.draglabs.dsoundboy.dsoundboy.Accessories.Recorder;
+import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfRecordingsActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.LoginActivity;
 import com.draglabs.dsoundboy.dsoundboy.BuildConfig;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;

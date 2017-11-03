@@ -5,6 +5,7 @@ import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 
 import java.util.Date;
 import java.util.Random;
@@ -119,6 +120,13 @@ public class RecorderSettings {
         mediaRecorder.setAudioEncodingBitRate(recordingEncodingBitRate);
         mediaRecorder.setAudioSamplingRate(recordingSampleRate);
         mediaRecorder.setOutputFile(audioSavePathInDevice);
+        Log.d("recorderAudioSource: ", "" + recorderAudioSource);
+        Log.d("recorderOutputFormat: ", "" + recorderOutputFormat);
+        Log.d("recorderAudioEncoding: ", "" + recordingAudioEncoding);
+        Log.d("recordingChannels: ", "" + recordingChannels);
+        Log.d("recorderEncodingBtRte: ", "" + recordingEncodingBitRate);
+        Log.d("recordingSampleRate: ", "" + recordingSampleRate);
+        Log.d("audioSavePathInDev: ", "" + audioSavePathInDevice);
 
         return this.mediaRecorder;
     }
