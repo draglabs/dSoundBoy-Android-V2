@@ -1,0 +1,16 @@
+
+<svg width="100px" height="100px" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="138" y="158" width="100" height="100" rx="50"></rect>
+    </defs>
+    <g id="30OCT2017" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="main-last" transform="translate(-138.000000, -158.000000)">
+            <g id="Rectangle-14-Copy">
+                <use fill="#A82424" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <rect stroke="#6D0000" stroke-width="12" x="144" y="164" width="88" height="88" rx="44"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
