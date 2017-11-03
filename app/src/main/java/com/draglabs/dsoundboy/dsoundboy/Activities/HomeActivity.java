@@ -100,7 +100,7 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home);
 
         prefUtils = new PrefUtils(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -109,17 +109,10 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         //contact = (Button)findViewById(R.id.contact);
         //submit = (Button)findViewById(R.id.submit);
 
-        chronometer = (Chronometer)findViewById(R.id.chronometer);
+        chronometer = (Chronometer)findViewById(R.id.chronometer_text);
         //chronometer.setFormat("HH:MM:SS:ss");
-        logoLink = (ImageButton)findViewById(R.id.logo_link);
 
-        //recordingImage = (ImageView)findViewById(R.id.recording_image);
-        //recordingImage.setVisibility(View.INVISIBLE);
-
-        enterInfo = (Button)findViewById(R.id.enter_info);
-        enterInfo.setEnabled(false);
-
-        viewRecordings = (Button)findViewById(R.id.button_view_recordings);
+        /*viewRecordings = (Button)findViewById(R.id.button_view_recordings);
         createJam = (Button)findViewById(R.id.button_create_jam);
         createJam.setEnabled(false);
         joinJam = (Button)findViewById(R.id.button_join_jam);
@@ -127,7 +120,7 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         exitJam = (Button)findViewById(R.id.button_exit_jam);
         exitJam.setEnabled(false);
         jamPINtext = (EditText)findViewById(R.id.text_jam_pin);
-        stop = (Button)findViewById(R.id.stop);
+        stop = (Button)findViewById(R.id.stop);*/
 
         setBandInfo();
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?

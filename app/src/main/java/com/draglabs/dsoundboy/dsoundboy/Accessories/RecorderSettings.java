@@ -116,7 +116,7 @@ public class RecorderSettings {
         mediaRecorder.setAudioSource(recorderAudioSource);
         mediaRecorder.setOutputFormat(recorderOutputFormat);
         mediaRecorder.setAudioEncoder(recordingAudioEncoding);
-        mediaRecorder.setAudioChannels(recordingChannels);
+        mediaRecorder.setAudioChannels(1);
         mediaRecorder.setAudioEncodingBitRate(recordingEncodingBitRate);
         mediaRecorder.setAudioSamplingRate(recordingSampleRate);
         mediaRecorder.setOutputFile(audioSavePathInDevice);
