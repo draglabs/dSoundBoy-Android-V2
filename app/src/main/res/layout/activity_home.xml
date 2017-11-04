@@ -21,7 +21,7 @@
         app:layout_constraintEnd_toEndOf="@+id/outer_circle"
         app:layout_constraintStart_toStartOf="@+id/outer_circle"
         app:layout_constraintTop_toTopOf="@+id/outer_circle"
-        app:srcCompat="@drawable/oval" />
+        app:srcCompat="@drawable/ic_inner_circle" />
 
     <ImageView
         android:id="@+id/outer_circle"
@@ -31,7 +31,6 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@id/outer_circle"
         android:contentDescription="@string/outer_circle_description"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -39,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.053"
-        app:srcCompat="@drawable/oval_copy_2x" />
+        app:srcCompat="@drawable/ic_outer_circle" />
 
     <Chronometer
         android:id="@+id/chronometer_text"
@@ -76,7 +75,7 @@
         app:layout_constraintEnd_toEndOf="@+id/inner_circle"
         app:layout_constraintStart_toStartOf="@+id/inner_circle"
         app:layout_constraintTop_toTopOf="@+id/inner_circle"
-        app:srcCompat="@drawable/recording" />
+        app:srcCompat="@drawable/ic_double_circle" />
 
     <ImageButton
         android:id="@+id/rec_button"
@@ -142,7 +141,6 @@
         android:text="@string/join"
         android:textColor="@color/colorDLTextWhite"
         android:textSize="24sp"
-        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/join_button"
         app:layout_constraintEnd_toEndOf="@+id/join_button"
         app:layout_constraintStart_toStartOf="@+id/join_button"

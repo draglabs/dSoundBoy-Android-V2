@@ -211,6 +211,7 @@ public class APIutils {
                     prefUtils.saveJamID(jamID);
                     prefUtils.saveJamStartTime(jamStartTime);
                     prefUtils.saveJamEndTime(jamEndTime);
+                    createDialog(activity, "", "Jam PIN", jamPIN);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

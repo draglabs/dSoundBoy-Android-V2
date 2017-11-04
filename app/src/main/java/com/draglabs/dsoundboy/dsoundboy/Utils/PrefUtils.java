@@ -428,4 +428,13 @@ public class PrefUtils {
 
         return artistEmail + recordingDescription + artistName + recordingVenue;
     }
+
+    public static String[] getBandData(Activity activity) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
+
+        return new String[]{prefs.getString("artist_email", null),
+                prefs.getString("recording_description", null),
+                prefs.getString("artist_name", null),
+                prefs.getString("recording_venue", null)};
+    }
 }

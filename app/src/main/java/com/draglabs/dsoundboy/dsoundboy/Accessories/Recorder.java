@@ -38,16 +38,16 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class Recorder {
 
     private Context context;
-    private Activity thatMainActivity;
+    private Activity activity;
     private RecorderSettings recorderSettings;
     private Thread recordingThread;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public Recorder(Context context, String[] bandData, Activity thatMainActivity) {
+    public Recorder(Context context, String[] bandData, Activity activity) {
         this.recorderSettings = new RecorderSettings();
 
         this.context = context;
-        this.thatMainActivity = thatMainActivity;
+        this.activity = activity;
         this.recordingThread = new Thread();
 
         recorderSettings.setBandData(bandData);
@@ -238,7 +238,7 @@ public class Recorder {
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(thatMainActivity, new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, 1);
+        ActivityCompat.requestPermissions(activity, new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, 1);
     }
 
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

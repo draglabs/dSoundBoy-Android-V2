@@ -51,7 +51,6 @@ import android.Manifest.permission.READ_CONTACTS
 class LoginRoutine(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) : CallbackListener {
     private val mAuthTask: LoginActivity.UserLoginTask? = null
 
-
     private var prefUtils: PrefUtils? = null
     private val callbackManager: CallbackManager
     private val accessTokenTracker: AccessTokenTracker? = null
