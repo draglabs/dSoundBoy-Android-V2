@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,6 +22,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
@@ -100,13 +102,17 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     private String recordingEndTimeServer;
 
     private NotificationManager notificationManager;
+    private HomeRoutine homeRoutine;
 
     private HashMap<String, Object> buttons;
+    private ImageButton pauseButton;
     private ImageButton recButton;
     private TextView recButtonText;
     private ImageButton joinButton;
     private TextView joinButtonText;
-    private HomeRoutine homeRoutine;
+    private ImageView pauseImage;
+
+    private Toolbar toolbar;
 
     private boolean isRecording;
 
@@ -115,6 +121,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         prefUtils = new PrefUtils(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -140,18 +148,36 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
         //System.out.println(AccessToken.getCurrentAccessToken());
 
+        pauseButton = (ImageButton)findViewById(R.id.pause_button); // doesn't actually pause, stops recording and uploads
         recButton = (ImageButton)findViewById(R.id.rec_button);
         recButtonText = (TextView) findViewById(R.id.rec_text);
         joinButton = (ImageButton)findViewById(R.id.join_button);
         joinButtonText = (TextView)findViewById(R.id.join_text);
         chronometer = (Chronometer)findViewById(R.id.chronometer_text);
+        pauseImage = (ImageView)findViewById(R.id.pause_image);
 
         isRecording = false;
         recButton.setOnClickListener(view -> {
             if (isRecording == false) {
                 clickRec(view); // for future:
             } else {
+                clickExitJam(view);
+            }
+        });
+        pauseButton.setOnClickListener(view -> {
+            if (isRecording == true) {
                 clickStop(view);
+            }
+            else {
+                Toast.makeText(this, "Please start or enter a jam", Toast.LENGTH_LONG).show();
+                // TODO: maybe make async so recording starts again quickly
+            }
+        });
+        joinButton.setOnClickListener(view -> {
+            if (isRecording == false) {
+                clickJoin(view);
+            } else {
+                Toast.makeText(this, "Please exit current jam", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -162,6 +188,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         buttons.put("joinButton", joinButton);
         buttons.put("joinButtonText", joinButtonText);
         buttons.put("chronometer", chronometer);
+        buttons.put("pauseButton", pauseButton);
+        buttons.put("pauseImage", pauseImage);
 
         homeRoutine = new HomeRoutine(buttons, this, this);
     }
@@ -179,8 +207,9 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         isRecording = true;
         recordingStartTime = new Date();
         homeRoutine.clickRec(chronometer, recorder);
-        recButtonText.setText("Stop");
+        recButtonText.setText("Exit");
         buttons.replace("recButtonText", recButtonText);
+        pauseImage.setVisibility(View.VISIBLE);
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -190,6 +219,11 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         homeRoutine.clickStop(view, recorder, chronometer, recordingStartTime, recordingEndTime);
         recButtonText.setText("Rec");
         buttons.replace("recButtonText", recButtonText);
+        pauseImage.setVisibility(View.INVISIBLE);
+    }
+
+    public void clickJoin(View view) {
+        homeRoutine.joinJam();
     }
 
     public void clickLogoLink(View view) {
@@ -198,7 +232,6 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     }
 
     public void clickEnterInfo(View view) {
-        // TODO: intent to open new activity with text fields; not necessary to record; will set title to default
         startStop.setEnabled(true);
         enterInfoIntent = new Intent(this, EnterInfoActivity.class);
         startActivity(enterInfoIntent);
@@ -218,8 +251,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     }
 
     public void clickExitJam(View view) {
-        jamPINtext.setText(getString(R.string.jam_pin));
-        APIutils.exitJam(prefUtils.getUniqueUserID(), prefUtils.getJamID());
+        pauseImage.setVisibility(View.INVISIBLE);
+        homeRoutine.exitJam();
     }
 
     public void uniqueUserIDset() {

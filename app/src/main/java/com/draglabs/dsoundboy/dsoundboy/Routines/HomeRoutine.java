@@ -139,12 +139,25 @@ public class HomeRoutine {
         if (!prefUtils.hasJamPIN()) {
             APIutils.startJam(activity, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(activity), PrefUtils.getRecordingDescription(activity), location);
             // may have to implement without a while loop
+            prefUtils = new PrefUtils(activity);
+            showNewJamPinDialog(context, "Jam PIN", prefUtils.getJamPIN());
         }
 
         /*String jamPIN = prefUtils.getJamPIN();
         Log.v("Jam PIN: ", jamPIN); // TODO: SHOW JSON RESPONSE IF ERROR AS INDEFINITE SNACKBAR OR TOAST
         String newJamPIN = jamPIN.substring(0, 3) + "-" + jamPIN.substring(3, 6) + "-" + jamPIN.substring(6, 9);
         showNewJamPinDialog(context, "Jam PIN", newJamPIN);*/
+    }
+
+    public void exitJam() {
+        prefUtils = new PrefUtils(activity);
+        APIutils.exitJam(prefUtils.getUniqueUserID(), prefUtils.getJamID());
+    }
+
+    public void joinJam() {
+        prefUtils = new PrefUtils(activity);
+        int jamPIN = showEnterJamPinDialog(context, "Enter a Jam PIN", "yada yada yada");
+        APIutils.joinJam(activity, prefUtils.getUniqueUserID(), jamPIN); // TODO: show error if incorrect
     }
 
     /*public void clickJoinJam() {
@@ -169,15 +182,15 @@ public class HomeRoutine {
         dialog.show();
     }
 
-    private String showEnterJamPinDialog(Context context, String title, String jamPIN) {
+    private int showEnterJamPinDialog(Context context, String title, String jamPIN) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(jamPIN).setTitle(title);
         builder.setNeutralButton("Okay", (dialog, which) -> dialog.dismiss());
 
         AlertDialog dialog = builder.create();
         dialog.show();
-
-        return null;
+        // TODO: enter jam pin here and return it
+        return 0;
     }
 
     public HashMap<String, Object> getButtons() {

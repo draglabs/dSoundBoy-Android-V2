@@ -31,6 +31,7 @@ android {
             keyPassword "GMPF@ther1"
         }
     }
+    sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res/images'] } }
 }
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
