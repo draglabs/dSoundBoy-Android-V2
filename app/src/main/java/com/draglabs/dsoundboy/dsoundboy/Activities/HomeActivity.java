@@ -222,6 +222,12 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         pauseImage.setVisibility(View.INVISIBLE);
     }
 
+    public void clickExitJam(View view) {
+        pauseImage.setVisibility(View.INVISIBLE);
+        clickStop(view);
+        homeRoutine.exitJam();
+    }
+
     public void clickJoin(View view) {
         homeRoutine.joinJam();
     }
@@ -248,11 +254,6 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
 
         Intent intent = new Intent(this, ListOfRecordingsActivity.class);
         startActivity(intent);
-    }
-
-    public void clickExitJam(View view) {
-        pauseImage.setVisibility(View.INVISIBLE);
-        homeRoutine.exitJam();
     }
 
     public void uniqueUserIDset() {
