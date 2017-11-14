@@ -1,10 +1,13 @@
 package com.draglabs.dsoundboy.dsoundboy.Accessories;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import java.util.Date;
@@ -48,7 +51,7 @@ public class RecorderSettings {
     private static int recorderOutputFormat;
     private static int recordingEncodingBitRate;
     private static int recordingSampleRate;
-    private static final int recordingChannels = 1;
+    private static int recordingChannels;
     @RequiresApi(LOLLIPOP) private static int recordingAudioEncoding;
     private AudioRecord audioRecord;
     private boolean isRecording = false;
@@ -63,12 +66,12 @@ public class RecorderSettings {
         this.startTime = null;
         this.endTime = null;
         this.random = new Random();
-        recorderAudioSource = MediaRecorder.AudioSource.DEFAULT;
-        recorderOutputFormat = MediaRecorder.OutputFormat.AAC_ADTS;
-        recordingEncodingBitRate = 16;
-        recordingSampleRate = 12000;
-        //recordingChannels = AudioFormat.CHANNEL_IN_MONO;
-        recordingAudioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+        this.recorderAudioSource = MediaRecorder.AudioSource.MIC;
+        this.recorderOutputFormat = MediaRecorder.OutputFormat.MPEG_4;
+        this.recordingEncodingBitRate = 192000;
+        this.recordingSampleRate = 44100;
+        this.recordingChannels = 1;
+        this.recordingAudioEncoding = MediaRecorder.AudioEncoder.AAC;
         this.mediaRecorder = mediaRecorderReady();
     }
 
@@ -81,12 +84,12 @@ public class RecorderSettings {
         this.audioSavePathInDevice = audioSavePathInDevice;
         this.random = new Random();
         this.bandData = bandData;
-        recorderAudioSource = MediaRecorder.AudioSource.DEFAULT;
-        recorderOutputFormat = MediaRecorder.OutputFormat.AAC_ADTS;
-        recordingEncodingBitRate = 16;
-        recordingSampleRate = 12000;
-        //recordingChannels = AudioFormat.CHANNEL_IN_MONO;
-        recordingAudioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+        this.recorderAudioSource = MediaRecorder.AudioSource.MIC;
+        this.recorderOutputFormat = MediaRecorder.OutputFormat.MPEG_4;
+        this.recordingEncodingBitRate = 192000;
+        this.recordingSampleRate = 44100;
+        this.recordingChannels = 1;
+        this.recordingAudioEncoding = MediaRecorder.AudioEncoder.AAC;
         this.audioRecord = audioRecord;
         this.pathname = pathname;
         this.mediaRecorder = mediaRecorderReady(recorderAudioSource, recorderOutputFormat, recordingEncodingBitRate,
@@ -102,7 +105,7 @@ public class RecorderSettings {
         this.recorderOutputFormat = recorderOutputFormat;
         this.recordingEncodingBitRate = recordingEncodingBitRate;
         this.recordingSampleRate = recordingSampleRate;
-        //this.recordingChannels = recordingChannels;
+        this.recordingChannels = recordingChannels;
         this.recordingAudioEncoding = recordingAudioEncoding;
     }
 

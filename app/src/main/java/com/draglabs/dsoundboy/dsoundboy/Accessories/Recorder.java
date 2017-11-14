@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Accessories;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.widget.Chronometer;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
 import java.io.File;
@@ -26,6 +28,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
+
+import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
+import cafe.adriel.androidaudiorecorder.model.AudioChannel;
+import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
+import cafe.adriel.androidaudiorecorder.model.AudioSource;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -58,46 +65,6 @@ public class Recorder {
                                                         recorderSettings.getRecordingChannels(),
                                                         recorderSettings.getRecordingAudioEncoding(),
         recorderSettings.getBufferElementsToRec() * recorderSettings.getBytesPerElement()));
-    }
-
-    public void startStopRecording(int startStopClickCount, Chronometer chronometer, ImageView recordingImage) {
-        if (checkPermissions()) {
-
-            recorderSettings.setStartTime(new Date());
-            String testString = "startTime.toString(): " + recorderSettings.getStartTime().toString() +
-                                ", startTime.getTime(): " + recorderSettings.getStartTime().getTime();
-            Toast.makeText(context, testString, Toast.LENGTH_LONG).show();
-            System.out.println(testString);
-
-            if (startStopClickCount % 2 != 0) {
-                // TODO: start
-
-                recorderSettings.setRecording(true);
-                recordingThread = new Thread(() -> writeAudioDataToFile(recorderSettings.getAudioSavePathInDevice()), "AudioRecorder Thread");
-                if (!recordingThread.isAlive()) {
-                    recordingThread.start();
-                } else {
-                    recordingThread.notify();
-                }
-                Toast.makeText(context, "Started recording.", Toast.LENGTH_LONG).show();
-                chronometer.start();
-                recordingImage.setVisibility(View.VISIBLE);
-            } else {
-                // TODO: pause
-
-                try {
-                    recordingThread.wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-                Toast.makeText(context, "Paused recording.", Toast.LENGTH_LONG).show();
-                chronometer.stop();
-                recordingImage.setVisibility(View.INVISIBLE);
-            }
-        } else {
-            requestPermission();
-        }
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -262,6 +229,10 @@ public class Recorder {
         int result = ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE);
         int result1 = ContextCompat.checkSelfPermission(context, RECORD_AUDIO);
         return ((result == PackageManager.PERMISSION_GRANTED) && (result1 == PackageManager.PERMISSION_GRANTED));
+    }
+
+    private boolean checkAudioPermissions() {
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED;
     }
 
     public String getAudioSavePathInDevice() {

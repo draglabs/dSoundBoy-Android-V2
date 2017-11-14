@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             Intent homeIntent = new Intent(this, HomeActivity.class);
             startActivity(homeIntent);
         } else {
-            Intent loginIntent = new Intent(this, LoginActivity.class);
+            Intent loginIntent = new Intent(this, NewLoginActivity.class);
             startActivity(loginIntent);
         }
     }

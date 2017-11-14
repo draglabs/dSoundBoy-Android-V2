@@ -48,7 +48,7 @@ import android.Manifest.permission.READ_CONTACTS
  * Created by davrukin on 11/2/17.
  */
 
-class LoginRoutine(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) : CallbackListener {
+class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) : CallbackListener {
     private val mAuthTask: LoginActivity.UserLoginTask? = null
 
     private var prefUtils: PrefUtils? = null
@@ -65,7 +65,7 @@ class LoginRoutine(private val buttons: HashMap<String, Any>, private val activi
 
     }
 
-    fun clickFacebookLogin(view: View) {
+    fun clickFacebookLogin() {
         //facebookLoginButton.setReadPermissions("email");
         val facebookLoginButton = buttons["facebookLoginButton"] as LoginButton
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"))

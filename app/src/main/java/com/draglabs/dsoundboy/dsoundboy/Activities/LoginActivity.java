@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine;
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.AWSutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 import com.facebook.AccessToken;
@@ -206,11 +205,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     public void clickFacebookLogin(View view) {
-        loginRoutine.clickFacebookLogin(view);
+        loginRoutine.clickFacebookLogin();
     }
 
     public void clickContinueButton(View view) {
-        loginRoutine.clickContinueButton(view);
+        loginRoutine.authenticateUser();
     }
 
     public void uniqueUserIDset() {

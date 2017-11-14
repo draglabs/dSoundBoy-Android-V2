@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array
+        name="menu_item_names" >
+        <item>@string/title_activity_enter_info</item>
+        <item>@string/title_activity_about</item>
+        <item>@string/title_activity_contact</item>
+        <item>Log Out</item>
+    </string-array>
+</resources>

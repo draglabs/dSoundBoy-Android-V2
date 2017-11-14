@@ -41,6 +41,8 @@
     <string name="record_button_description">Record Button</string>
     <string name="rec_button_description">Rec Button</string>
     <string name="join_button_description">Join Button</string>
+    <string name="pause_button_description">Pause Button</string>
+    <string name="chronometer_base_text">00:00</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>

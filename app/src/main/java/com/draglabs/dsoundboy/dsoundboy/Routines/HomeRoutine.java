@@ -2,19 +2,27 @@ package com.draglabs.dsoundboy.dsoundboy.Routines;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
+import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Chronometer;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.draglabs.dsoundboy.dsoundboy.Accessories.Recorder;
@@ -26,6 +34,7 @@ import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 
 /**
  * Created by davrukin on 11/3/17.
@@ -43,6 +52,46 @@ public class HomeRoutine {
         this.activity = activity;
         this.context = context;
         this.prefUtils = new PrefUtils(activity);
+    }
+
+    public void selectItem(int position, String[] settingsMenuItemTitles, DrawerLayout settingsMenuDrawerLayout, ListView settingsMenuItemList) {
+        // from sample: https://developer.android.com/training/implementing-navigation/nav-drawer.html
+        // create a few fragment and specify the activity to launch based on position
+        Fragment fragment = new Fragment();
+        Bundle args = new Bundle();
+        args.putInt(ItemFragment.ARG_ITEM_NAME, position);
+        fragment.setArguments(args);
+
+        // insert fragment by replacing existing fragment
+        FragmentManager fragmentManager = activity.getFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.content, fragment).commit();
+
+        // highlight the selected item, update the title, and close the drawer
+        settingsMenuItemList.setItemChecked(position, true);
+        activity.setTitle(settingsMenuItemTitles[position]);
+        settingsMenuDrawerLayout.closeDrawer(settingsMenuItemList);
+    }
+
+    public static class ItemFragment extends Fragment {
+        // from https://developer.android.com/training/implementing-navigation/nav-drawer.html
+        public static final String ARG_ITEM_NAME = "item_name";
+
+        public ItemFragment() {}
+
+        @Override
+        public View onCreateView(LayoutInflater layoutInflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            View rootView = layoutInflater.inflate(R.layout.navigation_view_1, container, false);
+            int i = getArguments().getInt(ARG_ITEM_NAME);
+            String itemName = getResources().getStringArray(R.array.menu_item_names)[i];
+            int itemID = getResources().getIdentifier(itemName.toLowerCase(Locale.getDefault()), "drawable",
+                    getActivity().getPackageName());
+            // imageview line ignored from sample
+            // ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
+            // where to show next activity?
+            getActivity().setTitle(itemName);
+            return rootView;
+        }
     }
 
     public void clickAbout() {
@@ -91,6 +140,7 @@ public class HomeRoutine {
             recordingEndTime = new Date();
         }
 
+        prefUtils = new PrefUtils(activity);
         String recordingPath = recorder.getAudioSavePathInDevice();
         APIutils.jamRecordingUpload(
                 prefUtils.getUniqueUserID(),

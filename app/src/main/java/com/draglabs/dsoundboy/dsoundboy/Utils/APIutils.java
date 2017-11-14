@@ -97,7 +97,9 @@ public class APIutils {
 
     public static void authenticateUser(Activity activity) {
         String facebookID = Profile.getCurrentProfile().getId();
+        Log.d("Facebook ID:", facebookID);
         String facebookAccessToken = AccessToken.getCurrentAccessToken().getToken();
+        Log.d("Auth Token:", facebookAccessToken);
 
         final PrefUtils prefUtils = new PrefUtils(activity);
         prefUtils.saveAccessToken(facebookAccessToken);

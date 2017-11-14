@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.NotificationManager;
@@ -15,22 +16,28 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
@@ -54,26 +61,17 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.HashMap;
 
+import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
+import cafe.adriel.androidaudiorecorder.model.AudioChannel;
+import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
+import cafe.adriel.androidaudiorecorder.model.AudioSource;
+
 public class HomeActivity extends AppCompatActivity implements CallbackListener {
 
     private Button about;
     private Button contact;
-    private Button submit;
-    private Chronometer chronometer;
-    private Button startStop;
-    private int startStopClickCount;
-    private ImageButton logoLink;
-    private Button reset;
-    private ImageView recordingImage;
     private Button enterInfo;
-    private ToggleButton login;
     private Button viewRecordings;
-    private Button createJam;
-    private Button joinJam;
-    private Button exitJam;
-    private EditText jamPINtext;
-    //private Button start; // is still startStop
-    private Button stop;
 
     private String emailText;
     private String descriptionText;
@@ -83,8 +81,6 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     private String jamID;
 
     private Intent enterInfoIntent;
-
-    private int activityMainViewCount;
 
     private Recorder recorder;
 
@@ -105,6 +101,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     private HomeRoutine homeRoutine;
 
     private HashMap<String, Object> buttons;
+
+    private Chronometer chronometer;
     private ImageButton pauseButton;
     private ImageButton recButton;
     private TextView recButtonText;
@@ -113,6 +111,9 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     private ImageView pauseImage;
 
     private Toolbar toolbar;
+    private String[] settingsMenuItemTitles;
+    private ListView settingsMenuItemList;
+    private DrawerLayout settingsMenuDrawerLayout;
 
     private boolean isRecording;
 
@@ -143,7 +144,11 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         jamPINtext = (EditText)findViewById(R.id.text_jam_pin);
         stop = (Button)findViewById(R.id.stop);*/
         bandInfo = PrefUtils.getBandData(this);
-        recorder = new Recorder(this, bandInfo, this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO },10);
+        } else {
+            recorder = new Recorder(this, bandInfo, this);
+        }
 
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
         //System.out.println(AccessToken.getCurrentAccessToken());
@@ -155,6 +160,14 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         joinButtonText = (TextView)findViewById(R.id.join_text);
         chronometer = (Chronometer)findViewById(R.id.chronometer_text);
         pauseImage = (ImageView)findViewById(R.id.pause_image);
+
+        settingsMenuItemTitles = getResources().getStringArray(R.array.menu_item_names);
+        settingsMenuDrawerLayout = (DrawerLayout)findViewById(R.id.home_layout);
+        settingsMenuItemList = (ListView)findViewById(R.id.navigation_view_1_list_view);
+
+        settingsMenuItemList.setAdapter(new ArrayAdapter<>(this, R.layout.navigation_view_1, settingsMenuItemTitles));
+        settingsMenuItemList.setOnItemClickListener((parent, view, position, id) ->
+                homeRoutine.selectItem(position, settingsMenuItemTitles, settingsMenuDrawerLayout, settingsMenuItemList));
 
         isRecording = false;
         recButton.setOnClickListener(view -> {
@@ -210,10 +223,36 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         recButtonText.setText("Exit");
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.VISIBLE);
+
+        String audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/recordedAudio.wav";
+        int color = getResources().getColor(R.color.colorDLRed1);
+        AndroidAudioRecorder.with(this)
+                .setFilePath(audioSavePathInDevice)
+                .setColor(color)
+                .setRequestCode(0)
+                .setSource(AudioSource.MIC)
+                .setChannel(AudioChannel.MONO)
+                .setSampleRate(AudioSampleRate.HZ_48000)
+                .setAutoStart(true) // set on or off by default? keep it as a setting
+                .setKeepDisplayOn(true)
+                .record();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 0) {
+            if (resultCode == RESULT_OK) {
+                // Great! User has recorded and saved the audio file
+                // upload it here?
+            } else if (resultCode == RESULT_CANCELED) {
+                // Oops! User has canceled the recording
+            }
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public void clickStop(View view) {
+    public void clickStop(View view) { // TODO: move all this logic into homeRoutine
         isRecording = false;
         recordingEndTime = new Date();
         homeRoutine.clickStop(view, recorder, chronometer, recordingStartTime, recordingEndTime);
@@ -238,13 +277,13 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     }
 
     public void clickEnterInfo(View view) {
-        startStop.setEnabled(true);
+        //startStop.setEnabled(true);
         enterInfoIntent = new Intent(this, EnterInfoActivity.class);
         startActivity(enterInfoIntent);
     }
 
     public void clickLogin(View view) {
-        login.toggle();
+        //login.toggle();
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
