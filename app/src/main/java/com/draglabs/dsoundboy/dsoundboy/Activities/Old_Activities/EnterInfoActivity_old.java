@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Activities;
+package com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,23 +9,26 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.draglabs.dsoundboy.dsoundboy.Accessories.BandInfo;
+import com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
-/**
- * Allows band to enter info about itself
- */
-public class EnterInfoActivity extends AppCompatActivity {
+public class EnterInfoActivity_old extends AppCompatActivity {
 
     private EditText email;
     private EditText description;
     private EditText artistName;
     private EditText venue;
 
-    /**
-     * onCreate method
-     * @param savedInstanceState the saved instance state
-     */
+    private Button save;
+
+    private String artistEmailText;
+    private String recordingDescriptionText;
+    private String artistNameText;
+    private String recordingVenueText;
+
+    private BandInfo bandInfo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,10 +38,8 @@ public class EnterInfoActivity extends AppCompatActivity {
         initializeView();
     }
 
-    /**
-     * Initializes all the EditTexts
-     */
     private void initializeView() {
+        save = (Button)findViewById(R.id.save);
         email = (EditText)findViewById(R.id.band_email_text);
         description = (EditText)findViewById(R.id.band_description_text);
         artistName = (EditText)findViewById(R.id.artist_name_text);
@@ -50,20 +51,25 @@ public class EnterInfoActivity extends AppCompatActivity {
         venue.setText(PrefUtils.getRecordingVenue(this));
     }
 
-    /**
-     * Saves band info to app storage
-     * @param view the view calling this method
-     */
     public void clickSave(View view) {
-        String artistEmailText = email.getText().toString();
-        String recordingDescriptionText = description.getText().toString();
-        String artistNameText = artistName.getText().toString();
-        String recordingVenueText = venue.getText().toString();
+        clickSave();
+    }
 
-        BandInfo bandInfo = new BandInfo(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
+    public void clickSave() {
+        artistEmailText = email.getText().toString();
+        recordingDescriptionText = description.getText().toString();
+        artistNameText = artistName.getText().toString();
+        recordingVenueText = venue.getText().toString();
+
+        bandInfo = new BandInfo(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
         PrefUtils.setBandInfo(this, bandInfo);
 
-        Intent sendBandInfo = new Intent(this, HomeActivity.class);
+        Intent sendBandInfo = new Intent(this, MainActivity.class);
+        sendBandInfo.putExtra("callingClass", "EnterInfoActivity");
+        sendBandInfo.putExtra("artistEmailText", artistEmailText);
+        sendBandInfo.putExtra("recordingDescriptionText", recordingDescriptionText);
+        sendBandInfo.putExtra("artistNameText", artistNameText);
+        sendBandInfo.putExtra("recordingVenueText", recordingVenueText);
 
         Toast.makeText(this, "Band Data Saved.", Toast.LENGTH_SHORT).show();
         Toast.makeText(this, "Go back and click \"Submit\" when done recording.", Toast.LENGTH_SHORT).show();

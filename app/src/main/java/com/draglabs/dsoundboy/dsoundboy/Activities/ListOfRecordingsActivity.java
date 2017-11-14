@@ -1,7 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -22,7 +21,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Email;
 import com.draglabs.dsoundboy.dsoundboy.Accessories.Strings;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;

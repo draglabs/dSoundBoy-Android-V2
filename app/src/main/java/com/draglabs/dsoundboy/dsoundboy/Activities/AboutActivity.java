@@ -1,34 +1,26 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.draglabs.dsoundboy.dsoundboy.R;
+import com.draglabs.dsoundboy.dsoundboy.Routines.AboutRoutine;
 
+/**
+ * Shows information about the company
+ */
 public class AboutActivity extends AppCompatActivity {
 
-    private Intent intent;
-    private TextView about;
-    private TextView companyURL;
-
+    /**
+     * onCreate method for AboutActivity
+     * @param savedInstanceState the state of the saved instance
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        // Get the Intent that started this activity and extract the string
-        intent = getIntent();
-
-        // Capture the layout's TextView and set the string as its text
-        about = (TextView)findViewById(R.id.about);
-
-        /*companyURL = (TextView)findViewById(R.id.companyURL);
-        companyURL.setClickable(true);
-        companyURL.setMovementMethod(LinkMovementMethod.getInstance());
-        String text = "<a href='http://www.draglabs.com'>draglabs.com</a>";
-        companyURL.setText(Html.fromHtml(text));*/
-
+        new AboutRoutine().doStuff((TextView)findViewById(R.id.companyURL));
     }
 }
