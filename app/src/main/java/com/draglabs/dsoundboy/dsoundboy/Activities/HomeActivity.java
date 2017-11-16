@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.content.res.Configuration;
 import android.location.Location;
 import android.location.LocationManager;
 import android.media.Image;
@@ -25,10 +26,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -114,6 +118,9 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
     private String[] settingsMenuItemTitles;
     private ListView settingsMenuItemList;
     private DrawerLayout settingsMenuDrawerLayout;
+    private CharSequence settingsMenuDrawerTitle;
+    private CharSequence settingsMenuTitle;
+    private ActionBarDrawerToggle settingsMenuDrawerToggle;
 
     private boolean isRecording;
 
@@ -153,21 +160,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
         //System.out.println(AccessToken.getCurrentAccessToken());
 
-        pauseButton = (ImageButton)findViewById(R.id.pause_button); // doesn't actually pause, stops recording and uploads
-        recButton = (ImageButton)findViewById(R.id.rec_button);
-        recButtonText = (TextView) findViewById(R.id.rec_text);
-        joinButton = (ImageButton)findViewById(R.id.join_button);
-        joinButtonText = (TextView)findViewById(R.id.join_text);
-        chronometer = (Chronometer)findViewById(R.id.chronometer_text);
-        pauseImage = (ImageView)findViewById(R.id.pause_image);
-
-        settingsMenuItemTitles = getResources().getStringArray(R.array.menu_item_names);
-        settingsMenuDrawerLayout = (DrawerLayout)findViewById(R.id.home_layout);
-        settingsMenuItemList = (ListView)findViewById(R.id.navigation_view_1_list_view);
-
-        settingsMenuItemList.setAdapter(new ArrayAdapter<>(this, R.layout.navigation_view_1, settingsMenuItemTitles));
-        settingsMenuItemList.setOnItemClickListener((parent, view, position, id) ->
-                homeRoutine.selectItem(position, settingsMenuItemTitles, settingsMenuDrawerLayout, settingsMenuItemList));
+        initializeButtons();
+        initializeDrawer();
 
         isRecording = false;
         recButton.setOnClickListener(view -> {
@@ -205,6 +199,92 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         buttons.put("pauseImage", pauseImage);
 
         homeRoutine = new HomeRoutine(buttons, this, this);
+    }
+
+    private void initializeButtons() {
+        pauseButton = (ImageButton)findViewById(R.id.pause_button); // doesn't actually pause, stops recording and uploads
+        recButton = (ImageButton)findViewById(R.id.rec_button);
+        recButtonText = (TextView) findViewById(R.id.rec_text);
+        joinButton = (ImageButton)findViewById(R.id.join_button);
+        joinButtonText = (TextView)findViewById(R.id.join_text);
+        chronometer = (Chronometer)findViewById(R.id.chronometer_text);
+        pauseImage = (ImageView)findViewById(R.id.pause_image);
+    }
+
+    private void initializeDrawer() {
+        settingsMenuItemTitles = getResources().getStringArray(R.array.menu_item_names);
+        settingsMenuDrawerLayout = (DrawerLayout)findViewById(R.id.home_layout);
+        settingsMenuItemList = (ListView)findViewById(R.id.navigation_view_1_list_view);
+        settingsMenuTitle = settingsMenuDrawerTitle = getTitle();
+        settingsMenuDrawerToggle = new ActionBarDrawerToggle(this, settingsMenuDrawerLayout,
+                R.string.drawer_open, R.string.drawer_close) {
+            /**
+             * Called when a drawer has settled in a completely closed state
+             * @param view the calling view
+             */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getActionBar().setTitle(settingsMenuTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /**
+             * Called when a drawer has settled in a completely open state
+             * @param view the calling view
+             */
+            public void onDrawerOpened(View view) {
+                super.onDrawerOpened(view);
+                getActionBar().setTitle(settingsMenuDrawerTitle);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+        // set the drawer toggle as the DrawerListener
+        //noinspection deprecation
+        settingsMenuDrawerLayout.setDrawerListener(settingsMenuDrawerToggle);
+
+        settingsMenuItemList.setAdapter(new ArrayAdapter<>(this, R.layout.navigation_view_1, settingsMenuItemTitles));
+        settingsMenuItemList.setOnItemClickListener((parent, view, position, id) ->
+                homeRoutine.selectItem(position, settingsMenuItemTitles, settingsMenuDrawerLayout, settingsMenuItemList));
+
+        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getActionBar().setHomeButtonEnabled(true);
+    }
+
+    /**
+     * Called whenever we called invalidateOptionsMenu()
+     * @param menu the menu
+     * @return superclass
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // if nav drawer is open --> hide action items related to current view
+        boolean drawerOpen = settingsMenuDrawerLayout.isDrawerOpen(settingsMenuItemList);
+        menu.findItem(R.id.action_websearch).setVisible(!drawerOpen);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred
+        settingsMenuDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration configuration) {
+        super.onConfigurationChanged(configuration);
+        settingsMenuDrawerToggle.onConfigurationChanged(configuration);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // pass the event to ActionBarDrawerToggle, if it returns
+        // true, then it has handled the app icon touch event
+        if (settingsMenuDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        } // pick activities here
+        // handle other action bar items here
+        return super.onOptionsItemSelected(item);
     }
 
     public void clickAbout(View view) {
