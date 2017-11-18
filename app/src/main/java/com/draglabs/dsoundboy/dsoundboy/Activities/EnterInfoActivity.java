@@ -4,11 +4,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.BandInfo;
+import com.draglabs.dsoundboy.dsoundboy.Models.BandInfoModel;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
@@ -60,8 +59,8 @@ public class EnterInfoActivity extends AppCompatActivity {
         String artistNameText = artistName.getText().toString();
         String recordingVenueText = venue.getText().toString();
 
-        BandInfo bandInfo = new BandInfo(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
-        PrefUtils.setBandInfo(this, bandInfo);
+        BandInfoModel bandInfoModel = new BandInfoModel(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
+        PrefUtils.setBandInfo(this, bandInfoModel);
 
         Intent sendBandInfo = new Intent(this, HomeActivity.class);
 

@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
 import org.json.JSONObject;
 
@@ -9,19 +9,19 @@ import cz.msebera.android.httpclient.Header;
  * Holds a JSON response that is returned
  */
 
-class Response {
+class ResponseModel {
 
     private int statusCode;
     private Header[] headers;
     private JSONObject jsonObject;
 
-    public Response() {
+    public ResponseModel() {
         statusCode = 0;
         headers = null;
         jsonObject = null;
     }
 
-    public Response(int statusCode, Header[] headers, JSONObject jsonObject) {
+    public ResponseModel(int statusCode, Header[] headers, JSONObject jsonObject) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.jsonObject = jsonObject;

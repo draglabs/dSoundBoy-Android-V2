@@ -1,21 +1,21 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
  * Created by davrukin on 8/16/17.
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class BandInfo {
+public class BandInfoModel {
 
     private String artistEmail;
     private String recordingDescription;
     private String artistName;
     private String recordingVenue;
 
-    public BandInfo() {
+    public BandInfoModel() {
     }
 
-    public BandInfo(String artistEmail, String recordingDescription, String artistName, String recordingVenue) {
+    public BandInfoModel(String artistEmail, String recordingDescription, String artistName, String recordingVenue) {
         this.artistEmail = artistEmail;
         this.recordingDescription = recordingDescription;
         this.artistName = artistName;

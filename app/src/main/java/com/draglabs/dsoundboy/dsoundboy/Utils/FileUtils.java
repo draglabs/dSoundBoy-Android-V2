@@ -2,7 +2,7 @@ package com.draglabs.dsoundboy.dsoundboy.Utils;
 
 import android.util.Log;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Strings;
+import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -85,7 +85,7 @@ class FileUtils {
     }
 
     /**
-     * |          Task         	|                     Post Types                     	|                                                   Response Types                                                   	|
+     * |          Task         	|                     Post Types                     	|                                                   ResponseModel Types                                                   	|
      |:---------------------:	|:--------------------------------------------------:	|:------------------------------------------------------------------------------------------------------------------:	|
      | Authenticate User     	| facebook_id, access_token                          	| code, user_id, first_name, last_name                                                                               	|
      | Solo Upload Recording 	| fileName, notes, startTime, endTime, audioFile     	| code, message                                                                                                      	|
@@ -107,8 +107,8 @@ class FileUtils {
         String standardError = "Other Error or Wrong Error Code. Check API and App.";
 
         switch (callingMethod) {
-            case Strings.AUTHENTICATE_USER:
-                if (code == 200 && (data.equals(Strings.jsonTypes.UNIQUE_ID.type()) || data.equals(Strings.jsonTypes.FIRST_NAME.type()) || data.equals(Strings.jsonTypes.LAST_NAME.type()))) {
+            case StringsModel.AUTHENTICATE_USER:
+                if (code == 200 && (data.equals(StringsModel.jsonTypes.UNIQUE_ID.type()) || data.equals(StringsModel.jsonTypes.FIRST_NAME.type()) || data.equals(StringsModel.jsonTypes.LAST_NAME.type()))) {
                     JSONObject user = jsonObject.getJSONObject("user");
                     return user.getString(data);
                 } else if (code == 400) {
@@ -116,7 +116,7 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.SOLO_UPLOAD_RECORDING:
+            case StringsModel.SOLO_UPLOAD_RECORDING:
                 if (code == 201) {
                     return jsonObject.getString("message");
                 } else if (code == 400) {
@@ -124,7 +124,7 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.START_JAM:
+            case StringsModel.START_JAM:
                 if (code == 200) {
                     JSONObject jam = jsonObject.getJSONObject("jam");
                     return jam.getString(data);
@@ -144,7 +144,7 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.JOIN_JAM:
+            case StringsModel.JOIN_JAM:
                 if (code == 200) {
                     JSONObject jam = jsonObject.getJSONObject("jam");
                     return jam.getString(data);
@@ -158,7 +158,7 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.JAM_RECORDING_UPLOAD:
+            case StringsModel.JAM_RECORDING_UPLOAD:
                 if (code == 201) {
                     return jsonObject.getString("message");
                 } else if (code == 400 || code == 401) {
@@ -166,7 +166,7 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.EXIT_JAM:
+            case StringsModel.EXIT_JAM:
                 if (code == 200) {
                     return jsonObject.getString("message");
                 } else if (code == 400) {
@@ -174,7 +174,7 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.GET_COLLABORATORS: // json type doesn't matter
+            case StringsModel.GET_COLLABORATORS: // json type doesn't matter
                 if (code == 200) {
                     JSONObject jam = jsonObject.getJSONObject("jam");
                     JSONArray collaborators = jam.getJSONArray("collaborators");
@@ -194,14 +194,14 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.GET_USER_ACTIVITY: // json type doesn't matter
+            case StringsModel.GET_USER_ACTIVITY: // json type doesn't matter
                 if (code == 200) {
                     //JSONArray recordings = jsonObject.getJSONArray("recordings"); // doesn't exist anymore
                     JSONArray jams = jsonObject.getJSONArray("jams");
                     Log.v("Jams: ", jams.toString());
-                    /*if (data.equals(Strings.jsonTypes.RECORDINGS.type())) {
+                    /*if (data.equals(StringsModel.jsonTypes.RECORDINGS.type())) {
                         return recordings.toString(); // TODO: maybe the recordings list is empty so nothing is being shown? arrange for that check
-                    } else if (data.equals(Strings.jsonTypes.JAMS.type())) {
+                    } else if (data.equals(StringsModel.jsonTypes.JAMS.type())) {
                         return jams.toString();
                     } else {
                         String recordingsString = recordings.toString();
@@ -214,14 +214,14 @@ class FileUtils {
                 } else {
                     return standardError;
                 }
-            case Strings.GET_JAM_DETAILS:
+            case StringsModel.GET_JAM_DETAILS:
                 if (code == 200) {
                     JSONArray jamDetails = jsonObject.getJSONArray("Enter Name Here"); // TODO: What's the name of the array?
                     return jamDetails.toString();
                 } else if (code == 400) {
                     return code + ": " + jsonObject.getString("error");
                 }
-            case Strings.NOTIFY_USER:
+            case StringsModel.NOTIFY_USER:
                 if (code == 200) {
                     return jsonObject.getString("message");
                 } else if (code == 400) {

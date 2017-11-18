@@ -1,11 +1,11 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
  * Created by davrukin on 9/12/17.
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public final class Strings {
+public final class StringsModel {
 
     public static final String AUTHENTICATE_USER = "Authenticate User";
     public static final String SOLO_UPLOAD_RECORDING = "Solo Upload Recording";

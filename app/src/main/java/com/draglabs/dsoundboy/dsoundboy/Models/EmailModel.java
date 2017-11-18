@@ -1,17 +1,17 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
  * Created by davrukin on 8/14/17.
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class Email {
+public class EmailModel {
 
     private String email;
     private String subject;
     private String message;
 
-    public Email(String email, String subject, String message) {
+    public EmailModel(String email, String subject, String message) {
         this.email = email;
         this.subject = subject;
         this.message = message;

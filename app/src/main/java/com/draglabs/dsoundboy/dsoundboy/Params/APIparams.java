@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Utils;
+package com.draglabs.dsoundboy.dsoundboy.Params;
 
 import android.location.Location;
 
@@ -10,11 +10,11 @@ import java.util.Date;
 import java.util.Locale;
 
 /**
- * Created by davrukin on 11/17/17.
- * Holds and returns parameters for all the API functions
+ * <p>Created by davrukin on 11/17/17.</p>
+ * <p>Holds and returns parameters for all the API functions.</p>
  */
 
-class APIparams {
+public class APIparams {
 
     /**
      * Used for the Authenticate User API with the Jam API
@@ -22,7 +22,7 @@ class APIparams {
      * @param facebookAccessToken the Access Token from the Facebook API
      * @return requestParams
      */
-    static RequestParams authenticateUser(String facebookID,
+    public static RequestParams authenticateUser(String facebookID,
                                           String facebookAccessToken) {
 
         RequestParams requestParams = new RequestParams();
@@ -41,7 +41,7 @@ class APIparams {
      * @param endTime the end time of the recording
      * @return requestParams
      */
-    static RequestParams soloUpload(String uniqueID,
+    public static RequestParams soloUpload(String uniqueID,
                                     String filename,
                                     String notes,
                                     Date startTime,
@@ -70,7 +70,7 @@ class APIparams {
      * @param location the name of the location of the jam
      * @return requestParams
      */
-    static RequestParams startJam(String uniqueID,
+    public static RequestParams startJam(String uniqueID,
                                   String jamLocation,
                                   String jamName,
                                   Location location) {
@@ -94,7 +94,7 @@ class APIparams {
      * @param pin the jam PIN
      * @return requestParams
      */
-    static RequestParams joinJam(String uniqueID,
+    public static RequestParams joinJam(String uniqueID,
                                  int pin) {
 
         RequestParams requestParams = new RequestParams();
@@ -114,7 +114,7 @@ class APIparams {
      * @param endTime the end time of the jam
      * @return requestParams
      */
-    static RequestParams jamRecordingUpload(String uniqueID,
+    public static RequestParams jamRecordingUpload(String uniqueID,
                                             String jamID,
                                             String filename,
                                             String notes,
@@ -144,7 +144,7 @@ class APIparams {
      * @param endTime the end time of the jam
      * @return requestParams
      */
-    static RequestParams jamRecordingUpload(String uniqueID,
+    public static RequestParams jamRecordingUpload(String uniqueID,
                                             String jamID,
                                             String filename,
                                             String notes,
@@ -170,7 +170,7 @@ class APIparams {
      * @param jamID the jam ID
      * @return requestParams
      */
-    static RequestParams exitJam(String uniqueID,
+    public static RequestParams exitJam(String uniqueID,
                                  String jamID) {
 
         RequestParams requestParams = new RequestParams();
@@ -186,7 +186,7 @@ class APIparams {
      * @param jamID the jam ID
      * @return requestParams
      */
-    static RequestParams getCollaborators(String uniqueID,
+    public static RequestParams getCollaborators(String uniqueID,
                                           String jamID) {
 
         RequestParams requestParams = new RequestParams();
@@ -201,7 +201,7 @@ class APIparams {
      * @param uniqueID the API's unique user ID
      * @return requestParams
      */
-    static RequestParams getUserActivity(String uniqueID) {
+    public static RequestParams getUserActivity(String uniqueID) {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("user_id", uniqueID);
@@ -213,7 +213,7 @@ class APIparams {
      * Used for the Get Jam Details API
      * @return empty requestParams
      */
-    static RequestParams getJamDetails() {
+    public static RequestParams getJamDetails() {
         return new RequestParams();
     }
 
@@ -222,7 +222,7 @@ class APIparams {
      * @param jamID the jam ID
      * @return requestParams
      */
-    static RequestParams notifyUser(String jamID) {
+    public static RequestParams notifyUser(String jamID) {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("jam_id", jamID);
@@ -235,7 +235,7 @@ class APIparams {
      * @param jamID the jam ID
      * @return requestParams
      */
-    static RequestParams generateXML(String jamID) {
+    public static RequestParams generateXML(String jamID) {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("jamid", jamID);
@@ -249,7 +249,7 @@ class APIparams {
      * @param userID the API's unique user ID
      * @return requestParams
      */
-    static RequestParams compress(String jamID,
+    public static RequestParams compress(String jamID,
                                   String userID) {
 
         RequestParams requestParams = new RequestParams();

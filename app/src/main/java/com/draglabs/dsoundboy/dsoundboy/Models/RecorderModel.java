@@ -1,13 +1,9 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
-import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
-import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
 import java.util.Date;
@@ -19,10 +15,10 @@ import static android.os.Build.VERSION_CODES.LOLLIPOP;
  * Created by davrukin on 10/30/17.
  */
 /*
-When nyou call the RecorderSettings class inside of another method use the follow syntax and perams
+When nyou call the RecorderModel class inside of another method use the follow syntax and perams
         this.recordingThread = new Thread();
 
-        recorderSettings.setBandData(is a parameter and string array which is modeled in BandInfo);
+        recorderSettings.setBandData(is a parameter and string array which is modeled in BandInfoModel);
         recorderSettings.setAudioSavePathInDevice(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings" + recorderSettings.getPathname());
         recorderSettings.setPathname(createAudioPathname(bandData, recorderSettings.getEXTENSION()));
         recorderSettings.setAudioRecord(new AudioRecord(recorderSettings.getRecorderAudioSource(),
@@ -35,7 +31,7 @@ When nyou call the RecorderSettings class inside of another method use the follo
  */
 
 
-public class RecorderSettings {
+public class RecorderModel {
 
     private Date startTime;
     private Date endTime;
@@ -59,7 +55,7 @@ public class RecorderSettings {
     private final String EXTENSION = ".aac";
     private String pathname;
 
-    public RecorderSettings() {
+    public RecorderModel() {
         /**
          *
          */
@@ -75,7 +71,7 @@ public class RecorderSettings {
         this.mediaRecorder = mediaRecorderReady();
     }
 
-    public RecorderSettings(String audioSavePathInDevice, String[] bandData, AudioRecord audioRecord, String pathname) {
+    public RecorderModel(String audioSavePathInDevice, String[] bandData, AudioRecord audioRecord, String pathname) {
         /**
          *
          */
@@ -165,7 +161,7 @@ public class RecorderSettings {
         return endTime;
     }
 
-    void setEndTime(Date endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 
@@ -225,7 +221,7 @@ public class RecorderSettings {
     }
 
     public static void setRecorderAudioSource(int recorderAudioSource) {
-        RecorderSettings.recorderAudioSource = recorderAudioSource;
+        RecorderModel.recorderAudioSource = recorderAudioSource;
     }
 
     public static int getRecorderOutputFormat() {
@@ -233,7 +229,7 @@ public class RecorderSettings {
     }
 
     public static void setRecorderOutputFormat(int recorderOutputFormat) {
-        RecorderSettings.recorderOutputFormat = recorderOutputFormat;
+        RecorderModel.recorderOutputFormat = recorderOutputFormat;
     }
 
     public static int getRecordingEncodingBitRate() {
@@ -241,7 +237,7 @@ public class RecorderSettings {
     }
 
     public static void setRecordingEncodingBitRate(int recordingEncodingBitRate) {
-        RecorderSettings.recordingEncodingBitRate = recordingEncodingBitRate;
+        RecorderModel.recordingEncodingBitRate = recordingEncodingBitRate;
     }
 
     public static int getRecordingSampleRate() {
@@ -249,7 +245,7 @@ public class RecorderSettings {
     }
 
     public static void setRecordingSampleRate(int recordingSampleRate) {
-        RecorderSettings.recordingSampleRate = recordingSampleRate;
+        RecorderModel.recordingSampleRate = recordingSampleRate;
     }
 
     public static int getRecordingChannels() {
@@ -257,7 +253,7 @@ public class RecorderSettings {
     }
 
     public static void setRecordingChannels(int recordingChannels) {
-        //RecorderSettings.recordingChannels = recordingChannels;
+        //RecorderModel.recordingChannels = recordingChannels;
     }
 
     public static int getRecordingAudioEncoding() {
@@ -265,7 +261,7 @@ public class RecorderSettings {
     }
 
     public static void setRecordingAudioEncoding(int recordingAudioEncoding) {
-        RecorderSettings.recordingAudioEncoding = recordingAudioEncoding;
+        RecorderModel.recordingAudioEncoding = recordingAudioEncoding;
     }
 
     public AudioRecord getAudioRecord() {

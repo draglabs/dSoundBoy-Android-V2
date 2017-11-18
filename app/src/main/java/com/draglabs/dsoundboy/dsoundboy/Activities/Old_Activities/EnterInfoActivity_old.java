@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.BandInfo;
+import com.draglabs.dsoundboy.dsoundboy.Models.BandInfoModel;
 import com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
@@ -27,7 +27,7 @@ public class EnterInfoActivity_old extends AppCompatActivity {
     private String artistNameText;
     private String recordingVenueText;
 
-    private BandInfo bandInfo;
+    private BandInfoModel bandInfoModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +61,8 @@ public class EnterInfoActivity_old extends AppCompatActivity {
         artistNameText = artistName.getText().toString();
         recordingVenueText = venue.getText().toString();
 
-        bandInfo = new BandInfo(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
-        PrefUtils.setBandInfo(this, bandInfo);
+        bandInfoModel = new BandInfoModel(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
+        PrefUtils.setBandInfo(this, bandInfoModel);
 
         Intent sendBandInfo = new Intent(this, MainActivity.class);
         sendBandInfo.putExtra("callingClass", "EnterInfoActivity");

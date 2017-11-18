@@ -4,29 +4,23 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
-import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Chronometer;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Recorder;
+import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils;
 import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity;
@@ -123,26 +117,26 @@ public class HomeRoutine {
         activity.startActivity(browserIntent);
     }
 
-    public void clickRec(Chronometer chronometer, Recorder recorder) {
+    public void clickRec(Chronometer chronometer, RecorderUtils recorderUtils) {
         createJam();
 
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        recorder.startRecording(activity);
+        recorderUtils.startRecording(activity);
 
         Toast.makeText(context, "Started recording.", Toast.LENGTH_LONG).show();
     }
 
-    public void clickStop(View view, Recorder recorder, Chronometer chronometer, Date recordingStartTime, Date recordingEndTime) {
-        recorder.stopRecording();
+    public void clickStop(View view, RecorderUtils recorderUtils, Chronometer chronometer, Date recordingStartTime, Date recordingEndTime) {
+        recorderUtils.stopRecording();
         chronometer.stop();
 
         Toast.makeText(context, "Stopped recording.", Toast.LENGTH_LONG).show();
 
-        submitToServer(view, recorder, recordingStartTime, recordingEndTime);
+        submitToServer(view, recorderUtils, recordingStartTime, recordingEndTime);
     }
 
-    private void submitToServer(View view, Recorder recorder, Date recordingStartTime, Date recordingEndTime) {
+    private void submitToServer(View view, RecorderUtils recorderUtils, Date recordingStartTime, Date recordingEndTime) {
 
         /*Thread thread = new Thread(() -> APIutils.jamRecordingUpload(uniqueUserID, jamID, "davrukin-test", recordingPath, "notes", recordingStartTime, recordingEndTime, view));
         thread.run();*/
@@ -160,7 +154,7 @@ public class HomeRoutine {
         }
 
         prefUtils = new PrefUtils(activity);
-        String recordingPath = recorder.getAudioSavePathInDevice();
+        String recordingPath = recorderUtils.getAudioSavePathInDevice();
         APIutils.jamRecordingUpload(
                 prefUtils.getUniqueUserID(),
                 prefUtils.getJamID(),
@@ -179,7 +173,7 @@ public class HomeRoutine {
                 notificationCompatBuilder.setProgress(100, i, false);
                 notificationManager.notify(id, notificationCompatBuilder.build());
 
-                String recordingPath = recorder.getAudioSavePathInDevice();
+                String recordingPath = recorderUtils.getAudioSavePathInDevice();
                 APIutils.jamRecordingUpload(
                         prefUtils.getUniqueUserID(),
                         prefUtils.getJamID(),

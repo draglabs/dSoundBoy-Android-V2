@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.BandInfo;
+import com.draglabs.dsoundboy.dsoundboy.Models.BandInfoModel;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 
 import java.util.ArrayList;
@@ -294,12 +294,12 @@ public class PrefUtils {
         editor.putString("fb_gender", gender);
         editor.putString("fb_profileURL", profileURL);
         editor.apply(); // This line is IMPORTANT !!!
-        Log.d("dSoundBoy", "Shared Name : "+first_name+"\nLast Name : "+last_name+"\nEmail : "+email+"\nGender : "+gender+"\nProfile Pic : "+profileURL);
+        Log.d("dSoundBoy", "Shared Name : "+first_name+"\nLast Name : "+last_name+"\nEmailModel : "+email+"\nGender : "+gender+"\nProfile Pic : "+profileURL);
     }
 
     public void getFacebookUserInfo() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        Log.d("dSoundBoy", "Name : "+prefs.getString("fb_name",null)+"\nEmail : "+prefs.getString("fb_email",null));
+        Log.d("dSoundBoy", "Name : "+prefs.getString("fb_name",null)+"\nEmailModel : "+prefs.getString("fb_email",null));
     }
 
     public void clearFacebookUserInfo() { // TODO: use when logging out of account
@@ -319,14 +319,14 @@ public class PrefUtils {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("artist_email", artistEmail);
         editor.apply();
-        Log.d("Artist Email: ", artistEmail);
+        Log.d("Artist EmailModel: ", artistEmail);
     }
 
     public static String getArtistEmail(Activity activity) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         if (prefs.contains("artist_email")) {
             String artistEmail = prefs.getString("artist_email", null);
-            Log.d("Artist Email: ", artistEmail);
+            Log.d("Artist EmailModel: ", artistEmail);
             return artistEmail;
         } else {
             return "Enter an artist email.";
@@ -398,30 +398,30 @@ public class PrefUtils {
         editor.putString("artist_name", artistName);
         editor.putString("recording_venue", recordingVenue);
         editor.apply();
-        Log.d("Artist Email: ", artistEmail);
+        Log.d("Artist EmailModel: ", artistEmail);
         Log.d("Recording Description: ", recordingDescription);
         Log.d("Artist Name: ", artistName);
         Log.d("Recording Venue: ", recordingVenue);
     }
 
-    public static void setBandInfo(Activity activity, BandInfo bandInfo) {
+    public static void setBandInfo(Activity activity, BandInfoModel bandInfoModel) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("artist_email", bandInfo.getArtistEmail());
-        editor.putString("recording_description", bandInfo.getRecordingDescription());
-        editor.putString("artist_name", bandInfo.getArtistName());
-        editor.putString("recording_venue", bandInfo.getRecordingVenue());
+        editor.putString("artist_email", bandInfoModel.getArtistEmail());
+        editor.putString("recording_description", bandInfoModel.getRecordingDescription());
+        editor.putString("artist_name", bandInfoModel.getArtistName());
+        editor.putString("recording_venue", bandInfoModel.getRecordingVenue());
         editor.apply();
-        Log.d("Artist Email: ", bandInfo.getArtistEmail());
-        Log.d("Recording Description: ", bandInfo.getRecordingDescription());
-        Log.d("Artist Name: ", bandInfo.getArtistName());
-        Log.d("Recording Venue: ", bandInfo.getRecordingVenue());
+        Log.d("Artist EmailModel: ", bandInfoModel.getArtistEmail());
+        Log.d("Recording Description: ", bandInfoModel.getRecordingDescription());
+        Log.d("Artist Name: ", bandInfoModel.getArtistName());
+        Log.d("Recording Venue: ", bandInfoModel.getRecordingVenue());
     }
 
     public static String getBandInfo(Activity activity) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
 
-        String artistEmail = "{Artist Email: " + prefs.getString("artist_email", null) + "}\n";
+        String artistEmail = "{Artist EmailModel: " + prefs.getString("artist_email", null) + "}\n";
         String recordingDescription = "{Recording Description: " + prefs.getString("recording_description", null) + "}\n";
         String artistName = "{Artist Name: " + prefs.getString("artist_name", null) + "}\n";
         String recordingVenue = "{Recording Venue: " + prefs.getString("recording_venue", null) + "}";

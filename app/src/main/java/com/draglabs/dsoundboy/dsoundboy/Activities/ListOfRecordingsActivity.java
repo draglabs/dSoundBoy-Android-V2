@@ -21,7 +21,7 @@ import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Strings;
+import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
@@ -75,7 +75,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
 
         selectedItems = new ArrayList<>();
         jamIDs = new ArrayList<>();
-        //APIutils.getUserActivity(this, new PrefUtils(this).getUniqueUserID(), Strings.jsonTypes.JAMS.type());
+        //APIutils.getUserActivity(this, new PrefUtils(this).getUniqueUserID(), StringsModel.jsonTypes.JAMS.type());
     }
 
     private void addRowsToTable(Object[] items) {
@@ -232,7 +232,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
         try {
             JSONArray jsonArray = new JSONArray(jamIDs);
             for (int i = 0; i < jsonArray.length(); i++) {
-                this.jamIDs.add(jsonArray.getJSONObject(i).getString(Strings.jsonTypes.JAM_ID.type()));
+                this.jamIDs.add(jsonArray.getJSONObject(i).getString(StringsModel.jsonTypes.JAM_ID.type()));
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -316,7 +316,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
 
     private void createNotifyUserDialog(String jamID) { // to notify user with email
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Email jam to account email?").setTitle("Email Jam");
+        builder.setMessage("EmailModel jam to account email?").setTitle("EmailModel Jam");
         builder.setPositiveButton("Yes", (dialog, which) -> {
             // set a callback once something is done
             //APIutils.notifyUser(jamID, this);

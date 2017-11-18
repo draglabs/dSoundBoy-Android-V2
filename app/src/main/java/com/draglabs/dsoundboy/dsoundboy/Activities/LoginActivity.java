@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        Toast.makeText(this, "Email login currently unavailable. Please login with Facebook only at this time.", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "EmailModel login currently unavailable. Please login with Facebook only at this time.", Toast.LENGTH_LONG).show();
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView)findViewById(R.id.email);

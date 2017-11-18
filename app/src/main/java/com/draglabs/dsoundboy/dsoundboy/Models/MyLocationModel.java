@@ -1,10 +1,10 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
  * Created by davrukin on 11/3/17.
  */
 
-public class MyLocation {
+public class MyLocationModel {
 
     private String latitude;
     private String longitude;

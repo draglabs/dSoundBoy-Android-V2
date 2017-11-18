@@ -32,7 +32,7 @@ v1.17.08.23
                 - have an integer that counts how many times the MainActivity has been loaded, if it's odd then the buttons are enabled, and vice-versa
                 - store enabled/disabled booleans and keep those to say which buttons are enabled and which are disabled
     - added LoginActivity that will later implement Facebook authentication
-    - will add recording capabilities, maybe in FileUtils.java, or in a recorder class
+    - will add recording capabilities, maybe in FileUtils.java, or in a recorderUtils class
         - hopefully it won't require weird or special inheritance stuff
         - Recorder.java
             - instantiate the class
@@ -100,7 +100,7 @@ v1.17.09.08
     - add documentation/instructions screen for app?
     - fix playing recordings and buttons therein in ListOfRecordings
     - finished Cognito sync, and can get all credentials now, have yet to test
-        - rather than have the AWSutils initializer in LoginActivity, have it in the recorder while submit?
+        - rather than have the AWSutils initializer in LoginActivity, have it in the recorderUtils while submit?
             - make sure Cognito user has rights to access and upload to S3 bucket !*!*!*!*!*!*
     - need to authenticate user with Shyam, and do other things with API
         - add Exit Jam button and work with "enabled"s

@@ -9,17 +9,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,8 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Recorder;
-import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
+import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
@@ -50,7 +46,7 @@ import cafe.adriel.androidaudiorecorder.model.AudioSource;
 public class HomeActivity extends AppCompatActivity {
 
     private String[] bandInfo;
-    private Recorder recorder;
+    private RecorderUtils recorderUtils;
 
     private LocationManager locationManager;
 
@@ -102,7 +98,7 @@ public class HomeActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO },10);
         } else {
-            recorder = new Recorder(this, bandInfo, this);
+            recorderUtils = new RecorderUtils(this, bandInfo, this);
         }
 
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
@@ -264,7 +260,7 @@ public class HomeActivity extends AppCompatActivity {
     public void clickRec(View view) {
         isRecording = true;
         recordingStartTime = new Date();
-        homeRoutine.clickRec(chronometer, recorder);
+        homeRoutine.clickRec(chronometer, recorderUtils);
         recButtonText.setText("Exit");
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.VISIBLE);
@@ -300,7 +296,7 @@ public class HomeActivity extends AppCompatActivity {
     public void clickStop(View view) { // TODO: move all this logic into homeRoutine
         isRecording = false;
         recordingEndTime = new Date();
-        homeRoutine.clickStop(view, recorder, chronometer, recordingStartTime, recordingEndTime);
+        homeRoutine.clickStop(view, recorderUtils, chronometer, recordingStartTime, recordingEndTime);
         recButtonText.setText("Rec");
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.INVISIBLE);

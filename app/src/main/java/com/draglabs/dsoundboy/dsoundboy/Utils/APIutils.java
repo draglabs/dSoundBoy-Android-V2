@@ -8,8 +8,9 @@ import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Email;
-import com.draglabs.dsoundboy.dsoundboy.Accessories.Strings;
+import com.draglabs.dsoundboy.dsoundboy.Models.EmailModel;
+import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel;
+import com.draglabs.dsoundboy.dsoundboy.Params.APIparams;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
 import com.google.gson.Gson;
@@ -29,20 +30,17 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 import cz.msebera.android.httpclient.HeaderElement;
 import cz.msebera.android.httpclient.ParseException;
 
 /**
- * Created by davrukin on 8/14/17.
+ * <p>Created by davrukin on 8/14/17.</p>
+ * <p>Hold all API calls</p>
  */
-
 @SuppressWarnings("DefaultFileTemplate")
 public class APIutils {
 
@@ -78,7 +76,7 @@ public class APIutils {
 
             OutputStreamWriter outputStreamWriter = new OutputStreamWriter(connection.getOutputStream());
 
-            outputStreamWriter.write(gson.toJson(new Email(email, subject, message)));
+            outputStreamWriter.write(gson.toJson(new EmailModel(email, subject, message)));
             outputStreamWriter.flush();
             String line;
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -112,9 +110,9 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String uniqueID = FileUtils.getJsonObject(Strings.AUTHENTICATE_USER, response, Strings.jsonTypes.UNIQUE_ID.type());
+                    String uniqueID = FileUtils.getJsonObject(StringsModel.AUTHENTICATE_USER, response, StringsModel.jsonTypes.UNIQUE_ID.type());
                     Log.v("Unique ID: ", uniqueID);
                     prefUtils.saveUniqueUserID(uniqueID);
                 } catch (JSONException e) {
@@ -128,7 +126,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -146,10 +144,10 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = FileUtils.getJsonObject(Strings.SOLO_UPLOAD_RECORDING, response, Strings.jsonTypes.MESSAGE.type());
-                    Log.v("Response Message: ", message);
+                    String message = FileUtils.getJsonObject(StringsModel.SOLO_UPLOAD_RECORDING, response, StringsModel.jsonTypes.MESSAGE.type());
+                    Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -161,7 +159,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -179,12 +177,12 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String jamPIN = FileUtils.getJsonObject(Strings.START_JAM, response, Strings.jsonTypes.PIN.type());
-                    String jamID = FileUtils.getJsonObject(Strings.START_JAM, response, Strings.jsonTypes.JAM_ID.type());
-                    String jamStartTime = FileUtils.getJsonObject(Strings.START_JAM, response, Strings.jsonTypes.START_TIME.type());
-                    String jamEndTime = FileUtils.getJsonObject(Strings.START_JAM, response, Strings.jsonTypes.END_TIME.type());
+                    String jamPIN = FileUtils.getJsonObject(StringsModel.START_JAM, response, StringsModel.jsonTypes.PIN.type());
+                    String jamID = FileUtils.getJsonObject(StringsModel.START_JAM, response, StringsModel.jsonTypes.JAM_ID.type());
+                    String jamStartTime = FileUtils.getJsonObject(StringsModel.START_JAM, response, StringsModel.jsonTypes.START_TIME.type());
+                    String jamEndTime = FileUtils.getJsonObject(StringsModel.START_JAM, response, StringsModel.jsonTypes.END_TIME.type());
                     Log.v("Jam PIN: ", jamPIN + "");
                     Log.v("Jam ID: ", jamID + "");
                     Log.v("Jam Start Time: ", jamStartTime + "");
@@ -205,7 +203,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -223,12 +221,12 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String jamPIN = FileUtils.getJsonObject(Strings.JOIN_JAM, response, Strings.jsonTypes.PIN.type());
-                    String jamID = FileUtils.getJsonObject(Strings.JOIN_JAM, response, Strings.jsonTypes.JAM_ID.type());
-                    String jamStartTime = FileUtils.getJsonObject(Strings.JOIN_JAM, response, Strings.jsonTypes.START_TIME.type());
-                    String jamEndTime = FileUtils.getJsonObject(Strings.JOIN_JAM, response, Strings.jsonTypes.END_TIME.type());
+                    String jamPIN = FileUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.PIN.type());
+                    String jamID = FileUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.JAM_ID.type());
+                    String jamStartTime = FileUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.START_TIME.type());
+                    String jamEndTime = FileUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.END_TIME.type());
                     Log.v("Jam PIN: ", jamPIN + "");
                     Log.v("Jam ID: ", jamID + "");
                     Log.v("Jam Start Time: ", jamStartTime + "");
@@ -248,7 +246,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -275,10 +273,10 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = FileUtils.getJsonObject(Strings.JAM_RECORDING_UPLOAD, response, Strings.jsonTypes.MESSAGE.type());
-                    Log.v("Response Message: ", message);
+                    String message = FileUtils.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type());
+                    Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -291,7 +289,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -318,10 +316,10 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = FileUtils.getJsonObject(Strings.JAM_RECORDING_UPLOAD, response, Strings.jsonTypes.MESSAGE.type());
-                    Log.v("Response Message: ", message);
+                    String message = FileUtils.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type());
+                    Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -334,7 +332,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -350,10 +348,10 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = FileUtils.getJsonObject(Strings.EXIT_JAM, response, Strings.jsonTypes.MESSAGE.type());
-                    Log.v("Response Message: ", message);
+                    String message = FileUtils.getJsonObject(StringsModel.EXIT_JAM, response, StringsModel.jsonTypes.MESSAGE.type());
+                    Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -365,7 +363,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -383,9 +381,9 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String collaborators = FileUtils.getJsonObject(Strings.GET_COLLABORATORS, response, Strings.jsonTypes.MESSAGE.type());
+                    String collaborators = FileUtils.getJsonObject(StringsModel.GET_COLLABORATORS, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("Collaborators: ", collaborators);
                     prefUtils.saveCollaborators(collaborators);
                 } catch (JSONException e) {
@@ -399,7 +397,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -435,18 +433,18 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    /*if (type.equals(Strings.jsonTypes.RECORDINGS.type())) {
-                        String recordings = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, type);
+                    /*if (type.equals(StringsModel.jsonTypes.RECORDINGS.type())) {
+                        String recordings = FileUtils.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, type);
                         Log.v("Recordings: ", recordings);
                         prefUtils.saveUserActivity(recordings);
-                    } else if (type.equals(Strings.jsonTypes.JAMS.type())){
-                        String jams = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, type);
+                    } else if (type.equals(StringsModel.jsonTypes.JAMS.type())){
+                        String jams = FileUtils.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, type);
                         Log.v("Jams: ", jams);
                         prefUtils.saveUserActivity(jams);
                     }*/
-                    String jams = FileUtils.getJsonObject(Strings.GET_USER_ACTIVITY, response, Strings.jsonTypes.JAMS.type());
+                    String jams = FileUtils.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, StringsModel.jsonTypes.JAMS.type());
                     Log.v("Jams: ", jams);
                     new PrefUtils(activity).saveUserActivity(jams);
                 } catch (JSONException e) {
@@ -460,7 +458,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -508,9 +506,9 @@ public class APIutils {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String jamDetails = FileUtils.getJsonObject(Strings.GET_JAM_DETAILS, response, Strings.jsonTypes.DATA.type());
+                    String jamDetails = FileUtils.getJsonObject(StringsModel.GET_JAM_DETAILS, response, StringsModel.jsonTypes.DATA.type());
                     Log.v("Jam Details: ", jamDetails);
                     new PrefUtils(activity).saveJamDetails(jamDetails); // TODO: enable later
                 } catch (JSONException e) {
@@ -524,7 +522,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -541,10 +539,10 @@ public class APIutils {
                 Log.v("Function: ", "Notify User");
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = FileUtils.getJsonObject(Strings.NOTIFY_USER, response, Strings.jsonTypes.MESSAGE.type());
-                    Log.v("Response Message: ", message);
+                    String message = FileUtils.getJsonObject(StringsModel.NOTIFY_USER, response, StringsModel.jsonTypes.MESSAGE.type());
+                    Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -557,7 +555,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
@@ -575,7 +573,7 @@ public class APIutils {
                Log.v("Function: ", "Generate XML");
                Log.v("Status Code: ", statusCode + "");
                Log.v("Headers: ", Arrays.toString(headers));
-               Log.v("Response: ", response.toString());
+               Log.v("ResponseModel: ", response.toString());
                createDialog(context, jamID, "Generate XML", response.toString());
            }
 
@@ -585,7 +583,7 @@ public class APIutils {
                    Log.v("Status Code: ", statusCode + "\n");
                    Log.v("Headers: ", Arrays.toString(headers) + "");
                    Log.v("Throwable: ", throwable.getMessage());
-                   Log.v("Response: ", response.toString());
+                   Log.v("ResponseModel: ", response.toString());
                } else {
                    Log.v("Reason: ", "Other Failure.");
                }
@@ -603,7 +601,7 @@ public class APIutils {
                 Log.v("Function: ", "Compress");
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
-                Log.v("Response: ", response.toString());
+                Log.v("ResponseModel: ", response.toString());
                 createDialog(context, jamID, "Compress", response.toString());
             }
 
@@ -613,7 +611,7 @@ public class APIutils {
                     Log.v("Status Code: ", statusCode + "\n");
                     Log.v("Headers: ", Arrays.toString(headers) + "");
                     Log.v("Throwable: ", throwable.getMessage());
-                    Log.v("Response: ", response.toString());
+                    Log.v("ResponseModel: ", response.toString());
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }

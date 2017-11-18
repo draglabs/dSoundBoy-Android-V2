@@ -1,4 +1,4 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
  * https://developer.android.com/guide/topics/media/mediaplayer.html

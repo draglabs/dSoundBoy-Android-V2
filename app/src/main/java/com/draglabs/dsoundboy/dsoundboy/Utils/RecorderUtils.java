@@ -1,24 +1,19 @@
-package com.draglabs.dsoundboy.dsoundboy.Accessories;
+package com.draglabs.dsoundboy.dsoundboy.Utils;
 
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.media.AudioRecord;
-import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.view.View;
-import android.widget.Chronometer;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.R;
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
+import com.draglabs.dsoundboy.dsoundboy.Models.RecorderModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,12 +22,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
-
-import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
-import cafe.adriel.androidaudiorecorder.model.AudioChannel;
-import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
-import cafe.adriel.androidaudiorecorder.model.AudioSource;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -42,52 +31,52 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-public class Recorder {
+public class RecorderUtils {
 
     private Context context;
     private Activity activity;
-    private RecorderSettings recorderSettings;
+    private RecorderModel recorderModel;
     private Thread recordingThread;
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public Recorder(Context context, String[] bandData, Activity activity) {
-        this.recorderSettings = new RecorderSettings();
+    public RecorderUtils(Context context, String[] bandData, Activity activity) {
+        this.recorderModel = new RecorderModel();
 
         this.context = context;
         this.activity = activity;
         this.recordingThread = new Thread();
 
-        recorderSettings.setBandData(bandData);
-        recorderSettings.setAudioSavePathInDevice(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings" + recorderSettings.getPathname());
-        recorderSettings.setPathname(createAudioPathname(bandData, recorderSettings.getEXTENSION()));
-        recorderSettings.setAudioRecord(new AudioRecord(recorderSettings.getRecorderAudioSource(),
-                                                        recorderSettings.getRecordingSampleRate(),
-                                                        recorderSettings.getRecordingChannels(),
-                                                        recorderSettings.getRecordingAudioEncoding(),
-        recorderSettings.getBufferElementsToRec() * recorderSettings.getBytesPerElement()));
+        recorderModel.setBandData(bandData);
+        recorderModel.setAudioSavePathInDevice(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings" + recorderModel.getPathname());
+        recorderModel.setPathname(createAudioPathname(bandData, recorderModel.getEXTENSION()));
+        recorderModel.setAudioRecord(new AudioRecord(recorderModel.getRecorderAudioSource(),
+                                                        recorderModel.getRecordingSampleRate(),
+                                                        recorderModel.getRecordingChannels(),
+                                                        recorderModel.getRecordingAudioEncoding(),
+        recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement()));
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void startRecording(Activity activity) {
         if (checkPermissions()) {
-            if (recorderSettings.getMediaRecorder() != null) {
-                recorderSettings.setPathname(createAudioPathname(
+            if (recorderModel.getMediaRecorder() != null) {
+                recorderModel.setPathname(createAudioPathname(
                         PrefUtils.getArtistName(activity),
                         PrefUtils.getRecordingDescription(activity),
                         PrefUtils.getRecordingVenue(activity),
                         PrefUtils.getArtistEmail(activity),
-                        new Date()) + recorderSettings.getEXTENSION());
+                        new Date()) + recorderModel.getEXTENSION());
 
-                recorderSettings.setAudioSavePathInDevice(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/" + recorderSettings.getPathname());
+                recorderModel.setAudioSavePathInDevice(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/" + recorderModel.getPathname());
 
-                recorderSettings.setStartTime(new Date()); // TODO: FILE NAMES NOT BEING SET PROPERLY
-                String testString = "startTime.toString(): " + recorderSettings.getStartTime().toString() +
-                        ", startTime.getTime(): " + recorderSettings.getStartTime().getTime();
+                recorderModel.setStartTime(new Date()); // TODO: FILE NAMES NOT BEING SET PROPERLY
+                String testString = "startTime.toString(): " + recorderModel.getStartTime().toString() +
+                        ", startTime.getTime(): " + recorderModel.getStartTime().getTime();
                 Toast.makeText(context, testString, Toast.LENGTH_LONG).show();
                 System.out.println(testString);
 
                 try {
-                    File recording = new File(recorderSettings.getAudioSavePathInDevice());
+                    File recording = new File(recorderModel.getAudioSavePathInDevice());
                     if (!recording.getParentFile().exists()) {
                         recording.getParentFile().mkdirs();
                     }
@@ -95,8 +84,8 @@ public class Recorder {
                         recording.createNewFile();
                     }
 
-                    recorderSettings.setRecording(true);
-                    recordingThread = new Thread(() -> writeAudioDataToFile(recorderSettings.getAudioSavePathInDevice()), "AudioRecorder Thread");
+                    recorderModel.setRecording(true);
+                    recordingThread = new Thread(() -> writeAudioDataToFile(recorderModel.getAudioSavePathInDevice()), "AudioRecorder Thread");
                     recordingThread.start();
 
                     Toast.makeText(context, "Recording Started.", Toast.LENGTH_LONG).show();
@@ -108,7 +97,7 @@ public class Recorder {
                     Toast.makeText(context, "Recording Error. IOException.", Toast.LENGTH_LONG).show();
                 }
             } else {
-                recorderSettings.setMediaRecorder(recorderSettings.mediaRecorderReady());
+                recorderModel.setMediaRecorder(recorderModel.mediaRecorderReady());
                 startRecording(activity);
             }
         } else {
@@ -118,14 +107,14 @@ public class Recorder {
 
     public void stopRecording() {
         // TODO: when "Submit" is clicked, finalize recording with this method
-        recorderSettings.setEndTime(new Date());
+        recorderModel.setEndTime(new Date());
 
         try {
-            if (recorderSettings.getAudioRecord() != null) {
-                recorderSettings.setRecording(false);
-                recorderSettings.getAudioRecord().stop();
-                recorderSettings.getAudioRecord().release();
-                recorderSettings.setAudioRecord(null);
+            if (recorderModel.getAudioRecord() != null) {
+                recorderModel.setRecording(false);
+                recorderModel.getAudioRecord().stop();
+                recorderModel.getAudioRecord().release();
+                recorderModel.setAudioRecord(null);
                 recordingThread = null;
             }
         } catch (IllegalStateException e) {
@@ -138,7 +127,7 @@ public class Recorder {
     }
 
     public void resetRecording() {
-        recorderSettings.getMediaRecorder().reset();
+        recorderModel.getMediaRecorder().reset();
     }
 
     private byte[] shortToByte(short[] shorts) {
@@ -153,7 +142,7 @@ public class Recorder {
     }
 
     private void writeAudioDataToFile(String pathname) {
-        short[] shorts = new short[recorderSettings.getBufferElementsToRec()];
+        short[] shorts = new short[recorderModel.getBufferElementsToRec()];
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -162,12 +151,12 @@ public class Recorder {
             e.printStackTrace();
         }
 
-        while (recorderSettings.isRecording()) {
-            recorderSettings.getAudioRecord().read(shorts, 0, recorderSettings.getBufferElementsToRec());
+        while (recorderModel.isRecording()) {
+            recorderModel.getAudioRecord().read(shorts, 0, recorderModel.getBufferElementsToRec());
             try {
                 byte[] data = shortToByte(shorts);
                 assert fileOutputStream != null;
-                fileOutputStream.write(data, 0, recorderSettings.getBufferElementsToRec() * recorderSettings.getBytesPerElement());
+                fileOutputStream.write(data, 0, recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -184,7 +173,7 @@ public class Recorder {
     public String createRandomAudioPathname(int length) {
         StringBuilder stringBuilder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            stringBuilder.append(recorderSettings.getRANDOM_AUDIO_FILE_NAME().charAt(recorderSettings.getRandom().nextInt(recorderSettings.getRANDOM_AUDIO_FILE_NAME().length())));
+            stringBuilder.append(recorderModel.getRANDOM_AUDIO_FILE_NAME().charAt(recorderModel.getRandom().nextInt(recorderModel.getRANDOM_AUDIO_FILE_NAME().length())));
         }
         return stringBuilder.toString();
     }
@@ -236,6 +225,6 @@ public class Recorder {
     }
 
     public String getAudioSavePathInDevice() {
-        return recorderSettings.getAudioSavePathInDevice();
+        return recorderModel.getAudioSavePathInDevice();
     }
 }
