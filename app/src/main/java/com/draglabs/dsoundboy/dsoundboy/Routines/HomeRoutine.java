@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,8 @@ import android.widget.Toast;
 import com.draglabs.dsoundboy.dsoundboy.Accessories.Recorder;
 import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfRecordingsActivity;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
@@ -102,6 +105,22 @@ public class HomeRoutine {
     public void clickContact() {
         Intent intent = new Intent(context, ContactActivity.class);
         activity.startActivity(intent);
+    }
+
+    public void clickEnterInfo() {
+        Intent intent = new Intent(context, EnterInfoActivity.class);
+        activity.startActivity(intent);
+    }
+
+    public void clickViewRecordings() {
+        // APIutils.getUserActivity(this, uniqueUserID, this);
+        Intent intent = new Intent(activity, ListOfRecordingsActivity.class);
+        activity.startActivity(intent);
+    }
+
+    public void clickLogoLink() {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"));
+        activity.startActivity(browserIntent);
     }
 
     public void clickRec(Chronometer chronometer, Recorder recorder) {

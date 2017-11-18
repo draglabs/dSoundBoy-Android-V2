@@ -46,8 +46,8 @@ import cz.msebera.android.httpclient.ParseException;
 @SuppressWarnings("DefaultFileTemplate")
 public class APIutils {
 
-    private static final String END_POINT = "http://api.draglabs.com";
-    private static final String API_VERSION = "/v1.01";
+    private static final String END_POINT = "http://api.draglabs.com/api";
+    private static final String API_VERSION = "/v2.0";
 
     private static final String POST_EMAIL_URL = "";
     private static final String POST_MUSIC_CONSOLIDATOR_URL = "";
@@ -103,9 +103,7 @@ public class APIutils {
         final PrefUtils prefUtils = new PrefUtils(activity);
         prefUtils.saveAccessToken(facebookAccessToken);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("facebook_id", facebookID);
-        requestParams.put("access_token", facebookAccessToken);
+        RequestParams requestParams = APIparams.authenticateUser(facebookID, facebookAccessToken);
 
         //JsonHttpHandler jsonHttpHandler = new JsonHttpHandler();
         //JSONObject response = jsonHttpHandler.getResponse();
@@ -139,19 +137,10 @@ public class APIutils {
     }
 
     public static void soloUpload(String uniqueID, String filename, String path, String notes, Date startTime, Date endTime) {
-        // DATE FORMAT: 2017-07-27T23:48:48
-        //              yyyy-MM-dd'T'HH:mm:ss
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US); // TODO: SAVE/ACCESS START/END TIMES
-        // TODO: Date ___time = Calendar.getInstance().getTime();
+        String newPOST = SOLO_UPLOAD_RECORDING + "/" + uniqueID;
 
-        String newPOST = SOLO_UPLOAD_RECORDING + "/" + uniqueID; // TODO: SAVE/ACCESS UNIQUE ID
+        RequestParams requestParams = APIparams.soloUpload(uniqueID, filename, notes, startTime, endTime);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("fileName", filename);
-        requestParams.put("notes", notes);
-        requestParams.put("start_time", dateFormat.format(startTime));
-        requestParams.put("end_time", dateFormat.format(endTime));
         upload("audioFile", path, newPOST, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
@@ -181,17 +170,9 @@ public class APIutils {
     }
 
     public static void startJam(Activity activity, String uniqueID, String jamLocation, String jamName, Location location) {
-        double jamLatitude = location.getLatitude();
-        double jamLongitude = location.getLongitude();
-
         final PrefUtils prefUtils = new PrefUtils(activity);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jam_location", jamLocation);
-        requestParams.put("jam_name", jamName);
-        requestParams.put("jam_lat", jamLatitude);
-        requestParams.put("jam_long", jamLongitude);
+        RequestParams requestParams = APIparams.startJam(uniqueID, jamLocation, jamName, location);
 
         post(START_JAM, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -235,9 +216,7 @@ public class APIutils {
     public static void joinJam(Activity activity, String uniqueID, int pin) {
         final PrefUtils prefUtils = new PrefUtils(activity);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("unique_id", uniqueID);
-        requestParams.put("pin", pin);
+        RequestParams requestParams = APIparams.joinJam(uniqueID, pin);
 
         post(JOIN_JAM, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -279,17 +258,10 @@ public class APIutils {
 
     public static void jamRecordingUpload(String uniqueID, String jamID, String filename, String path, String notes, Date startTime, Date endTime, View view) { // convert through binary data and multi-part upload
         String newPOST = JAM_RECORDING_UPLOAD + "/" + uniqueID + "/jamid/" + jamID;
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US); // TODO: SAVE/ACCESS START/END TIMES
 
         Log.d("newPOST: ", newPOST);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jamid", jamID); // TODO: do something when there is error, not just give dummy response **!!**!!
-        requestParams.put("fileName", filename);
-        requestParams.put("notes", notes);
-        requestParams.put("startTime", dateFormat.format(startTime));
-        requestParams.put("endTime", dateFormat.format(endTime));
+        RequestParams requestParams = APIparams.jamRecordingUpload(uniqueID, jamID, filename, notes, startTime, endTime);
         //String string = uniqueID + "\n" + jamID + "\n" + filename + "\n" + notes + "\n" + startTime + "\n" + endTime;
         Snackbar.make(view, uniqueID, Snackbar.LENGTH_LONG).show();
         Snackbar.make(view, jamID, Snackbar.LENGTH_LONG).show();
@@ -332,13 +304,7 @@ public class APIutils {
 
         Log.d("newPOST: ", newPOST);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jamid", jamID); // TODO: do something when there is error, not just give dummy response **!!**!!
-        requestParams.put("fileName", filename);
-        requestParams.put("notes", notes);
-        requestParams.put("startTime", startTime);
-        requestParams.put("endTime", endTime);
+        RequestParams requestParams = APIparams.jamRecordingUpload(uniqueID, jamID, filename, notes, startTime, endTime);
         //String string = uniqueID + "\n" + jamID + "\n" + filename + "\n" + notes + "\n" + startTime + "\n" + endTime;
         Snackbar.make(view, uniqueID, Snackbar.LENGTH_LONG).show();
         Snackbar.make(view, jamID, Snackbar.LENGTH_LONG).show();
@@ -377,9 +343,7 @@ public class APIutils {
     }
 
     public static void exitJam(String uniqueID, String jamID) {
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jam_id", jamID);
+        RequestParams requestParams = APIparams.exitJam(uniqueID, jamID);
 
         post(EXIT_JAM, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -412,9 +376,7 @@ public class APIutils {
     public static void getCollaborators(Activity activity, String uniqueID, String jamID) {
         final PrefUtils prefUtils = new PrefUtils(activity);
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jam_id", jamID);
+        RequestParams requestParams = APIparams.getCollaborators(uniqueID, jamID);
 
         get(GET_COLLABORATORS, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -450,9 +412,8 @@ public class APIutils {
         String newPOST = GET_USER_ACTIVITY + "/";
         // TODO: add date as part of the request header
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        //requestParams.put("jam_id", jamID);
+        RequestParams requestParams = APIparams.getUserActivity(uniqueID);
+
         Header[] headers = new Header[]{new Header() {
             @Override
             public String getName() {
@@ -508,9 +469,8 @@ public class APIutils {
     }
 
     public static void getJamDetails(String userID, String jamID, Activity activity, Context context) {
-        final PrefUtils prefUtils = new PrefUtils(activity);
+        RequestParams requestParams = APIparams.getJamDetails();
 
-        RequestParams requestParams = new RequestParams();
         Header[] headers = new Header[]{new Header() {
             @Override
             public String getName() {
@@ -573,7 +533,7 @@ public class APIutils {
     }
 
     public static void notifyUser(String jamID, Context context) {
-        RequestParams requestParams = new RequestParams("jam_id", jamID);
+        RequestParams requestParams = APIparams.notifyUser(jamID);
 
         post(NOTIFY_USER, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -607,7 +567,7 @@ public class APIutils {
     }
 
     public static void generateXML(String jamID, JSONObject jamDetails, Context context) {
-        RequestParams requestParams = new RequestParams("jamid", jamID);
+        RequestParams requestParams = APIparams.generateXML(jamID);
 
         post(GENERATE_XML + jamID, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -635,9 +595,7 @@ public class APIutils {
     }
 
     public static void compress(String jamID, String userID, JSONObject jamDetails, Context context) {
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("jam_id", jamID);
-        requestParams.put("user_id", userID);
+        RequestParams requestParams = APIparams.compress(jamID, userID);
 
         post(COMPRESS, requestParams, new JsonHttpResponseHandler() {
             @Override

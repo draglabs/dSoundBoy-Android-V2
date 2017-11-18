@@ -2,66 +2,43 @@ package com.draglabs.dsoundboy.dsoundboy.Activities;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
+
 import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.res.Configuration;
-import android.location.Location;
 import android.location.LocationManager;
-import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.SystemClock;
-import android.preference.PreferenceManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import com.draglabs.dsoundboy.dsoundboy.Accessories.Recorder;
-import com.draglabs.dsoundboy.dsoundboy.BuildConfig;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine;
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
-import com.facebook.AccessToken;
-import com.facebook.FacebookSdk;
-import com.facebook.LoggingBehavior;
-import com.facebook.Profile;
-import com.facebook.appevents.AppEventsLogger;
-import com.viralypatel.sharedpreferenceshelper.lib.SharedPreferencesHelper;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import com.facebook.AccessToken;
+import com.facebook.Profile;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -70,28 +47,12 @@ import cafe.adriel.androidaudiorecorder.model.AudioChannel;
 import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
 import cafe.adriel.androidaudiorecorder.model.AudioSource;
 
-public class HomeActivity extends AppCompatActivity implements CallbackListener {
+public class HomeActivity extends AppCompatActivity {
 
-    private Button about;
-    private Button contact;
-    private Button enterInfo;
-    private Button viewRecordings;
-
-    private String emailText;
-    private String descriptionText;
-    private String artistNameText;
-    private String venueText;
     private String[] bandInfo;
-    private String jamID;
-
-    private Intent enterInfoIntent;
-
     private Recorder recorder;
 
     private LocationManager locationManager;
-
-    private String uniqueUserID;
-    private int jamPIN;
 
     private PrefUtils prefUtils;
 
@@ -135,21 +96,8 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         prefUtils = new PrefUtils(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 
-        //about = (Button)findViewById(R.id.about);
-        //contact = (Button)findViewById(R.id.contact);
-        //submit = (Button)findViewById(R.id.submit);
-
         //chronometer.setFormat("HH:MM:SS:ss");
 
-        /*viewRecordings = (Button)findViewById(R.id.button_view_recordings);
-        createJam = (Button)findViewById(R.id.button_create_jam);
-        createJam.setEnabled(false);
-        joinJam = (Button)findViewById(R.id.button_join_jam);
-        joinJam.setEnabled(false);
-        exitJam = (Button)findViewById(R.id.button_exit_jam);
-        exitJam.setEnabled(false);
-        jamPINtext = (EditText)findViewById(R.id.text_jam_pin);
-        stop = (Button)findViewById(R.id.stop);*/
         bandInfo = PrefUtils.getBandData(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO },10);
@@ -158,7 +106,7 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         }
 
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
-        //System.out.println(AccessToken.getCurrentAccessToken());
+        System.out.println(AccessToken.getCurrentAccessToken());
 
         initializeButtons();
         initializeDrawer();
@@ -263,6 +211,10 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         return super.onPrepareOptionsMenu(menu);
     }
 
+    /**
+     * onPostCreate method
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -270,29 +222,42 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         settingsMenuDrawerToggle.syncState();
     }
 
+    /**
+     * onConfigurationChanged method
+     * @param configuration the new configuration
+     */
     @Override
     public void onConfigurationChanged(Configuration configuration) {
         super.onConfigurationChanged(configuration);
         settingsMenuDrawerToggle.onConfigurationChanged(configuration);
     }
 
+    /**
+     * Opens Activity depending on the button clicked
+     * @param item the button clicked
+     * @return true if selected, none if doing something
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // pass the event to ActionBarDrawerToggle, if it returns
         // true, then it has handled the app icon touch event
         if (settingsMenuDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+            switch (item.getItemId()) {
+                case R.string.title_activity_about:
+                    homeRoutine.clickAbout();
+                    break;
+                case R.string.title_activity_contact:
+                    homeRoutine.clickContact();
+                    break;
+                case R.string.title_activity_enter_info:
+                    homeRoutine.clickEnterInfo();
+                    break;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
         } // pick activities here
         // handle other action bar items here
-        return super.onOptionsItemSelected(item);
-    }
-
-    public void clickAbout(View view) {
-        homeRoutine.clickAbout();
-    }
-
-    public void clickContact(View view) {
-        homeRoutine.clickContact();
+        return true;
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -351,41 +316,7 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         homeRoutine.joinJam();
     }
 
-    public void clickLogoLink(View view) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"));
-        startActivity(browserIntent);
-    }
-
-    public void clickEnterInfo(View view) {
-        //startStop.setEnabled(true);
-        enterInfoIntent = new Intent(this, EnterInfoActivity.class);
-        startActivity(enterInfoIntent);
-    }
-
-    public void clickLogin(View view) {
-        //login.toggle();
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void clickViewRecordings(View view) {
-       // APIutils.getUserActivity(this, uniqueUserID, this);
-
-        Intent intent = new Intent(this, ListOfRecordingsActivity.class);
-        startActivity(intent);
-    }
-
-    public void uniqueUserIDset() {
-        String uniqueUserID = prefUtils.getUniqueUserID();
-        Log.v("Unique User ID (MA): ", uniqueUserID + "");
-        // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
-    }
-
-    /*public void clickJoinJam(View view) {
-        homeRoutine.clickJoinJam();
-    }*/
-
-    public void jamIDset() {
+    /*public void jamIDset() {
         Log.v("Jam ID: ", prefUtils.getJamID() + "");
     }
 
@@ -409,12 +340,7 @@ public class HomeActivity extends AppCompatActivity implements CallbackListener 
         Log.v("User Activity: ", prefUtils.getUserActivity() + "");
     }
 
-    @Override
-    public void getJamDetailsSet() {
-        Log.v("Jam Details: ", prefUtils.getJamDetails() + " ");
-    }
-
     private String[] createArray(String _0, String _1, String _2, String _3) {
         return new String[]{_0, _1, _2, _3};
-    }
+    }*/
 }

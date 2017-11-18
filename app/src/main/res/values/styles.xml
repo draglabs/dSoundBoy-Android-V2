@@ -10,7 +10,7 @@
         <item name="windowBackground">@color/colorDLBackground</item>
     </style>
 
-    <style name="DragLabs" parent="Theme.AppCompat.NoActionBar">
+    <style name="DragLabs" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorDLRed1</item>
         <item name="colorPrimaryDark">@color/colorDLRed1</item>
         <item name="colorAccent">@color/colorAccent</item>
