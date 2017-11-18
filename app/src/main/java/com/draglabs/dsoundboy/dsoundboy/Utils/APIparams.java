@@ -11,10 +11,17 @@ import java.util.Locale;
 
 /**
  * Created by davrukin on 11/17/17.
+ * Holds and returns parameters for all the API functions
  */
 
 class APIparams {
 
+    /**
+     * Used for the Authenticate User API with the Jam API
+     * @param facebookID the user's Facebook ID
+     * @param facebookAccessToken the Access Token from the Facebook API
+     * @return requestParams
+     */
     static RequestParams authenticateUser(String facebookID,
                                           String facebookAccessToken) {
 
@@ -25,6 +32,15 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Solo Recording Upload API
+     * @param uniqueID the API's unique user ID
+     * @param filename the name of the recorded file
+     * @param notes notes from the recording
+     * @param startTime the start time of the recording
+     * @param endTime the end time of the recording
+     * @return requestParams
+     */
     static RequestParams soloUpload(String uniqueID,
                                     String filename,
                                     String notes,
@@ -46,6 +62,14 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Start Jam API
+     * @param uniqueID the API's unique user ID
+     * @param jamLocation the physical location of the user, latitude and longitude extracted
+     * @param jamName the name of the jam
+     * @param location the name of the location of the jam
+     * @return requestParams
+     */
     static RequestParams startJam(String uniqueID,
                                   String jamLocation,
                                   String jamName,
@@ -64,6 +88,12 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Join Jam API
+     * @param uniqueID the APIs unique user ID
+     * @param pin the jam PIN
+     * @return requestParams
+     */
     static RequestParams joinJam(String uniqueID,
                                  int pin) {
 
@@ -74,6 +104,16 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Jam Recording Upload API
+     * @param uniqueID the APIs unique user ID
+     * @param jamID the jam ID
+     * @param filename the name of the recorded file
+     * @param notes notes from the recording
+     * @param startTime the start time of the jam
+     * @param endTime the end time of the jam
+     * @return requestParams
+     */
     static RequestParams jamRecordingUpload(String uniqueID,
                                             String jamID,
                                             String filename,
@@ -94,6 +134,16 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Jam Recording Upload API
+     * @param uniqueID the APIs unique user ID
+     * @param jamID the jam ID
+     * @param filename the name of the recorded file
+     * @param notes notes from the recording
+     * @param startTime the start time of the jam
+     * @param endTime the end time of the jam
+     * @return requestParams
+     */
     static RequestParams jamRecordingUpload(String uniqueID,
                                             String jamID,
                                             String filename,
@@ -114,6 +164,12 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Exit Jam API
+     * @param uniqueID the API's unique user ID
+     * @param jamID the jam ID
+     * @return requestParams
+     */
     static RequestParams exitJam(String uniqueID,
                                  String jamID) {
 
@@ -124,6 +180,12 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Get Collaborators API
+     * @param uniqueID the API's unique user ID
+     * @param jamID the jam ID
+     * @return requestParams
+     */
     static RequestParams getCollaborators(String uniqueID,
                                           String jamID) {
 
@@ -134,6 +196,11 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Get User Activity API
+     * @param uniqueID the API's unique user ID
+     * @return requestParams
+     */
     static RequestParams getUserActivity(String uniqueID) {
 
         RequestParams requestParams = new RequestParams();
@@ -142,10 +209,19 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Get Jam Details API
+     * @return empty requestParams
+     */
     static RequestParams getJamDetails() {
         return new RequestParams();
     }
 
+    /**
+     * Used for the Notify User API
+     * @param jamID the jam ID
+     * @return requestParams
+     */
     static RequestParams notifyUser(String jamID) {
 
         RequestParams requestParams = new RequestParams();
@@ -154,6 +230,11 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Generate XML API
+     * @param jamID the jam ID
+     * @return requestParams
+     */
     static RequestParams generateXML(String jamID) {
 
         RequestParams requestParams = new RequestParams();
@@ -162,6 +243,12 @@ class APIparams {
         return requestParams;
     }
 
+    /**
+     * Used for the Compressor API
+     * @param jamID the jam ID
+     * @param userID the API's unique user ID
+     * @return requestParams
+     */
     static RequestParams compress(String jamID,
                                   String userID) {
 
