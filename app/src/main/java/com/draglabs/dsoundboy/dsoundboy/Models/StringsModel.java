@@ -18,6 +18,9 @@ public final class StringsModel {
     public static final String NOTIFY_USER = "Notify User";
     public static final String GET_JAM_DETAILS = "Get Jam Details";
 
+    private static final String JAM = "/jam/";
+    private static final String USER = "/user/";
+
     public enum jsonTypes {
         CODE("code"),
         USER_ID("user_id"),
@@ -45,6 +48,30 @@ public final class StringsModel {
 
         public String type() {
             return name;
+        }
+    }
+
+    public enum apiPaths {
+        AUTHENTICATE_USER(JAM + "auth"),
+        START_JAM(JAM + "start"),
+        JOIN_JAM(JAM + "join"),
+        JAM_RECORDING_UPLOAD(JAM + "upload/userid"),
+        EXIT_JAM(JAM + "exit"),
+        GET_COLLABORATORS(JAM + "collaborators"),
+        COMPRESS(JAM + "archive"),
+        NOTIFY_USER(JAM + "notifyuser"),
+        GET_USER_ACTIVITY(USER + "activity/id"),
+        GET_JAM_DETAILS(USER + "jam-details?jamId="),
+        SOLO_UPLOAD_RECORDING("/soloupload/id");
+
+        private final String path;
+
+        apiPaths(String path) {
+            this.path = path;
+        }
+
+        public String path() {
+            return path;
         }
     }
 }

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.draglabs.dsoundboy.dsoundboy">
 
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="26" />
+        android:targetSdkVersion="27" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -28,7 +29,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/DragLabs">
+        android:theme="@style/DragLabs"
+        tools:targetApi="m">
         <meta-data
             android:name="com.facebook.sdk.ApplicationID"
             android:value="@string/facebook_app_id" />
@@ -121,7 +123,7 @@
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider147689855771285"
-            android:exported="true" />
+            android:exported="false" />
 
         <activity
             android:name=".Activities.ListOfRecordingsActivity"

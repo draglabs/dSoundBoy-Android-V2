@@ -1,48 +1,23 @@
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.annotation.TargetApi
 import android.app.Activity
-import android.app.LoaderManager
 import android.content.Context
-import android.content.CursorLoader
 import android.content.Intent
-import android.content.Loader
-import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
-import android.os.AsyncTask
-import android.os.Build
-import android.os.Bundle
-import android.provider.ContactsContract
 import android.support.design.widget.Snackbar
-import android.text.TextUtils
 import android.util.Log
 import android.view.View
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.TextView
-
 import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.LoginActivity
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils
-import com.facebook.AccessToken
-import com.facebook.AccessTokenTracker
-import com.facebook.CallbackManager
-import com.facebook.FacebookCallback
-import com.facebook.FacebookException
+import com.facebook.*
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
-
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.HashMap
-
-import android.Manifest.permission.READ_CONTACTS
+import java.util.*
 
 /**
  * Created by davrukin on 11/2/17.

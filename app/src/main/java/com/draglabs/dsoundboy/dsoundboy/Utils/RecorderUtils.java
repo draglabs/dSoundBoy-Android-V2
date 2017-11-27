@@ -27,7 +27,8 @@ import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 /**
- * Created by davrukin on 8/23/17.
+ * <p>Created by davrukin on 8/23/17.</p>
+ * <p>Performs functions pertaining to the recorder</p>
  */
 
 @SuppressWarnings("DefaultFileTemplate")
@@ -38,6 +39,12 @@ public class RecorderUtils {
     private RecorderModel recorderModel;
     private Thread recordingThread;
 
+    /**
+     * Constructor for the RecorderUtils
+     * @param context the app's context
+     * @param bandData the band's data
+     * @param activity the activity calling this constructor
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public RecorderUtils(Context context, String[] bandData, Activity activity) {
         this.recorderModel = new RecorderModel();
@@ -56,6 +63,10 @@ public class RecorderUtils {
         recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement()));
     }
 
+    /**
+     * Starts recdording
+     * @param activity the activity calling this method
+     */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public void startRecording(Activity activity) {
         if (checkPermissions()) {
@@ -78,10 +89,10 @@ public class RecorderUtils {
                 try {
                     File recording = new File(recorderModel.getAudioSavePathInDevice());
                     if (!recording.getParentFile().exists()) {
-                        recording.getParentFile().mkdirs();
+                        recording.getParentFile().mkdirs(); // result ignored
                     }
                     if (!recording.exists()) {
-                        recording.createNewFile();
+                        recording.createNewFile(); // result ignored
                     }
 
                     recorderModel.setRecording(true);
@@ -105,6 +116,9 @@ public class RecorderUtils {
         }
     }
 
+    /**
+     * Stops recording
+     */
     public void stopRecording() {
         // TODO: when "Submit" is clicked, finalize recording with this method
         recorderModel.setEndTime(new Date());
@@ -126,10 +140,18 @@ public class RecorderUtils {
         Toast.makeText(context, "Recording Completed.", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Resets the recording
+     */
     public void resetRecording() {
         recorderModel.getMediaRecorder().reset();
     }
 
+    /**
+     * Converts an array of the short data type to an array of bytes, used for the recorder
+     * @param shorts an array of the short data type
+     * @return an array of bytes
+     */
     private byte[] shortToByte(short[] shorts) {
         int shortArraySize = shorts.length;
         byte[] bytes = new byte[shortArraySize * 2];
@@ -141,6 +163,10 @@ public class RecorderUtils {
         return bytes;
     }
 
+    /**
+     * Write the audio data to the file
+     * @param pathname the local path to the file
+     */
     private void writeAudioDataToFile(String pathname) {
         short[] shorts = new short[recorderModel.getBufferElementsToRec()];
 
@@ -170,6 +196,11 @@ public class RecorderUtils {
         }
     }
 
+    /**
+     * Creates a random audio pathname
+     * @param length the length of the name
+     * @return the name
+     */
     public String createRandomAudioPathname(int length) {
         StringBuilder stringBuilder = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
@@ -178,10 +209,25 @@ public class RecorderUtils {
         return stringBuilder.toString();
     }
 
+    /**
+     * Creates a pathname based on an array of strings containing the band's data
+     * @param data the band's data
+     * @param extension the file extension
+     * @return the new file's pathname
+     */
     private String createAudioPathname(String[] data, String extension) {
         return createAudioPathname(data[0], data[1], data[2], data[3], new Date()) + extension;
     }
 
+    /**
+     * Creates a pathname based on a band's data
+     * @param bandName the band's name
+     * @param description a description of the recording
+     * @param venue where the recording was made
+     * @param email the band's email
+     * @param date the date of the recording
+     * @return the name of the file
+     */
     private String createAudioPathname(String bandName, String description, String venue, String email, Date date) {
         // format: BAND-NAME_GENRE-NAME_VENUE_EMAIL_DAY-MONTH-YEAR_HOUR:MINUTE:SECOND:MILLISECOND
         Locale currentLocale = Locale.getDefault();
@@ -193,10 +239,19 @@ public class RecorderUtils {
         return (bandName + "_" + description + "_" + email + "_" + venue + "_" + dateString);
     }
 
+    /**
+     * Requests permission to write to external storage and to record audio
+     */
     private void requestPermission() {
         ActivityCompat.requestPermissions(activity, new String[]{WRITE_EXTERNAL_STORAGE, RECORD_AUDIO}, 1);
     }
 
+    /**
+     * Performs actions once permissions have been granted
+     * @param requestCode the request code
+     * @param permissions string array of the permissions
+     * @param grantResults integer array of the permission results
+     */
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch(requestCode) {
             case 1:
@@ -214,16 +269,28 @@ public class RecorderUtils {
         }
     }
 
+    /**
+     * Checks to see if the permissions have been accepted
+     * @return true if accepted, false if not
+     */
     private boolean checkPermissions() {
         int result = ContextCompat.checkSelfPermission(context, WRITE_EXTERNAL_STORAGE);
         int result1 = ContextCompat.checkSelfPermission(context, RECORD_AUDIO);
         return ((result == PackageManager.PERMISSION_GRANTED) && (result1 == PackageManager.PERMISSION_GRANTED));
     }
 
+    /**
+     * Checks to see if the app can record audio
+     * @return true if yes, false if no
+     */
     private boolean checkAudioPermissions() {
         return ActivityCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Gets the local path where the audio is saved
+     * @return the local path where the audio is saved
+     */
     public String getAudioSavePathInDevice() {
         return recorderModel.getAudioSavePathInDevice();
     }

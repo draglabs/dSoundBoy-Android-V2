@@ -1,11 +1,10 @@
-
-<svg width="362px" height="362px" viewBox="0 0 362 362" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="362px" height="362px" viewBox="0 0 362 362" version="1.1" xmlns="http://www.w3.org/2000/svg">
     <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
     <desc>Created with Sketch.</desc>
-    <defs></defs>
+    <defs />
     <g id="30OCT2017" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" fill-opacity="0.680000007">
         <g id="main-last" transform="translate(-7.000000, -94.000000)" fill="#A01021">
-            <circle id="Oval-Copy" cx="188" cy="275" r="181"></circle>
+            <circle id="Oval-Copy" cx="188" cy="275" r="181" />
         </g>
     </g>
 </svg>

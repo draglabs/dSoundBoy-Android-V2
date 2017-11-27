@@ -1,12 +1,9 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
-import android.app.AlertDialog;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.RequiresApi;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,26 +11,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.CheckBox;
-import android.widget.ImageButton;
 import android.widget.TableLayout;
-import android.widget.TableRow;
-import android.widget.TextView;
-import android.widget.ToggleButton;
 
-import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfRecordingsRoutine;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -52,7 +35,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
     private boolean isPlaying = false;
     private boolean isInitiallyPlaying = false;
 
-    private ArrayList<Object> selectedItems;
+    private ArrayList<Object> selectedItems; // updated, not queried
     private ArrayList<String> jamIDs;
 
     /**
@@ -130,11 +113,8 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
     /**
      * Listens to when the recording is being played and does stuff, probably not needed
      */
-    private View.OnClickListener playStop = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
+    private View.OnClickListener playStop = view -> {
 
-        }
     };
 
     /**
@@ -194,7 +174,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
 
     /**
      * Stops playing the currently-playing track
-     * @param mediaPlayer
+     * @param mediaPlayer the media player
      */
     private void stopTrack(MediaPlayer mediaPlayer) {
         ListOfRecordingsRoutine.stopTrack(mediaPlayer);

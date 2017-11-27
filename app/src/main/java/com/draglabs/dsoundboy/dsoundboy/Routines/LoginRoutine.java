@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
-import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 import com.facebook.AccessToken;
@@ -25,9 +22,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Created by davrukin on 11/2/17.
+ * <p>Created by davrukin on 11/2/17.</p>
+ * <p>Performs login tasks</p>
  */
-
 public class LoginRoutine implements CallbackListener {
 
     private HashMap<String, Object> buttons;
@@ -39,8 +36,12 @@ public class LoginRoutine implements CallbackListener {
     private AccessTokenTracker accessTokenTracker;
     private AccessToken accessToken;
 
-    private String uniqueUserID;
-
+    /**
+     * The constructor for the Login Routine
+     * @param buttons
+     * @param activity
+     * @param context
+     */
     public LoginRoutine(HashMap<String, Object> buttons, Activity activity, Context context) {
         this.buttons = buttons;
         this.activity = activity;
@@ -49,6 +50,9 @@ public class LoginRoutine implements CallbackListener {
         this.callbackManager = CallbackManager.Factory.create();
     }
 
+    /**
+     * The Facebook authentication routine
+     */
     public void clickFacebookLogin() {
         LoginButton facebookLoginButton = (LoginButton)buttons.get("facebookLoginButton");
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
@@ -87,12 +91,15 @@ public class LoginRoutine implements CallbackListener {
         });
     }
 
+    /**
+     * Authenticates the user with the dlsAPI
+     */
     public void authenticateUser() {
         APIutils.authenticateUser(activity);
         prefUtils = new PrefUtils(activity);
         prefUtils.addListener(this);
         uniqueUserIDset();
-        uniqueUserID = prefUtils.getUniqueUserID();
+        String uniqueUserID = prefUtils.getUniqueUserID();
 
         Toast.makeText(context, "Unique ID: " + prefUtils.getUniqueUserID(), Toast.LENGTH_LONG).show();
         Log.d("Unique ID: ", uniqueUserID);
@@ -102,42 +109,70 @@ public class LoginRoutine implements CallbackListener {
         activity.startActivity(intent);
     }
 
+    /**
+     * Saves the Facebook credentials in PrefUtils
+     * @param loginResult the login result
+     */
     public void saveFacebookCredentials(LoginResult loginResult) {
         prefUtils = new PrefUtils(activity); // add listener like above?
         prefUtils.saveAccessToken(loginResult.getAccessToken().getToken());
     }
 
+    /**
+     * Callback for the setting of the dlsAPI user ID and logs it
+     */
     public void uniqueUserIDset() {
         Log.v("Unique User ID: ", new PrefUtils(activity).getUniqueUserID() + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
+    /**
+     * Callback for the setting of the jam ID and logs it
+     */
     public void jamIDset() {
         Log.v("Jam ID: ", prefUtils.getJamID() + "");
     }
 
+    /**
+     * Callback for the setting of the jam PIN and logs it
+     */
     public void jamPINset() {
         Log.v("Jam PIN: ", prefUtils.getJamPIN() + "");
     }
 
+    /**
+     * Callback for the setting of the jam's start time and logs it
+     */
     public void jamStartTimeSet() {
         Log.v("Jam Start Time: ", prefUtils.getJamStartTime() + "");
     }
 
+    /**
+     * Callback for the setting of the jam's end time and logs it
+     */
     public void jamEndTimeSet() {
         Log.v("Jam End Time: ", prefUtils.getJamEndTime() + "");
     }
 
+    /**
+     * Callback for the setting of the jam's collaborators and logs them
+     */
     public void getCollaboratorsSet() {
         Log.v("Collaborators: ", prefUtils.getCollaborators() + "");
 
     }
 
+    /**
+     * Callback for the setting of the user's activity and logs it
+     */
     public void getUserActivitySet() {
         Log.v("User Activity: ", prefUtils.getUserActivity() + "");
 
     }
 
+    /**
+     * Callback for the setting of the jam's details and logs them
+     */
     public void getJamDetailsSet() {
         Log.v("Jam Details: ", prefUtils.getJamDetails() + "");
     }

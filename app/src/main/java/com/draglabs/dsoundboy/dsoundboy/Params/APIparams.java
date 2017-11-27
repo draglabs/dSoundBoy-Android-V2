@@ -4,6 +4,8 @@ import android.location.Location;
 
 import com.loopj.android.http.RequestParams;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -250,12 +252,30 @@ public class APIparams {
      * @return requestParams
      */
     public static RequestParams compress(String jamID,
-                                  String userID) {
+                                         String userID) {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("jam_id", jamID);
         requestParams.put("user_id", userID);
 
+        return requestParams;
+    }
+
+    /**
+     * Creates the request parameters for a file upload
+     * @param filename the file name
+     * @param path the local file path
+     * @return the request parameters
+     */
+    public static RequestParams createRequestParamsForUpload(String filename,
+                                                             String path) {
+        File file = new File(path);
+        RequestParams requestParams = new RequestParams();
+        try {
+            requestParams.put(filename, file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         return requestParams;
     }
 }

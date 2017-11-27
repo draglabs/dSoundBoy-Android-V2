@@ -8,53 +8,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 /**
- * Created by davrukin on 8/15/17.
+ * <p>Created by davrukin on 8/15/17.</p>
+ * <p>Parses incoming JSONs for relevant info</p>
  */
 
 @SuppressWarnings("DefaultFileTemplate")
-class FileUtils {
-
-    public static void startRecording() {
-
-    }
-
-    public static void endRecording() {
-
-    }
-
-    public static byte[] shortToByte(short[] data) {
-        return null;
-
-    }
-
-    public static void writeAudioDataToFile(String pathname) {
-
-    }
-
-    public static void MediaRecorderReady() {
-
-    }
-
-    public static String createAudioFileName(String bandName, String genreName, String venue, String email, Date date) {
-        // format: BAND-NAME_GENRE-NAME_VENUE_EMAIL_DAY-MONTH-YEAR_HOUR:MINUTE:SECOND:MILLISECOND
-        Locale currentLocale = Locale.getDefault();
-        String pattern = "dd-MM-yyyy_HH:mm:ss:SSS";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, currentLocale);
-        String dateString = simpleDateFormat.format(date);
-
-        return (bandName + "_" + genreName + "_" + email + "_" + venue + "_" + dateString);
-    }
-
-    public static void requestPermission() {
-
-    }
-
+class JsonUtils {
     /*@Override
     public static void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch(requestCode) {
@@ -80,9 +42,6 @@ class FileUtils {
         return ((result == PackageManager.PERMISSION_GRANTED) && (result1 == PackageManager.PERMISSION_GRANTED));
     }*/
 
-    public static void submitRecordingsToServer() {
-
-    }
 
     /**
      * |          Task         	|                     Post Types                     	|                                                   ResponseModel Types                                                   	|
@@ -96,11 +55,11 @@ class FileUtils {
      | Get Collaborators     	| user_id, jam_id                                    	| code, collaborators array: email, name, facebook_id, id                                                            	|
      | Get User Activity     	| user_id                                            	| recordings array: s3url, fileName, jamID, startTime, endTime, notes, _id; jams array: id, name, startTime, endTime 	|
      | Notify User           	| jam_id                                             	| code, message                                                                                                      	|
-     * @param callingMethod
-     * @param jsonObject
-     * @param data
-     * @return
-     * @throws JSONException
+     * @param callingMethod the calling method
+     * @param jsonObject the json object to parse
+     * @param data the data type being looked for
+     * @return the information being looked for
+     * @throws JSONException if there is one
      */
     public static String getJsonObject(String callingMethod, JSONObject jsonObject, String data) throws JSONException {
         int code = jsonObject.getInt("code");
@@ -233,5 +192,4 @@ class FileUtils {
                 return standardError;
         }
     }
-
 }

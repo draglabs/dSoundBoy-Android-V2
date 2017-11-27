@@ -124,11 +124,7 @@ public class PrefUtils {
     }
 
     public boolean hasJamPIN() {
-        if (getJamPIN() != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return getJamPIN() != null;
     }
 
     public void clearJamPIN() {
@@ -152,11 +148,7 @@ public class PrefUtils {
     }
 
     public boolean hasUniqueUserID() { // TODO: rename isAuthorized?
-        if (getUniqueUserID() != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return getUniqueUserID() != null;
     }
 
     public void clearUniqueUserID() {

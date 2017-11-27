@@ -34,9 +34,9 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
- * Created by davrukin on 11/3/17.
+ * <p>Created by davrukin on 11/3/17.</p>
+ * <p>The home routine which shows all the recording screen stuff</p>
  */
-
 public class HomeRoutine {
 
     private HashMap<String, Object> buttons;
@@ -44,6 +44,12 @@ public class HomeRoutine {
     private Context context;
     private PrefUtils prefUtils;
 
+    /**
+     * Constructor for the Home Routine
+     * @param buttons the buttons seen on the UI
+     * @param activity the activity calling the routine
+     * @param context the context calling the routine
+     */
     public HomeRoutine(HashMap<String, Object> buttons, Activity activity, Context context) {
         this.buttons = buttons;
         this.activity = activity;
@@ -51,6 +57,13 @@ public class HomeRoutine {
         this.prefUtils = new PrefUtils(activity);
     }
 
+    /**
+     * What happens when selecting an item in the menu list
+     * @param position the item's position in the list
+     * @param settingsMenuItemTitles the titles of the menu items
+     * @param settingsMenuDrawerLayout the layout of the drawer
+     * @param settingsMenuItemList the list of the items in the drawer
+     */
     public void selectItem(int position, String[] settingsMenuItemTitles, DrawerLayout settingsMenuDrawerLayout, ListView settingsMenuItemList) {
         // from sample: https://developer.android.com/training/implementing-navigation/nav-drawer.html
         // create a few fragment and specify the activity to launch based on position
@@ -69,12 +82,22 @@ public class HomeRoutine {
         settingsMenuDrawerLayout.closeDrawer(settingsMenuItemList);
     }
 
+    /**
+     * Contains a single fragment that stores the nav drawer
+     */
     public static class ItemFragment extends Fragment {
         // from https://developer.android.com/training/implementing-navigation/nav-drawer.html
         public static final String ARG_ITEM_NAME = "item_name";
 
         public ItemFragment() {}
 
+        /**
+         * Creates the view for the fragment
+         * @param layoutInflater inflates the layout
+         * @param container contains the view group
+         * @param savedInstanceState the saved instance state
+         * @return the view created by the fragment
+         */
         @Override
         public View onCreateView(LayoutInflater layoutInflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -91,32 +114,52 @@ public class HomeRoutine {
         }
     }
 
+    /**
+     * Opens the About Activity
+     */
     public void clickAbout() {
         Intent intent = new Intent(context, AboutActivity.class);
         activity.startActivity(intent);
     }
 
+    /**
+     * Opens the Contact Activity
+     */
     public void clickContact() {
         Intent intent = new Intent(context, ContactActivity.class);
         activity.startActivity(intent);
     }
 
+    /**
+     * Opens the Enter Info Activity
+     */
     public void clickEnterInfo() {
         Intent intent = new Intent(context, EnterInfoActivity.class);
         activity.startActivity(intent);
     }
 
+    /**
+     * Opens the View Recordings Activity
+     */
     public void clickViewRecordings() {
         // APIutils.getUserActivity(this, uniqueUserID, this);
         Intent intent = new Intent(activity, ListOfRecordingsActivity.class);
         activity.startActivity(intent);
     }
 
+    /**
+     * Goes to the company website when the logo is clicked
+     */
     public void clickLogoLink() {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"));
         activity.startActivity(browserIntent);
     }
 
+    /**
+     * Starts recording audio
+     * @param chronometer
+     * @param recorderUtils
+     */
     public void clickRec(Chronometer chronometer, RecorderUtils recorderUtils) {
         createJam();
 
@@ -127,6 +170,14 @@ public class HomeRoutine {
         Toast.makeText(context, "Started recording.", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Stops recording audio
+     * @param view the view calling the method
+     * @param recorderUtils the recorder settings
+     * @param chronometer stops the chronometer
+     * @param recordingStartTime submits the recording's start time to the server
+     * @param recordingEndTime submits the recording's end time to the server
+     */
     public void clickStop(View view, RecorderUtils recorderUtils, Chronometer chronometer, Date recordingStartTime, Date recordingEndTime) {
         recorderUtils.stopRecording();
         chronometer.stop();
@@ -136,6 +187,13 @@ public class HomeRoutine {
         submitToServer(view, recorderUtils, recordingStartTime, recordingEndTime);
     }
 
+    /**
+     * Submits the file to the server
+     * @param view the view calling the method
+     * @param recorderUtils the recorder settings
+     * @param recordingStartTime the recording's start time
+     * @param recordingEndTime the recording's end time
+     */
     private void submitToServer(View view, RecorderUtils recorderUtils, Date recordingStartTime, Date recordingEndTime) {
 
         /*Thread thread = new Thread(() -> APIutils.jamRecordingUpload(uniqueUserID, jamID, "davrukin-test", recordingPath, "notes", recordingStartTime, recordingEndTime, view));
@@ -192,6 +250,9 @@ public class HomeRoutine {
         // TODO: SET CORRECT RECORDING PATH, START, AND END TIME
     }
 
+    /**
+     * Creates a jam, shows a new jam PIN if there isn't one already, gets the device's location
+     */
     public void createJam() {
         //LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
         String provider = LocationManager.GPS_PROVIDER;
@@ -212,11 +273,17 @@ public class HomeRoutine {
         showNewJamPinDialog(context, "Jam PIN", newJamPIN);*/
     }
 
+    /**
+     * Exits a jam
+     */
     public void exitJam() {
         prefUtils = new PrefUtils(activity);
         APIutils.exitJam(prefUtils.getUniqueUserID(), prefUtils.getJamID());
     }
 
+    /**
+     * Joins a jam, shows dialog to enter a jam PIN
+     */
     public void joinJam() {
         prefUtils = new PrefUtils(activity);
         int jamPIN = showEnterJamPinDialog(context, "Enter a Jam PIN", "yada yada yada");
@@ -237,6 +304,12 @@ public class HomeRoutine {
         Toast.makeText(this, emailText + "\n" + descriptionText + "\n" + artistNameText + "\n" + venueText, Toast.LENGTH_LONG).show();
     }*/
 
+    /**
+     * Creates the dialog to show the new jam PIN
+     * @param context the app context
+     * @param title the title of the dialog
+     * @param jamPIN the new jam PIN
+     */
     private void showNewJamPinDialog(Context context, String title, String jamPIN) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(jamPIN).setTitle(title);
@@ -245,6 +318,13 @@ public class HomeRoutine {
         dialog.show();
     }
 
+    /**
+     * Creates the dialog to enter the new jam PIN
+     * @param context the app context
+     * @param title the title of the dialog
+     * @param jamPIN the jam PIN to enter
+     * @return 0
+     */
     private int showEnterJamPinDialog(Context context, String title, String jamPIN) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage(jamPIN).setTitle(title);
@@ -256,6 +336,10 @@ public class HomeRoutine {
         return 0;
     }
 
+    /**
+     * Returns the UI elements
+     * @return buttons
+     */
     public HashMap<String, Object> getButtons() {
         return buttons;
     }

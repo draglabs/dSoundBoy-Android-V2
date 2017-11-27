@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -49,6 +50,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
+@SuppressLint("Registered")
 public class MainActivity_old extends AppCompatActivity implements CallbackListener {
 
     private Button about;
@@ -110,9 +112,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
                 messageDigest.update(signature.toByteArray());
                 Log.d("KeyHash: ", Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT));
             }
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
+        } catch (PackageManager.NameNotFoundException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
 
@@ -170,7 +170,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?
         recorderUtils = new RecorderUtils(this, bandInfo, MainActivity_old.this);
 
-        String callingClass = null;
+        @SuppressWarnings("UnusedAssignment") String callingClass = null;
         if (getIntent().getStringExtra("callingClass") != null) {
             callingClass = getIntent().getStringExtra("callingClass");
 
@@ -397,6 +397,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         prefUtils = new PrefUtils(this);
         APIutils.startJam(this, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(this), PrefUtils.getRecordingDescription(this), location);
         String jamPIN = prefUtils.getJamPIN();
+        //noinspection StatementWithEmptyBody
         if (prefUtils.hasJamPIN()) { // what did I want to do here?
             Log.v("Jam PIN: ", jamPIN); // TODO: SHOW JSON RESPONSE IF ERROR AS INDEFINITE SNACKBAR OR TOAST
         } else {

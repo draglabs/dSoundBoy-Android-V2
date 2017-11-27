@@ -2,7 +2,7 @@ package com.draglabs.dsoundboy.dsoundboy.Routines
 
 import android.content.Context
 import android.content.pm.PackageManager
-import android.content.pm.PackageManager.*
+import android.content.pm.PackageManager.GET_SIGNATURES
 import android.util.Base64
 import android.util.Log
 import com.draglabs.dsoundboy.dsoundboy.BuildConfig
@@ -18,6 +18,9 @@ import java.security.NoSuchAlgorithmException
  */
 class MainRoutine {
 
+    /**
+     * Authorizes with Facebook SDK
+     */
     @Suppress("DEPRECATION")
     fun facebookAuthorize(activity: Context) {
 

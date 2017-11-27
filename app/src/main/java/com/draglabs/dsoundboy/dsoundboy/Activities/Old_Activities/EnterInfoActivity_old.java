@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,6 +14,7 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
+@SuppressLint("Registered")
 public class EnterInfoActivity_old extends AppCompatActivity {
 
     private EditText email;
