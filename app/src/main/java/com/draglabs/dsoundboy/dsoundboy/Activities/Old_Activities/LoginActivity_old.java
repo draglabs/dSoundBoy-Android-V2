@@ -2,6 +2,7 @@ package com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.LoaderManager.LoaderCallbacks;
 import android.content.CursorLoader;
@@ -56,6 +57,7 @@ import static android.Manifest.permission.READ_CONTACTS;
 /**
  * A login screen that offers login via email/password.
  */
+@SuppressLint("Registered")
 public class LoginActivity_old extends AppCompatActivity implements LoaderCallbacks<Cursor>, CallbackListener {
 
     /**

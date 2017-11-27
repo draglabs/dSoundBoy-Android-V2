@@ -6,9 +6,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
@@ -28,6 +26,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -42,7 +41,12 @@ public class ListOfRecordingsRoutine {
      * Adds rows to the table of jams, where a single row is a single jam
      * @param items all the jams
      */
-    public static void addRowsToTable(Object[] items, Activity activity, Context context, MediaPlayer mediaPlayer, TableLayout tableLayout) {
+    public static void addRowsToTable(Object[] items,
+                                      Activity activity,
+                                      Context context,
+                                      MediaPlayer mediaPlayer,
+                                      TableLayout tableLayout) {
+        
         addRowToTable(new PrefUtils(activity).getJamID(), 0, activity, context, mediaPlayer, tableLayout);
 
         /*int i = 0;
@@ -66,7 +70,13 @@ public class ListOfRecordingsRoutine {
      * @param item the jam to add
      * @param index the jam's index
      */
-    public static void addRowToTable(final Object item, int index, Activity activity, Context context, MediaPlayer mediaPlayer, TableLayout tableLayout) {
+    public static void addRowToTable(final Object item,
+                                     int index,
+                                     Activity activity,
+                                     Context context,
+                                     MediaPlayer mediaPlayer,
+                                     TableLayout tableLayout) {
+
         final TableRow newRow = new TableRow(context);
         TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT); // check later
         newRow.setLayoutParams(layoutParams);
@@ -153,10 +163,10 @@ public class ListOfRecordingsRoutine {
 
         File directory = new File(path);
         if (!directory.exists()) {
-            directory.mkdirs();
+            directory.mkdirs(); // result ignored
         } else {
             Log.v("Directory: ", directory.toString());
-            Log.v("Directory Length: ", directory.listFiles().toString());
+            Log.v("Directory Length: ", Arrays.toString(directory.listFiles()));
             if (directory.list().length != 0) {
                 return directory.list();
             }
@@ -168,7 +178,10 @@ public class ListOfRecordingsRoutine {
      * Sets the download location from where to fetch the recording on S3
      */
     // TODO: is this necessary now?
-    public static void setUserActivityURLs(Activity activity, Context context, HashMap userActivity) {
+    public static void setUserActivityURLs(Activity activity,
+                                           Context context,
+                                           HashMap userActivity) {
+
         PrefUtils prefUtils = new PrefUtils(activity);
         APIutils.getUserActivity(activity, prefUtils.getUniqueUserID(), context);
 
@@ -201,7 +214,10 @@ public class ListOfRecordingsRoutine {
      * Brings the jam IDs into the user activity data stored in PrefUtils
      */
     // TODO: is this still necessary?
-    public static void setUserActivityJamIDs(Activity activity, Context context, ArrayList<String> jamIDList) {
+    public static void setUserActivityJamIDs(Activity activity,
+                                             Context context,
+                                             ArrayList<String> jamIDList) {
+
         PrefUtils prefUtils = new PrefUtils(activity);
         APIutils.getUserActivity(activity, prefUtils.getUniqueUserID(), context);
         Log.v("Unique User ID: ", prefUtils.getUniqueUserID());
@@ -243,7 +259,10 @@ public class ListOfRecordingsRoutine {
      * @param jamID the jam ID to send
      */
     // TODO: check functionality
-    public static void createNotifyUserDialog(String jamID, Activity activity, Context context) { // to notify user with email
+    public static void createNotifyUserDialog(String jamID,
+                                              Activity activity,
+                                              Context context) { // to notify user with email
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setMessage("EmailModel jam to account email?").setTitle("EmailModel Jam");
         builder.setPositiveButton("Yes", (dialog, which) -> {
@@ -287,7 +306,10 @@ public class ListOfRecordingsRoutine {
      * Plays a track given a URI
      * @param uri the uri
      */
-    public static void playTrack(Uri uri, MediaPlayer mediaPlayer, Activity activity) {
+    public static void playTrack(Uri uri,
+                                 MediaPlayer mediaPlayer,
+                                 Activity activity) {
+
         stopTrack(mediaPlayer);
 
         if (!mediaPlayer.isPlaying()) {
@@ -300,7 +322,7 @@ public class ListOfRecordingsRoutine {
 
     /**
      * Stops playing the currently-playing track
-     * @param mediaPlayer
+     * @param mediaPlayer the media player
      */
     public static void stopTrack(MediaPlayer mediaPlayer) {
         mediaPlayer.stop();

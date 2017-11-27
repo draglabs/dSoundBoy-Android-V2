@@ -36,7 +36,6 @@ import java.util.Locale;
 /**
  * Created by davrukin on 11/3/17.
  */
-
 public class HomeRoutine {
 
     private HashMap<String, Object> buttons;

@@ -27,28 +27,25 @@ public class AWSutils {
     private Map<String, String> logins;
 
     public AWSutils(final Context context) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                credentialsProvider = new CognitoCachingCredentialsProvider(context, "us-east-1:1669047e-58e5-41bc-8866-4e9ff2dd86b7", Regions.US_EAST_1);
-                syncClient = new CognitoSyncManager(context, Regions.US_EAST_1, credentialsProvider);
+        Thread thread = new Thread(() -> {
+            credentialsProvider = new CognitoCachingCredentialsProvider(context, "us-east-1:1669047e-58e5-41bc-8866-4e9ff2dd86b7", Regions.US_EAST_1);
+            syncClient = new CognitoSyncManager(context, Regions.US_EAST_1, credentialsProvider);
 
-                /*dataset = syncClient.openOrCreateDataset("myDataset");
-                dataset.put("myKey", "myValue");
-                dataset.synchronize(new DefaultSyncCallback() {
-                    @Override
-                    public void onSuccess(Dataset dataset, List newRecords) {
-                        // handler code here
-                    }
-                });*/
+            /*dataset = syncClient.openOrCreateDataset("myDataset");
+            dataset.put("myKey", "myValue");
+            dataset.synchronize(new DefaultSyncCallback() {
+                @Override
+                public void onSuccess(Dataset dataset, List newRecords) {
+                    // handler code here
+                }
+            });*/
 
-                // TODO: authenticate with Facebook: https://docs.aws.amazon.com/cognito/latest/developerguide/facebook.html
+            // TODO: authenticate with Facebook: https://docs.aws.amazon.com/cognito/latest/developerguide/facebook.html
 
-                logins = new HashMap<>();
-                logins.put("graph.facebook.com", AccessToken.getCurrentAccessToken().getToken());
-                credentialsProvider.setLogins(logins);
-                credentialsProvider.refresh();
-            }
+            logins = new HashMap<>();
+            logins.put("graph.facebook.com", AccessToken.getCurrentAccessToken().getToken());
+            credentialsProvider.setLogins(logins);
+            credentialsProvider.refresh();
         });
         thread.start();
     }

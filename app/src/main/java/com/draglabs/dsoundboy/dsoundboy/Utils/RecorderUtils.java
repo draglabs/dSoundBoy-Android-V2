@@ -78,10 +78,10 @@ public class RecorderUtils {
                 try {
                     File recording = new File(recorderModel.getAudioSavePathInDevice());
                     if (!recording.getParentFile().exists()) {
-                        recording.getParentFile().mkdirs();
+                        recording.getParentFile().mkdirs(); // result ignored
                     }
                     if (!recording.exists()) {
-                        recording.createNewFile();
+                        recording.createNewFile(); // result ignored
                     }
 
                     recorderModel.setRecording(true);

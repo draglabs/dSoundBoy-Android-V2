@@ -308,8 +308,8 @@ public class APIutils {
         Snackbar.make(view, jamID, Snackbar.LENGTH_LONG).show();
         Snackbar.make(view, filename, Snackbar.LENGTH_LONG).show();
         Snackbar.make(view, notes, Snackbar.LENGTH_LONG).show();
-        Snackbar.make(view, startTime.toString(), Snackbar.LENGTH_LONG).show();
-        Snackbar.make(view, endTime.toString(), Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, startTime, Snackbar.LENGTH_LONG).show();
+        Snackbar.make(view, endTime, Snackbar.LENGTH_LONG).show();
 
         upload("audioFile", path, newPOST, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -587,7 +587,7 @@ public class APIutils {
                } else {
                    Log.v("Reason: ", "Other Failure.");
                }
-               createDialog(context, jamID, "Failure", response.toString());
+               createDialog(context, jamID, "Failure", response != null ? response.toString() : null);
            }
         });
     }
@@ -615,7 +615,7 @@ public class APIutils {
                 } else {
                     Log.v("Reason: ", "Other Failure.");
                 }
-                createDialog(context, jamID, "Failure", response.toString());
+                createDialog(context, jamID, "Failure", response != null ? response.toString() : null);
             }
         });
     }

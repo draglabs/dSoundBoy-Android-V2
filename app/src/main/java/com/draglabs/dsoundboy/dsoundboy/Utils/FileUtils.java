@@ -96,11 +96,11 @@ class FileUtils {
      | Get Collaborators     	| user_id, jam_id                                    	| code, collaborators array: email, name, facebook_id, id                                                            	|
      | Get User Activity     	| user_id                                            	| recordings array: s3url, fileName, jamID, startTime, endTime, notes, _id; jams array: id, name, startTime, endTime 	|
      | Notify User           	| jam_id                                             	| code, message                                                                                                      	|
-     * @param callingMethod
-     * @param jsonObject
-     * @param data
-     * @return
-     * @throws JSONException
+     * @param callingMethod the calling method
+     * @param jsonObject the json object to parse
+     * @param data the data type being looked for
+     * @return the information being looked for
+     * @throws JSONException if there is one
      */
     public static String getJsonObject(String callingMethod, JSONObject jsonObject, String data) throws JSONException {
         int code = jsonObject.getInt("code");

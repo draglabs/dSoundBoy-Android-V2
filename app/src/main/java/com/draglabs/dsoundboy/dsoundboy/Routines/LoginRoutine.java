@@ -4,13 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
-import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 import com.facebook.AccessToken;
@@ -38,8 +35,6 @@ public class LoginRoutine implements CallbackListener {
     private CallbackManager callbackManager;
     private AccessTokenTracker accessTokenTracker;
     private AccessToken accessToken;
-
-    private String uniqueUserID;
 
     public LoginRoutine(HashMap<String, Object> buttons, Activity activity, Context context) {
         this.buttons = buttons;
@@ -92,7 +87,7 @@ public class LoginRoutine implements CallbackListener {
         prefUtils = new PrefUtils(activity);
         prefUtils.addListener(this);
         uniqueUserIDset();
-        uniqueUserID = prefUtils.getUniqueUserID();
+        String uniqueUserID = prefUtils.getUniqueUserID();
 
         Toast.makeText(context, "Unique ID: " + prefUtils.getUniqueUserID(), Toast.LENGTH_LONG).show();
         Log.d("Unique ID: ", uniqueUserID);

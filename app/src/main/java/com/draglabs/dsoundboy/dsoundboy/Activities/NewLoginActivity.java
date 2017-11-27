@@ -1,9 +1,7 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,7 +9,6 @@ import android.view.View;
 
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine;
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
@@ -28,12 +25,10 @@ import java.util.HashMap;
  */
 public class NewLoginActivity extends AppCompatActivity {
 
-    private HashMap<String, Object> buttons;
     private CallbackManager callbackManager;
     private LoginRoutine loginRoutine;
     private AccessToken accessToken;
     private AccessTokenTracker accessTokenTracker;
-    private LoginButton loginButton;
 
     /**
      * The onCreate method for the new login activity
@@ -43,14 +38,15 @@ public class NewLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //noinspection deprecation
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();
 
         setContentView(R.layout.activity_new_login);
 
-        buttons = new HashMap<>();
+        HashMap<String, Object> buttons = new HashMap<>();
 
-        loginButton = (LoginButton)findViewById(R.id.login_button);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -95,9 +91,9 @@ public class NewLoginActivity extends AppCompatActivity {
 
     /**
      * What happens when the login is successful, it calls back to the CallbackManager
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode the request code
+     * @param resultCode the result code
+     * @param data the data from the intent
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -115,7 +111,7 @@ public class NewLoginActivity extends AppCompatActivity {
 
     /**
      * Performs the Facebook Login
-     * @param view
+     * @param view the view calling the login
      */
     public void clickFacebookLogin(View view) {
         loginRoutine.clickFacebookLogin();
