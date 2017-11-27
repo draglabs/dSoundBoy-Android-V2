@@ -43,6 +43,9 @@ import cafe.adriel.androidaudiorecorder.model.AudioChannel;
 import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
 import cafe.adriel.androidaudiorecorder.model.AudioSource;
 
+/**
+ * The Home Activity after user is authenticated with Facebook and with dlsAPI (Drag Labs Server API)
+ */
 public class HomeActivity extends AppCompatActivity {
 
     private String[] bandInfo;
@@ -81,6 +84,10 @@ public class HomeActivity extends AppCompatActivity {
 
     private boolean isRecording;
 
+    /**
+     * onCreate method for the Home Activity
+     * @param savedInstanceState the saved instance state
+     */
     @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +111,7 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
         System.out.println(AccessToken.getCurrentAccessToken());
 
-        initializeButtons();
+        initializeUIElements();
         initializeDrawer();
 
         isRecording = false;
@@ -145,7 +152,10 @@ public class HomeActivity extends AppCompatActivity {
         homeRoutine = new HomeRoutine(buttons, this, this);
     }
 
-    private void initializeButtons() {
+    /**
+     * Initializes all UI elements
+     */
+    private void initializeUIElements() {
         pauseButton = (ImageButton)findViewById(R.id.pause_button); // doesn't actually pause, stops recording and uploads
         recButton = (ImageButton)findViewById(R.id.rec_button);
         recButtonText = (TextView) findViewById(R.id.rec_text);
@@ -155,6 +165,9 @@ public class HomeActivity extends AppCompatActivity {
         pauseImage = (ImageView)findViewById(R.id.pause_image);
     }
 
+    /**
+     * Initializes the drawer items and does things when buttons are opened and closed
+     */
     private void initializeDrawer() {
         settingsMenuItemTitles = getResources().getStringArray(R.array.menu_item_names);
         settingsMenuDrawerLayout = (DrawerLayout)findViewById(R.id.home_layout);
@@ -256,6 +269,10 @@ public class HomeActivity extends AppCompatActivity {
         return true;
     }
 
+    /**
+     * Starts recording
+     * @param view the view calling this method
+     */
     @TargetApi(Build.VERSION_CODES.N)
     public void clickRec(View view) {
         isRecording = true;
@@ -279,6 +296,45 @@ public class HomeActivity extends AppCompatActivity {
                 .record();
     }
 
+    /**
+     * Stops recording
+     * @param view the view calling this method
+     */
+    @TargetApi(Build.VERSION_CODES.N)
+    public void clickStop(View view) { // TODO: move all this logic into homeRoutine
+        isRecording = false;
+        recordingEndTime = new Date();
+        homeRoutine.clickStop(view, recorderUtils, chronometer, recordingStartTime, recordingEndTime);
+        recButtonText.setText("Rec");
+        buttons.replace("recButtonText", recButtonText);
+        pauseImage.setVisibility(View.INVISIBLE);
+    }
+
+
+    /**
+     * Exits the jam
+     * @param view the view calling this method
+     */
+    public void clickExitJam(View view) {
+        pauseImage.setVisibility(View.INVISIBLE);
+        clickStop(view);
+        homeRoutine.exitJam();
+    }
+
+    /**
+     * Joins a jam
+     * @param view the view calling this method
+     */
+    public void clickJoin(View view) {
+        homeRoutine.joinJam();
+    }
+
+    /**
+     * Confirms when file has been saved
+     * @param requestCode the request code
+     * @param resultCode the result code
+     * @param data the intent
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -290,26 +346,6 @@ public class HomeActivity extends AppCompatActivity {
                 // Oops! User has canceled the recording
             }
         }
-    }
-
-    @TargetApi(Build.VERSION_CODES.N)
-    public void clickStop(View view) { // TODO: move all this logic into homeRoutine
-        isRecording = false;
-        recordingEndTime = new Date();
-        homeRoutine.clickStop(view, recorderUtils, chronometer, recordingStartTime, recordingEndTime);
-        recButtonText.setText("Rec");
-        buttons.replace("recButtonText", recButtonText);
-        pauseImage.setVisibility(View.INVISIBLE);
-    }
-
-    public void clickExitJam(View view) {
-        pauseImage.setVisibility(View.INVISIBLE);
-        clickStop(view);
-        homeRoutine.exitJam();
-    }
-
-    public void clickJoin(View view) {
-        homeRoutine.joinJam();
     }
 
     /*public void jamIDset() {

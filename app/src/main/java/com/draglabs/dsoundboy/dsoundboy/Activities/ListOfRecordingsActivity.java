@@ -24,6 +24,7 @@ import android.widget.ToggleButton;
 import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
+import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfRecordingsRoutine;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
@@ -36,6 +37,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Lists all the recordings from the user and his/her jams
+ */
 public class ListOfRecordingsActivity extends AppCompatActivity implements CallbackListener {
 
     private Toolbar toolbar;
@@ -51,6 +55,10 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
     private ArrayList<Object> selectedItems;
     private ArrayList<String> jamIDs;
 
+    /**
+     * onCreate method for the ListOfRecordings Activity
+     * @param savedInstanceState the saved instance state
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,167 +86,50 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
         //APIutils.getUserActivity(this, new PrefUtils(this).getUniqueUserID(), StringsModel.jsonTypes.JAMS.type());
     }
 
+    /**
+     * Adds rows to the table of jams, where a single row is a single jam
+     * @param items all the jams
+     */
     private void addRowsToTable(Object[] items) {
-        addRowToTable(new PrefUtils(this).getJamID(), 0);
-
-        /*int i = 0;
-        for (Object id : userActivity.keySet()) { // STREAMING ONES FIRST
-            addRowToTable(userActivity.get(id), i);
-            i++;
-        }
-
-        int j = i;
-        i = 0;
-
-        for (; j < items.length; j++) { // LOCAL ONES SECOND
-            addRowToTable(items[i], j);
-            i++;
-        }*/
+        ListOfRecordingsRoutine.addRowsToTable(items, this, this, mediaPlayer, tableLayout);
     }
 
+    /**
+     * <p>Adds a single row to the table with a vertical top-down index of where its located in the table</p>
+     * <p>Sets listeners for each item that is clicked</p>
+     * @param item the jam to add
+     * @param index the jam's index
+     */
     private void addRowToTable(final Object item, int index) {
-        final TableRow newRow = new TableRow(this);
-        TableRow.LayoutParams layoutParams = new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT); // check later
-        newRow.setLayoutParams(layoutParams);
-
-        CheckBox checkBox = new CheckBox(this); // TODO: select if checked
-        TextView textView = new TextView(this);
-        ToggleButton toggleButton = new ToggleButton(this);
-        //toggleButton.setOnClickListener(playStop);
-
-        final ImageButton play = new ImageButton(this);
-        final ImageButton pause = new ImageButton(this);
-        final ImageButton previous = new ImageButton(this);
-
-        String itemAsString = (String)item;
-
-        textView.setText(itemAsString); // TODO: make text scrollable in constrained width of textview
-        toggleButton.setText(itemAsString);
-        newRow.addView(checkBox);
-        newRow.addView(textView);
-        //newRow.addView(toggleButton);
-
-        play.setImageResource(android.R.drawable.ic_media_play);
-        pause.setImageResource(android.R.drawable.ic_media_pause);
-        previous.setImageResource(android.R.drawable.ic_media_previous);
-
-        /*newRow.addView(play);
-
-        View.OnClickListener playPauseRecordingListener = view -> {
-            if (clickCount % 2 == 0) {
-                // show pause
-                newRow.removeView(play);
-                newRow.addView(pause);
-                Uri uri = Uri.fromFile(new File((String)item));
-                playTrack(uri); // TODO: buttons not visible?
-            } else {
-                // show play
-                newRow.removeView(pause);
-                newRow.addView(play);
-                pauseTrack();
-            }
-            newRow.addView(previous);
-            clickCount++;
-        };
-
-        View.OnClickListener resetRecordingListener = view -> restartTrack();
-
-        play.setOnClickListener(playPauseRecordingListener);
-        pause.setOnClickListener(playPauseRecordingListener);
-        previous.setOnClickListener(resetRecordingListener);*/
-
-        textView.setOnClickListener(view -> createNotifyUserDialog(itemAsString));
-
-        toggleButton.setOnClickListener(view -> {
-            if (!toggleButton.isChecked()) {
-                toggleButton.setText("Playing track");
-                if (!itemAsString.startsWith("http")) {
-                    Uri uri = Uri.fromFile(new File(itemAsString));
-                    playTrack(uri);
-                } else {
-                    streamURLplay(itemAsString);
-                }
-            } else {
-                stopTrack(mediaPlayer);
-            }
-        });
-
-        checkBox.setOnCheckedChangeListener((compoundButton, b) -> {
-            if (b == true) {
-
-            } else {
-
-            }
-        });
-
-        tableLayout.addView(newRow, index); // TODO: Play, add play button
+        ListOfRecordingsRoutine.addRowToTable(item, index, this, this, mediaPlayer, tableLayout);
     }
 
+    /**
+     * Goes through the local directory to create a list of all the recordings that have been made
+     * @return new array of strings indexed appropriately according to location in folder
+     */
     private String[] listFilesInDirectory() {
-        String path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/";
-
-        File directory = new File(path);
-        if (!directory.exists()) {
-            directory.mkdirs();
-        } else {
-            Log.v("Directory: ", directory.toString());
-            Log.v("Directory Length: ", directory.listFiles().toString());
-            if (directory.list().length != 0) {
-                return directory.list();
-            }
-        }
-        return new String[]{"No saved recordings."};
+        return ListOfRecordingsRoutine.listFilesInDirectory();
     }
 
+    /**
+     * Sets the download location from where to fetch the recording on S3
+     */
     @RequiresApi(api = Build.VERSION_CODES.N)
     private void setUserActivityURLs() {
-        PrefUtils prefUtils = new PrefUtils(this);
-        APIutils.getUserActivity(this, prefUtils.getUniqueUserID(), this);
-
-        // TODO: renew prefUtils whenever a change is made, because the old one is still in memory
-        prefUtils = new PrefUtils(this);
-        String userActivityData = prefUtils.getUserActivity(); // TODO: CRASHES HERE
-        //Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        //Map<String, Object> stringObjectMap = gson.fromJson(userActivity, new TypeToken<Map<String ,Object>>(){}.getType());
-        //stringObjectMap.forEach((x, y) -> System.out.println(""));
-        Log.d("User Activity: ", userActivityData);
-        try {
-            JSONObject jsonObject = new JSONObject(userActivityData);
-            JSONArray recordings = jsonObject.getJSONArray("recordings");
-            for (int i = 0; i < recordings.length(); i++) {
-                JSONObject recording = recordings.getJSONObject(i);
-                String recordingID = recording.getString("_id"); // add values to arraylist or other data structure? maybe key-value
-                String recordingUrl = recording.getString("s3url");
-                userActivity.put(recordingID, recordingUrl);
-                /*for (Object id : userActivity.keySet()) {
-                    String url = userActivity.get(id);
-                }*/ // USE LATER WHEN GETTING
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ListOfRecordingsRoutine.setUserActivityURLs(this, this, userActivity);
     }
 
+    /**
+     * Brings the jam IDs into the user activity data stored in PrefUtils
+     */
     private void setUserActivityJamIDs() {
-        PrefUtils prefUtils = new PrefUtils(this);
-        APIutils.getUserActivity(this, prefUtils.getUniqueUserID(), this);
-        Log.v("Unique User ID: ", prefUtils.getUniqueUserID());
-
-        prefUtils = new PrefUtils(this);
-        String jamIDs = prefUtils.getUserActivity();
-
-        Log.d("Jam IDs: ", jamIDs);
-
-        try {
-            JSONArray jsonArray = new JSONArray(jamIDs);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                this.jamIDs.add(jsonArray.getJSONObject(i).getString(StringsModel.jsonTypes.JAM_ID.type()));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        ListOfRecordingsRoutine.setUserActivityJamIDs(this, this, jamIDs);
     }
 
+    /**
+     * Listens to when the recording is being played and does stuff, probably not needed
+     */
     private View.OnClickListener playStop = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
@@ -246,25 +137,28 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
         }
     };
 
-
+    /**
+     * Streams the url
+     * @param url the url to play
+     * @return new MediaPlayer object
+     */
     private MediaPlayer streamURLplay(String url) {
-        MediaPlayer mediaPlayer = new MediaPlayer();
-        mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        try {
-            mediaPlayer.setDataSource(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaPlayer.prepareAsync();
-        mediaPlayer.start();
-        return mediaPlayer;
+        return ListOfRecordingsRoutine.streamURLplay(url);
     }
 
+    /**
+     * Stops the url audio stream
+     * @param mediaPlayer the MediaPlayer object
+     */
     private void streamURLstop(MediaPlayer mediaPlayer) {
         mediaPlayer.stop();
         mediaPlayer.release();
     }
 
+    /**
+     * Listener for when the Floating Action Button is clicked
+     * @param view the view calling this method
+     */
     public void clickFab(View view) {
         fab = (FloatingActionButton)findViewById(R.id.fab);
         Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null).show();
@@ -275,95 +169,104 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
         // TODO: on selected list items, submit to server; filename: {userID_2017-08-31_13:02:45:384.pcm}
     }
 
+    /**
+     * Plays a track given a URI
+     * @param uri the uri
+     */
     private void playTrack(Uri uri) {
-        stopTrack(mediaPlayer);
-
-        if (!mediaPlayer.isPlaying()) {
-            mediaPlayer = MediaPlayer.create(this, uri);
-        }
-
-        mediaPlayer.prepareAsync();
-        mediaPlayer.start();
+        ListOfRecordingsRoutine.playTrack(uri, mediaPlayer, this);
     }
 
+    /**
+     * Pauses the currently-playing track
+     */
     private void pauseTrack() {
         mediaPlayer.pause();
     }
 
+    /**
+     * Restarts the currently-playing track
+     */
     private void restartTrack() {
         mediaPlayer.reset();
         mediaPlayer.start();
     }
 
+    /**
+     * Stops playing the currently-playing track
+     * @param mediaPlayer
+     */
     private void stopTrack(MediaPlayer mediaPlayer) {
-        mediaPlayer.stop();
-        mediaPlayer.reset();
-        mediaPlayer.release();
+        ListOfRecordingsRoutine.stopTrack(mediaPlayer);
     }
 
+    /**
+     * Shows a dummy alert dialog
+     */
     private void createAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Hello!").setTitle("World!");
-        builder.setPositiveButton("Okay", (dialog, which) -> {
-            // set a callback once something is done
-            dialog.dismiss();
-        });
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-        builder.setNeutralButton("Remind me later", (dialog, which) -> dialog.dismiss());
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        ListOfRecordingsRoutine.createAlertDialog(this);
     }
 
+    /**
+     * Shows the dialog to confirm sending the jam to the email given a Jam ID
+     * @param jamID the jam ID to send
+     */
     private void createNotifyUserDialog(String jamID) { // to notify user with email
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("EmailModel jam to account email?").setTitle("EmailModel Jam");
-        builder.setPositiveButton("Yes", (dialog, which) -> {
-            // set a callback once something is done
-            //APIutils.notifyUser(jamID, this);
-            APIutils.getJamDetails(new PrefUtils(this).getUniqueUserID(), jamID, this, this);
-            JSONObject jamDetails = null;
-            try {
-                jamDetails = new JSONObject(new PrefUtils(this).getJamDetails());
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            //APIutils.generateXML(jamID, jamDetails, this);
-            APIutils.compress(jamID, new PrefUtils(this).getUniqueUserID(), jamDetails, this);
-            dialog.dismiss();
-        });
-        builder.setNegativeButton("No", (dialog, which) -> dialog.cancel());
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        ListOfRecordingsRoutine.createNotifyUserDialog(jamID, this, this);
     }
 
+    /**
+     * Callback for the setting of the dlsAPI user ID and logs it
+     */
     public void uniqueUserIDset() {
         Log.v("Unique User ID: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the jam PIN and logs it
+     */
     public void jamPINset() {
         Log.v("Jam PIN: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the jam ID and logs it
+     */
     public void jamIDset() {
         Log.v("Jam ID: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the jam's start time and logs it
+     */
     public void jamStartTimeSet() {
         Log.v("Jam Start Time: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the jam's end time and logs it
+     */
     public void jamEndTimeSet() {
         Log.v("Jam End Time: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the jam's collaborators and logs them
+     */
     public void getCollaboratorsSet() {
         Log.v("Collaborators: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the user's activity and logs it
+     */
     public void getUserActivitySet() {
         Log.v("User Activity: ", "Done");
     }
 
+    /**
+     * Callback for the setting of the jam's details and logs them
+     */
     public void getJamDetailsSet() {
         Log.v("Jam Details: ", "Done");
     }

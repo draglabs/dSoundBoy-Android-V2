@@ -23,6 +23,9 @@ import com.facebook.login.widget.LoginButton;
 
 import java.util.HashMap;
 
+/**
+ * The new and improved login activity, with just a single button!
+ */
 public class NewLoginActivity extends AppCompatActivity {
 
     private HashMap<String, Object> buttons;
@@ -32,6 +35,10 @@ public class NewLoginActivity extends AppCompatActivity {
     private AccessTokenTracker accessTokenTracker;
     private LoginButton loginButton;
 
+    /**
+     * The onCreate method for the new login activity
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,21 +93,38 @@ public class NewLoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * What happens when the login is successful, it calls back to the CallbackManager
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * If the login process is cancelled
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
     }
 
+    /**
+     * Performs the Facebook Login
+     * @param view
+     */
     public void clickFacebookLogin(View view) {
         loginRoutine.clickFacebookLogin();
     }
 
+    /**
+     * Clicking this takes the user to the DragLabs home page
+     * @param view the view calling this method
+     */
     public void clickLogoLink(View view) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"));
         startActivity(browserIntent);

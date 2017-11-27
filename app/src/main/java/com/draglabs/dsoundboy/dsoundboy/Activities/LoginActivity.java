@@ -98,6 +98,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private HashMap<String, Object> buttons;
 
+    /**
+     * onCreate method for the Login Activity
+     * @param savedInstanceState the saved instance state
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,61 +208,112 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         loginRoutine = new LoginRoutine(buttons, this, this);
     }
 
+    /**
+     * Sets the UI elements
+     */
+    private void setUIElements() {
+
+    }
+
+    /**
+     * Performs the Facebook login
+     * @param view the view calling this method
+     */
     public void clickFacebookLogin(View view) {
         loginRoutine.clickFacebookLogin();
     }
 
+    /**
+     * Authenticates the user with the dlsAPI
+     * @param view the view calling this method
+     */
     public void clickContinueButton(View view) {
         loginRoutine.authenticateUser();
     }
 
+    /**
+     * Callback for setting the dlsAPI user ID and logs it
+     */
     public void uniqueUserIDset() {
         Log.v("Unique User ID: ", prefUtils.getUniqueUserID() + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
+    /**
+     * Callback for the setting of the jam ID and logs it
+     */
     public void jamIDset() {
         Log.v("Jam ID: ", prefUtils.getJamID() + "");
     }
 
+    /**
+     * Callback for the setting of the jam PIN and logs it
+     */
     public void jamPINset() {
         Log.v("Jam PIN: ", prefUtils.getJamPIN() + "");
     }
 
+    /**
+     * Callback for the setting of the jam's start time and logs it
+     */
     public void jamStartTimeSet() {
         Log.v("Jam Start Time: ", prefUtils.getJamStartTime() + "");
     }
 
+    /**
+     * Callback for the setting of the jam's end time and logs it
+     */
     public void jamEndTimeSet() {
         Log.v("Jam End Time: ", prefUtils.getJamEndTime() + "");
     }
 
+    /**
+     * Callback for the setting of the jam's collaborators and logs them
+     */
     public void getCollaboratorsSet() {
         Log.v("Collaborators: ", prefUtils.getCollaborators() + "");
 
     }
 
+    /**
+     * Callback for the setting of the user's activity and logs it
+     */
     public void getUserActivitySet() {
         Log.v("User Activity: ", prefUtils.getUserActivity() + "");
 
     }
 
+    /**
+     * Callback for the setting of the jam's details and logs them
+     */
     public void getJamDetailsSet() {
         Log.v("Jam Details: ", prefUtils.getJamDetails() + "");
     }
 
+    /**
+     * Registers with the CallbackManager once login is complete
+     * @param requestCode the request code
+     * @param resultCode the result code
+     * @param data the intent with the data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    /**
+     * Stops tracking the Facebook access token if the login is closed
+     */
     @Override
     public void onDestroy() {
         super.onDestroy();
         accessTokenTracker.stopTracking();
     }
 
+    /**
+     * Populates the autocomplete field for email login
+     */
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
@@ -267,6 +322,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         getLoaderManager().initLoader(0, null, this);
     }
 
+    /**
+     * Requests contacts permissions
+     * @return true or false depending on permissions result
+     */
     private boolean mayRequestContacts() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return true;
@@ -353,11 +412,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
+    /**
+     * Checks if the email address entered is of valid format
+     * @param email the email address
+     * @return true or false
+     */
     private boolean isEmailValid(String email) {
         //TODO: Replace this with your own logic
         return email.contains("@");
     }
 
+    /**
+     * Checks if the password entered is of valid format
+     * @param password the password
+     * @return true or false
+     */
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
         return password.length() > 4;
@@ -392,6 +461,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         });
     }
 
+    /**
+     * Launches when the loader is created
+     * @param i i
+     * @param bundle the bundle of sticks
+     * @return new CursorLoader
+     */
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
@@ -409,6 +484,11 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
 
+    /**
+     * Launched when the load is finished
+     * @param cursorLoader the cursor loader
+     * @param cursor the cursor
+     */
     @Override
     public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
@@ -421,11 +501,19 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         addEmailsToAutoComplete(emails);
     }
 
+    /**
+     * What happens when the loader is reset
+     * @param cursorLoader the cursor loader
+     */
     @Override
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
 
     }
 
+    /**
+     * Adds a list of emails to the auto complete
+     * @param emailAddressCollection the collection of emails
+     */
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         //Create adapter to tell the AutoCompleteTextView what to show in its dropdown list.
         ArrayAdapter<String> adapter =
@@ -435,6 +523,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         mEmailView.setAdapter(adapter);
     }
 
+    /**
+     * Queries the profiles
+     */
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -454,11 +545,21 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         private final String mEmail;
         private final String mPassword;
 
+        /**
+         * The user login task
+         * @param email email address
+         * @param password password
+         */
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
+        /**
+         * Does this in the background
+         * @param params the parmesan
+         * @return true or false
+         */
         @Override
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
@@ -482,6 +583,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             return true;
         }
 
+        /**
+         * What happens once it's done doing its thing
+         * @param success if it's successful
+         */
         @Override
         protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
@@ -495,6 +600,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
+        /**
+         * Cancels the authorization task if it was cancelled
+         */
         @Override
         protected void onCancelled() {
             mAuthTask = null;
