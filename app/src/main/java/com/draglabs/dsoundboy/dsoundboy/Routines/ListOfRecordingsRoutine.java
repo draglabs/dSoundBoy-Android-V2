@@ -30,8 +30,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * <p>Created by davrukin on 11/27/2017.</p>
  * <p>Contains functions for the ListOfRecordings Activity</p>
+ * <p>Created by davrukin on 11/27/2017.</p>
  */
 public class ListOfRecordingsRoutine {
 

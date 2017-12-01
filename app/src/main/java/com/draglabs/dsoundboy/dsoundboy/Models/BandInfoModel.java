@@ -1,7 +1,8 @@
 package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
- * Created by davrukin on 8/16/17.
+ * <p>Holds info of the band</p>
+ * <p>Created by davrukin on 8/16/17.</p>
  */
 
 @SuppressWarnings("DefaultFileTemplate")

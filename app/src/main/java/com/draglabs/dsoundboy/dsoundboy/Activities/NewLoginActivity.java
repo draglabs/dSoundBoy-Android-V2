@@ -81,9 +81,8 @@ public class NewLoginActivity extends AppCompatActivity {
 
         loginRoutine = new LoginRoutine(buttons, this, this);
 
-        Log.d("Access Token:", AccessToken.getCurrentAccessToken().toString());
-
         if (AccessToken.getCurrentAccessToken() != null) {
+            Log.d("Access Token:", AccessToken.getCurrentAccessToken().toString());
             Intent homeIntent = new Intent(this, HomeActivity.class);
             startActivity(homeIntent);
         }

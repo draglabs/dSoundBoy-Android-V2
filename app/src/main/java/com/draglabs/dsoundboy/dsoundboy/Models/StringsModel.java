@@ -1,7 +1,8 @@
 package com.draglabs.dsoundboy.dsoundboy.Models;
 
 /**
- * Created by davrukin on 9/12/17.
+ * <p>Holds strings used throughout the program, separate from the XML strings file</p>
+ * <p>Created by davrukin on 9/12/17.</p>
  */
 
 @SuppressWarnings("DefaultFileTemplate")
@@ -21,6 +22,9 @@ public final class StringsModel {
     private static final String JAM = "/jam/";
     private static final String USER = "/user/";
 
+    /**
+     * Strings used for parsing JSON
+     */
     public enum jsonTypes {
         CODE("code"),
         USER_ID("user_id"),
@@ -42,15 +46,26 @@ public final class StringsModel {
 
         private final String name;
 
+        /**
+         * Constructor for the enum
+         * @param name the name of the enum string
+         */
         jsonTypes(String name) {
             this.name = name;
         }
 
+        /**
+         * Returns the name of the enum string
+         * @return the name of the enum string
+         */
         public String type() {
             return name;
         }
     }
 
+    /**
+     * Holds paths for all the API calls
+     */
     public enum apiPaths {
         AUTHENTICATE_USER(JAM + "auth"),
         START_JAM(JAM + "start"),
@@ -66,10 +81,18 @@ public final class StringsModel {
 
         private final String path;
 
+        /**
+         * Constructor for the enum
+         * @param path the dlsAPI path of the enum string
+         */
         apiPaths(String path) {
             this.path = path;
         }
 
+        /**
+         * Returns the dlsAPI path for the enum string
+         * @return the dlsAPI path for the enum string
+         */
         public String path() {
             return path;
         }

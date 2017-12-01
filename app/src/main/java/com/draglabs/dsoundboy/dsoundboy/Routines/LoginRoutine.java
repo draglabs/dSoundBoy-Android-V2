@@ -22,8 +22,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * <p>Created by davrukin on 11/2/17.</p>
  * <p>Performs login tasks</p>
+ * <p>Created by davrukin on 11/2/17.</p>
  */
 public class LoginRoutine implements CallbackListener {
 

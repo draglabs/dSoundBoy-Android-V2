@@ -35,6 +35,7 @@ android {
     sourceSets { main { res.srcDirs = ['src/main/res', 'src/main/res/images'] } }
 }
 dependencies {
+    implementation 'com.google.android.gms:play-services-auth:11.6.2'
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'com.android.support:support-core-utils:27.0.1'
     compile 'com.android.support:customtabs:27.0.1'

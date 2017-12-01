@@ -38,8 +38,8 @@ import cz.msebera.android.httpclient.HeaderElement;
 import cz.msebera.android.httpclient.ParseException;
 
 /**
+ * <p>Holds all dlsAPI calls</p>
  * <p>Created by davrukin on 8/14/17.</p>
- * <p>Hold all dlsAPI calls</p>
  */
 @SuppressWarnings("DefaultFileTemplate")
 public class APIutils { // TODO: docs for all other utils

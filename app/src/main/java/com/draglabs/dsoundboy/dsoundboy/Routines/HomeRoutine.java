@@ -34,8 +34,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 /**
- * <p>Created by davrukin on 11/3/17.</p>
  * <p>The home routine which shows all the recording screen stuff</p>
+ * <p>Created by davrukin on 11/3/17.</p>
  */
 public class HomeRoutine {
 
