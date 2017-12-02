@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "15880598840",
+    "firebase_url": "https://dsoundboy-97ae9.firebaseio.com",
+    "project_id": "dsoundboy-97ae9",
+    "storage_bucket": "dsoundboy-97ae9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15880598840:android:050612e1c6987ded",
+        "android_client_info": {
+          "package_name": "com.draglabs.dsoundboy.dsoundboy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15880598840-271bnbhsk6hbvb21hmcqrt8kr4oeefjl.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "15880598840-uq9sibbcgn948922ietih1bc9oj5h5r2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOGUtqN4q70wXt0hInEdGq9AVPrkde5PE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

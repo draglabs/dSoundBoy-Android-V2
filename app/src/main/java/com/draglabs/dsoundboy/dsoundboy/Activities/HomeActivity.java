@@ -5,13 +5,11 @@ import android.annotation.TargetApi;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -28,20 +26,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
-
+import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils;
 import com.facebook.AccessToken;
 import com.facebook.Profile;
+
 import java.util.Date;
 import java.util.HashMap;
 
 import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
-import cafe.adriel.androidaudiorecorder.model.AudioChannel;
-import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
-import cafe.adriel.androidaudiorecorder.model.AudioSource;
 
 /**
  * The Home Activity after user is authenticated with Facebook and with dlsAPI (Drag Labs Server API)
@@ -282,7 +277,7 @@ public class HomeActivity extends AppCompatActivity {
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.VISIBLE);
 
-        String audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/recordedAudio.wav";
+        /*String audioSavePathInDevice = Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings/recordedAudio.wav";
         int color = getResources().getColor(R.color.colorDLRed1);
         AndroidAudioRecorder.with(this)
                 .setFilePath(audioSavePathInDevice)
@@ -293,7 +288,7 @@ public class HomeActivity extends AppCompatActivity {
                 .setSampleRate(AudioSampleRate.HZ_48000)
                 .setAutoStart(true) // set on or off by default? keep it as a setting
                 .setKeepDisplayOn(true)
-                .record();
+                .record();*/
     }
 
     /**
@@ -308,6 +303,7 @@ public class HomeActivity extends AppCompatActivity {
         recButtonText.setText("Rec");
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.INVISIBLE);
+        AndroidAudioRecorder.with(this);
     }
 
 

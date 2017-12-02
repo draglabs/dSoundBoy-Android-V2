@@ -13,6 +13,7 @@ import com.facebook.appevents.AppEventsLogger
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
+
 /**
  * Created by davrukin on 11/1/17.
  */
@@ -48,5 +49,4 @@ class MainRoutine {
 
         Log.v("App ID and App Name: ", FacebookSdk.getApplicationId() + "; " + FacebookSdk.getApplicationName())
     }
-
 }

@@ -1,8 +1,8 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine;
@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         new MainRoutine().facebookAuthorize(this);
+        //new MainRoutine().googleAuthorize();
         setContentView(R.layout.activity_main);
 
         if (new PrefUtils(this).hasUniqueUserID() && AccessToken.getCurrentAccessToken() != null) {
@@ -31,5 +32,6 @@ public class MainActivity extends AppCompatActivity {
             Intent loginIntent = new Intent(this, NewLoginActivity.class);
             startActivity(loginIntent);
         }
+
     }
 }

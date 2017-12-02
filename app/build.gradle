@@ -46,6 +46,7 @@ dependencies {
     compile 'com.android.support:design:27.0.1'
     compile 'com.android.support:recyclerview-v7:27.0.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.google.android.gms:play-services-auth:11.6.2'
     compile 'com.google.code.gson:gson:2.8.1'
     compile 'org.apache.httpcomponents:httpcore:4.4.6'
     compile 'com.amazonaws:aws-android-sdk-core:2.4.7'
@@ -73,3 +74,5 @@ repositories {
     maven { url 'https://maven.google.com' }
     maven { url 'https://dl.google.com/dl/android/maven2' }
 }
+
+apply plugin: 'com.google.gms.google-services'
