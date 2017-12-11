@@ -229,7 +229,7 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
     }
 
     public void clickContinueButton(View view) {
-        APIutils.authenticateUser(this);
+        APIutils.registerUser(this, this);
         prefUtils = new PrefUtils(this);
         prefUtils.addListener(this);
         uniqueUserIDset();

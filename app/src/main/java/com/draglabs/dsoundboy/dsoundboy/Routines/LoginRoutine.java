@@ -95,7 +95,7 @@ public class LoginRoutine implements CallbackListener {
      * Authenticates the user with the dlsAPI
      */
     public void authenticateUser() {
-        APIutils.authenticateUser(activity);
+        APIutils.registerUser(activity, context);
         prefUtils = new PrefUtils(activity);
         prefUtils.addListener(this);
         uniqueUserIDset();

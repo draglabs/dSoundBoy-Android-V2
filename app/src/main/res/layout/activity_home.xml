@@ -7,6 +7,13 @@
     android:background="@color/colorDLBackground"
     android:visibility="visible">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorDLFillGrey"
+        android:theme="@style/DragLabs"/>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -165,14 +172,14 @@
             app:layout_constraintVertical_bias="1.0" />
     </android.support.constraint.ConstraintLayout>
 
-    <Android.support.design.widget.NavigationView
+    <android.support.design.widget.NavigationView
         android:id="@+id/navigation_view_1"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/colorDLBackground"
         app:menu="@menu/home_menu"
-        app:itemTextColor="@color/colorDLTextWhite" >
+        app:itemTextColor="@android:color/primary_text_dark" >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -186,6 +193,6 @@
 
         </LinearLayout>
 
-    </Android.support.design.widget.NavigationView>
+    </android.support.design.widget.NavigationView>
 
 </android.support.v4.widget.DrawerLayout>

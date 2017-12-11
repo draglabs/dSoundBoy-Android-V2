@@ -38,6 +38,7 @@ public class NewLoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id));
         //noinspection deprecation
         FacebookSdk.sdkInitialize(this);
         callbackManager = CallbackManager.Factory.create();

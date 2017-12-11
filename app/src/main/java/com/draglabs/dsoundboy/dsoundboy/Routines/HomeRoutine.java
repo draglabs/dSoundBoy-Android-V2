@@ -214,9 +214,9 @@ public class HomeRoutine {
         prefUtils = new PrefUtils(activity);
         String recordingPath = recorderUtils.getAudioSavePathInDevice();
         APIutils.jamRecordingUpload(
+                context,
                 prefUtils.getUniqueUserID(),
                 prefUtils.getJamID(),
-                PrefUtils.getRecordingVenue(activity),
                 recordingPath, PrefUtils.getRecordingDescription(activity),
                 recordingStartTime, recordingEndTime,
                 view);
@@ -261,7 +261,7 @@ public class HomeRoutine {
         prefUtils = new PrefUtils(activity);
 
         if (!prefUtils.hasJamPIN()) {
-            APIutils.startJam(activity, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(activity), PrefUtils.getRecordingDescription(activity), location);
+            APIutils.newJam(activity, context, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(activity), PrefUtils.getRecordingDescription(activity), location);
             // may have to implement without a while loop
             prefUtils = new PrefUtils(activity);
             showNewJamPinDialog(context, "Jam PIN", prefUtils.getJamPIN());
@@ -287,7 +287,7 @@ public class HomeRoutine {
     public void joinJam() {
         prefUtils = new PrefUtils(activity);
         int jamPIN = showEnterJamPinDialog(context, "Enter a Jam PIN", "yada yada yada");
-        APIutils.joinJam(activity, prefUtils.getUniqueUserID(), jamPIN); // TODO: show error if incorrect
+        APIutils.joinJam(activity, context, jamPIN, prefUtils.getUniqueUserID()); // TODO: show error if incorrect
     }
 
     /*public void clickJoinJam() {

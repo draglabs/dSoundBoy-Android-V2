@@ -73,7 +73,7 @@
                 android:value=".Activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.LoginActivity"
+            android:name=".Activities.Old_Activities.LoginActivity"
             android:label="@string/title_activity_login"
             android:parentActivityName=".Activities.MainActivity">
             <intent-filter>
@@ -92,7 +92,7 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:parentActivityName=".Activities.LoginActivity">
+            android:parentActivityName=".Activities.Old_Activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -100,7 +100,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.LoginActivity" />
+                android:value=".Activities.Old_Activities.LoginActivity" />
             <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
                 android:value="@string/facebook_app_id" />
@@ -108,7 +108,7 @@
         <activity
             android:name="com.facebook.CustomTabActivity"
             android:exported="true"
-            android:parentActivityName=".Activities.LoginActivity">
+            android:parentActivityName=".Activities.Old_Activities.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -117,7 +117,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.LoginActivity" />
+                android:value=".Activities.Old_Activities.LoginActivity" />
         </activity>
 
         <provider

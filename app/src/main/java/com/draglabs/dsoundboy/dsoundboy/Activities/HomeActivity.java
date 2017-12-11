@@ -88,8 +88,8 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        toolbar = (Toolbar)findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        //toolbar = (Toolbar)findViewById(R.id.toolbar);
+        //setSupportActionBar(toolbar);
 
         prefUtils = new PrefUtils(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -198,8 +198,9 @@ public class HomeActivity extends AppCompatActivity {
         settingsMenuItemList.setOnItemClickListener((parent, view, position, id) ->
                 homeRoutine.selectItem(position, settingsMenuItemTitles, settingsMenuDrawerLayout, settingsMenuItemList));
 
-        getActionBar().setDisplayHomeAsUpEnabled(true);
-        getActionBar().setHomeButtonEnabled(true);
+        //getActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
+        //getActionBar().setDisplayHomeAsUpEnabled(true);
+        //getActionBar().setHomeButtonEnabled(true);
     }
 
     /**

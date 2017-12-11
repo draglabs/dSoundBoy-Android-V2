@@ -9,7 +9,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity
-import com.draglabs.dsoundboy.dsoundboy.Activities.LoginActivity
+import com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities.LoginActivity
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
@@ -73,7 +73,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
     }
 
     fun clickContinueButton(view: View) {
-        APIutils.authenticateUser(activity)
+        APIutils.registerUser(activity, context)
         prefUtils = PrefUtils(activity)
         prefUtils!!.addListener(this)
         uniqueUserIDset()

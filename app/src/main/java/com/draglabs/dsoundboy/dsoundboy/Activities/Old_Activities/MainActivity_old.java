@@ -34,7 +34,6 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfRecordingsActivity;
-import com.draglabs.dsoundboy.dsoundboy.Activities.LoginActivity;
 import com.draglabs.dsoundboy.dsoundboy.BuildConfig;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
@@ -270,9 +269,9 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
 
                 recordingPath = recorderUtils.getAudioSavePathInDevice();
                 APIutils.jamRecordingUpload(
+                        this,
                         prefUtils.getUniqueUserID(),
                         prefUtils.getJamID(),
-                        PrefUtils.getRecordingVenue(getThisActivity()),
                         recordingPath, PrefUtils.getRecordingDescription(getThisActivity()),
                         recordingStartTimeServer, recordingEndTimeServer,
                         view);
@@ -343,7 +342,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
 
         Toast.makeText(this, "Stopped recording.", Toast.LENGTH_LONG).show();
 
-        Thread thread = new Thread(() -> APIutils.jamRecordingUpload(uniqueUserID, jamID, "davrukin-test", recordingPath, "notes", recordingStartTime, recordingEndTime, view));
+        Thread thread = new Thread(() -> APIutils.jamRecordingUpload(this, uniqueUserID, jamID, "davrukin-test", "notes", recordingStartTime, recordingEndTime, view));
         thread.run();
 
         recordingImage.setVisibility(View.INVISIBLE);
@@ -395,7 +394,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
         prefUtils = new PrefUtils(this);
-        APIutils.startJam(this, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(this), PrefUtils.getRecordingDescription(this), location);
+        APIutils.newJam(this, this, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(this), PrefUtils.getRecordingDescription(this), location);
         String jamPIN = prefUtils.getJamPIN();
         //noinspection StatementWithEmptyBody
         if (prefUtils.hasJamPIN()) { // what did I want to do here?
@@ -423,7 +422,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
     public void clickJoinJam(View view) {
         Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
 
-        APIutils.joinJam(this, prefUtils.getUniqueUserID(), Integer.parseInt(jamPINtext.getText().toString()));
+        APIutils.joinJam(this, this, Integer.parseInt(jamPINtext.getText().toString()), prefUtils.getUniqueUserID());
     }
 
     public void jamIDset() {

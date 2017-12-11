@@ -2,6 +2,7 @@ package com.draglabs.dsoundboy.dsoundboy.Params;
 
 import android.location.Location;
 
+import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel;
 import com.loopj.android.http.RequestParams;
 
 import java.io.File;
@@ -19,19 +20,189 @@ import java.util.Locale;
 public class APIparams {
 
     /**
+     * Used for the Start Jam API
+     * @param uniqueID the API's unique user ID
+     * @param jamLocation the physical location of the user, latitude and longitude extracted
+     * @param jamName the name of the jam
+     * @param location the name of the location of the jam
+     * @param notes the jam notes
+     * @return requestParams
+     */
+    public static RequestParams newJam(String uniqueID,
+                                       String jamLocation,
+                                       String jamName,
+                                       Location location,
+                                       String notes) {
+
+        double jamLatitude = location.getLatitude();
+        double jamLongitude = location.getLongitude();
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("user_id", uniqueID);
+        requestParams.put("jam_location", jamLocation);
+        requestParams.put("jam_name", jamName);
+        requestParams.put("jam_lat", jamLatitude);
+        requestParams.put("jam_long", jamLongitude);
+        requestParams.put("notes", notes);
+
+        return requestParams;
+    }
+
+    /**
+     * Used for the Update Jam API
+     * @param name the name of the jam
+     * @param jamID the jam ID
+     * @param location the place name where the jam was recorded
+     * @param notes the jam notes
+     * @return requestParams
+     */
+    public static RequestParams updateJam(String name,
+                                          String jamID,
+                                          String location,
+                                          String notes) {
+
+        RequestParams requestParams = new RequestParams();
+
+        requestParams.put("name", name);
+        requestParams.put("id", jamID);
+        requestParams.put("location", location);
+        requestParams.put("notes", notes);
+
+        return requestParams;
+    }
+
+    /**
+     * Used for the Join Jam API
+     * @param UUID the dlsAPI unique user ID
+     * @param pin the jam PIN
+     * @return requestParams
+     */
+    public static RequestParams joinJam(String UUID,
+                                        int pin) {
+
+        RequestParams requestParams = new RequestParams();
+
+        requestParams.put("user_id", UUID);
+        requestParams.put("pin", pin);
+
+        return requestParams;
+    }
+
+    /**
+     * Used for the Jam Recording Upload API
+     * @param uniqueID the dlsAPI UUID
+     * @param jamID the jam ID
+     * @param filename the name of the recorded file
+     * @param location the location name of the jam
+     * @param startTime the start time of the jam
+     * @param endTime the end time of the jam
+     * @return requestParams
+     */
+    public static RequestParams jamRecordingUpload(String uniqueID,
+                                                   String jamID,
+                                                   String filename,
+                                                   String location,
+                                                   Date startTime,
+                                                   Date endTime) {
+
+        RequestParams requestParams = new RequestParams();
+
+        requestParams.put("user_id", uniqueID);
+        requestParams.put("jam_id", jamID);
+        requestParams.put("file_name", filename);
+        requestParams.put("location", location);
+        requestParams.put("start_time", StringsModel.STANDARD_DATE_FORMAT.format(startTime));
+        requestParams.put("end_time", StringsModel.STANDARD_DATE_FORMAT.format(endTime));
+
+        return requestParams;
+    }
+
+    /**
+     * Used for the Jam Recording Upload API
+     * @param uniqueID the dlsAPI UUID
+     * @param jamID the jam ID
+     * @param path the path to the file
+     * @param location the location name of the jam
+     * @param startTime the start time of the jam
+     * @param endTime the end time of the jam
+     * @return requestParams
+     */
+    public static RequestParams jamRecordingUpload(String uniqueID,
+                                                   String jamID,
+                                                   String path,
+                                                   String location,
+                                                   String startTime,
+                                                   String endTime) {
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.put("user_id", uniqueID);
+        requestParams.put("jam_id", jamID);
+        requestParams.put("location", location);
+        requestParams.put("start_time", startTime);
+        requestParams.put("end_time", endTime);
+        try {
+            requestParams.put("file_name", new File(path));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return requestParams;
+    }
+
+    /**
+     * Used for the Get Jam Details API
+     * @return empty requestParams
+     */
+    public static RequestParams getJamDetails() {
+        return new RequestParams();
+    }
+
+    /**
+     * Used for the Get Recordings API
+     * @return empty requestParams
+     */
+    public static RequestParams getRecordings() {
+        return new RequestParams();
+    }
+
+    /**
      * Used for the Authenticate User API with the Jam API
      * @param facebookID the user's Facebook ID
      * @param facebookAccessToken the Access Token from the Facebook API
      * @return requestParams
      */
-    public static RequestParams authenticateUser(String facebookID,
-                                          String facebookAccessToken) {
+    public static RequestParams registerUser(String facebookID,
+                                             String facebookAccessToken) {
 
         RequestParams requestParams = new RequestParams();
         requestParams.put("facebook_id", facebookID);
         requestParams.put("access_token", facebookAccessToken);
 
         return requestParams;
+    }
+
+    /**
+     * Used for the Update User API
+     * @return empty requestParams
+     */
+    public static RequestParams updateUser() {
+        return new RequestParams();
+    }
+
+    /**
+     * Used for the Get Active Jam API
+     * @return empty requestParams
+     */
+    public static RequestParams getActiveJam() {
+        return new RequestParams();
+    }
+
+    /**
+     * Used for the Get User Activity API
+     * @return empty requestParams
+     */
+    public static RequestParams getUserActivity() {
+        return new RequestParams();
     }
 
     /**
@@ -60,108 +231,6 @@ public class APIparams {
         requestParams.put("notes", notes);
         requestParams.put("start_time", dateFormat.format(startTime));
         requestParams.put("end_time", dateFormat.format(endTime));
-
-        return requestParams;
-    }
-
-    /**
-     * Used for the Start Jam API
-     * @param uniqueID the API's unique user ID
-     * @param jamLocation the physical location of the user, latitude and longitude extracted
-     * @param jamName the name of the jam
-     * @param location the name of the location of the jam
-     * @return requestParams
-     */
-    public static RequestParams startJam(String uniqueID,
-                                  String jamLocation,
-                                  String jamName,
-                                  Location location) {
-
-        double jamLatitude = location.getLatitude();
-        double jamLongitude = location.getLongitude();
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jam_location", jamLocation);
-        requestParams.put("jam_name", jamName);
-        requestParams.put("jam_lat", jamLatitude);
-        requestParams.put("jam_long", jamLongitude);
-
-        return requestParams;
-    }
-
-    /**
-     * Used for the Join Jam API
-     * @param uniqueID the APIs unique user ID
-     * @param pin the jam PIN
-     * @return requestParams
-     */
-    public static RequestParams joinJam(String uniqueID,
-                                 int pin) {
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("unique_id", uniqueID);
-        requestParams.put("pin", pin);
-
-        return requestParams;
-    }
-
-    /**
-     * Used for the Jam Recording Upload API
-     * @param uniqueID the APIs unique user ID
-     * @param jamID the jam ID
-     * @param filename the name of the recorded file
-     * @param notes notes from the recording
-     * @param startTime the start time of the jam
-     * @param endTime the end time of the jam
-     * @return requestParams
-     */
-    public static RequestParams jamRecordingUpload(String uniqueID,
-                                            String jamID,
-                                            String filename,
-                                            String notes,
-                                            Date startTime,
-                                            Date endTime) {
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jamid", jamID);
-        requestParams.put("fileName", filename);
-        requestParams.put("notes", notes);
-        requestParams.put("startTime", dateFormat.format(startTime));
-        requestParams.put("endTime", dateFormat.format(endTime));
-
-        return requestParams;
-    }
-
-    /**
-     * Used for the Jam Recording Upload API
-     * @param uniqueID the APIs unique user ID
-     * @param jamID the jam ID
-     * @param filename the name of the recorded file
-     * @param notes notes from the recording
-     * @param startTime the start time of the jam
-     * @param endTime the end time of the jam
-     * @return requestParams
-     */
-    public static RequestParams jamRecordingUpload(String uniqueID,
-                                            String jamID,
-                                            String filename,
-                                            String notes,
-                                            String startTime,
-                                            String endTime) {
-
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-        requestParams.put("jamid", jamID);
-        requestParams.put("fileName", filename);
-        requestParams.put("notes", notes);
-        requestParams.put("startTime", startTime);
-        requestParams.put("endTime", endTime);
 
         return requestParams;
     }
@@ -196,27 +265,6 @@ public class APIparams {
         requestParams.put("jam_id", jamID);
 
         return requestParams;
-    }
-
-    /**
-     * Used for the Get User Activity API
-     * @param uniqueID the API's unique user ID
-     * @return requestParams
-     */
-    public static RequestParams getUserActivity(String uniqueID) {
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.put("user_id", uniqueID);
-
-        return requestParams;
-    }
-
-    /**
-     * Used for the Get Jam Details API
-     * @return empty requestParams
-     */
-    public static RequestParams getJamDetails() {
-        return new RequestParams();
     }
 
     /**
