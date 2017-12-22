@@ -194,12 +194,11 @@ public class APIutils { // TODO: docs for all other utils
      * @param view the view calling the upload
      */
     public static void jamRecordingUpload(Context context, String UUID, String jamID, String path, String notes, Date startTime, Date endTime, View view) { // convert through binary data and multi-part upload
-        String newPOST = JAM_RECORDING_UPLOAD;
 
         Header[] headers = APIheaders.standardHeader(UUID);
         RequestParams requestParams = APIparams.jamRecordingUpload(UUID, jamID, path, notes, startTime, endTime);
 
-        upload(context, headers, requestParams, "audioFile", path, newPOST, new JsonHttpResponseHandler() {
+        upload(context, headers, requestParams, "audioFile", path, JAM_RECORDING_UPLOAD, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
@@ -231,12 +230,11 @@ public class APIutils { // TODO: docs for all other utils
      * @param view the view calling the upload
      */
     public static void jamRecordingUpload(Context context, String UUID, String jamID, String path, String notes, String startTime, String endTime, View view) { // convert through binary data and multi-part upload
-        String newPOST = JAM_RECORDING_UPLOAD;
 
         Header[] headers = APIheaders.standardHeader(UUID);
         RequestParams requestParams = APIparams.jamRecordingUpload(UUID, jamID, path, notes, startTime, endTime);
 
-        upload(context, headers, requestParams, "audioFile", path, newPOST, new JsonHttpResponseHandler() {
+        upload(context, headers, requestParams, "audioFile", path, JAM_RECORDING_UPLOAD, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);

@@ -1,8 +1,8 @@
 package com.draglabs.dsoundboy.dsoundboy.Models;
 
-/**
- * https://developer.android.com/guide/topics/media/mediaplayer.html
- * Created by davrukin on 9/27/17.
+/*
+  https://developer.android.com/guide/topics/media/mediaplayer.html
+  Created by davrukin on 9/27/17.
  */
 
 /*public class MediaPlayerService extends Service implements MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener {

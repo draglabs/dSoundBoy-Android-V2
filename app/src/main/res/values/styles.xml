@@ -18,6 +18,14 @@
         <item name="windowBackground">@color/colorDLBackground</item>
     </style>
 
+    <style name="DragLabsActionBar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorDLRed1</item>
+        <item name="colorPrimaryDark">@color/colorDLRed1</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorTextPrimary">@color/colorDLTextWhite</item>
+        <item name="windowBackground">@color/colorDLBackground</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -26,5 +34,9 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="DragLabs.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="DragLabs.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

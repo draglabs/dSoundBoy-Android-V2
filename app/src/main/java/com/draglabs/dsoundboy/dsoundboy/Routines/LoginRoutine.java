@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
+import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 import com.facebook.AccessToken;
@@ -17,6 +19,10 @@ import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.facebook.login.widget.ProfilePictureView;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,9 +44,9 @@ public class LoginRoutine implements CallbackListener {
 
     /**
      * The constructor for the Login Routine
-     * @param buttons
-     * @param activity
-     * @param context
+     * @param buttons the buttons
+     * @param activity the activity calling the routine
+     * @param context the app's context
      */
     public LoginRoutine(HashMap<String, Object> buttons, Activity activity, Context context) {
         this.buttons = buttons;
@@ -119,11 +125,49 @@ public class LoginRoutine implements CallbackListener {
     }
 
     /**
+     * Sets the profile view in the app so that the user sees their picture, name, and email
+     * @param response the json response from Facebook
+     */
+    public void setProfileView(JSONObject response) {
+        try {
+            String name = response.getString("name");
+            String email = response.getString("email");
+            ProfilePictureView pictureView = (ProfilePictureView)activity.findViewById(R.id.user_picture);
+            pictureView.setPresetSize(ProfilePictureView.NORMAL);
+            pictureView.setProfileId(response.getString("id"));
+
+            TextView userNameTextView = (TextView)activity.findViewById(R.id.user_name);
+            TextView userEmailTextView = (TextView)activity.findViewById(R.id.user_email);
+            userNameTextView.setText(name);
+            userEmailTextView.setText(email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Callback for the setting of the dlsAPI user ID and logs it
      */
     public void uniqueUserIDset() {
         Log.v("Unique User ID: ", new PrefUtils(activity).getUniqueUserID() + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
+    }
+
+    /**
+     * Gets the buttons
+     * @return the buttons
+     */
+    public HashMap<String, Object> getButtons() {
+        return buttons;
+    }
+
+    /**
+     * Adds a button
+     * @param string the string key to add
+     * @param object the object by the key
+     */
+    public void addButton(String string, Object object) {
+        buttons.put(string, object);
     }
 
     /**

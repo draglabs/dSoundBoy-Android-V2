@@ -10,6 +10,7 @@ import android.content.res.Configuration;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -77,6 +78,8 @@ public class HomeActivity extends AppCompatActivity {
     private CharSequence settingsMenuTitle;
     private ActionBarDrawerToggle settingsMenuDrawerToggle;
 
+    private NavigationView navigationView;
+
     private boolean isRecording;
 
     /**
@@ -88,8 +91,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        //toolbar = (Toolbar)findViewById(R.id.toolbar);
-        //setSupportActionBar(toolbar);
+
+        toolbar = (Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        initializeUIElements();
+        initializeDrawer();
+        initializeNavigationView();
 
         prefUtils = new PrefUtils(this);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
@@ -106,19 +114,16 @@ public class HomeActivity extends AppCompatActivity {
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();
         System.out.println(AccessToken.getCurrentAccessToken());
 
-        initializeUIElements();
-        initializeDrawer();
-
         isRecording = false;
         recButton.setOnClickListener(view -> {
-            if (isRecording == false) {
+            if (!isRecording) {
                 clickRec(view); // for future:
             } else {
                 clickExitJam(view);
             }
         });
         pauseButton.setOnClickListener(view -> {
-            if (isRecording == true) {
+            if (isRecording) {
                 clickStop(view);
             }
             else {
@@ -127,7 +132,7 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
         joinButton.setOnClickListener(view -> {
-            if (isRecording == false) {
+            if (!isRecording) {
                 clickJoin(view);
             } else {
                 Toast.makeText(this, "Please exit current jam", Toast.LENGTH_LONG).show();
@@ -198,9 +203,24 @@ public class HomeActivity extends AppCompatActivity {
         settingsMenuItemList.setOnItemClickListener((parent, view, position, id) ->
                 homeRoutine.selectItem(position, settingsMenuItemTitles, settingsMenuDrawerLayout, settingsMenuItemList));
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+        actionBar.setDisplayHomeAsUpEnabled(true);
         //getActionBar().setHomeAsUpIndicator(R.drawable.ic_menu);
         //getActionBar().setDisplayHomeAsUpEnabled(true);
         //getActionBar().setHomeButtonEnabled(true);
+    }
+
+    /**
+     * Initializes the Navigation View
+     */
+    private void initializeNavigationView() {
+        navigationView = (NavigationView)findViewById(R.id.navigation_view_1);
+        navigationView.setNavigationItemSelectedListener(menuItem -> {
+            menuItem.setChecked(true);
+            settingsMenuDrawerLayout.closeDrawers();
+            return true;
+        });
     }
 
     /**
@@ -250,19 +270,19 @@ public class HomeActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.string.title_activity_about:
                     homeRoutine.clickAbout();
-                    break;
+                    return true;
                 case R.string.title_activity_contact:
                     homeRoutine.clickContact();
-                    break;
+                    return true;
                 case R.string.title_activity_enter_info:
                     homeRoutine.clickEnterInfo();
-                    break;
+                    return true;
                 default:
                     return super.onOptionsItemSelected(item);
             }
         } // pick activities here
         // handle other action bar items here
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     /**

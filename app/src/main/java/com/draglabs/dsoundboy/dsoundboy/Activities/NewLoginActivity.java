@@ -2,8 +2,8 @@ package com.draglabs.dsoundboy.dsoundboy.Activities;
 
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
@@ -15,6 +15,7 @@ import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 
@@ -47,7 +48,9 @@ public class NewLoginActivity extends AppCompatActivity {
 
         HashMap<String, Object> buttons = new HashMap<>();
 
-        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginRoutine = new LoginRoutine(buttons, this, this);
+
+        LoginButton loginButton = (LoginButton)findViewById(R.id.login_button);
         loginButton.setReadPermissions("email");
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -55,6 +58,16 @@ public class NewLoginActivity extends AppCompatActivity {
                 Log.d("User ID: ", loginResult.getAccessToken().getUserId());
                 Log.d("Access Token: ", loginResult.getAccessToken().getToken());
                 Log.d("Application ID: ", loginResult.getAccessToken().getApplicationId());
+
+                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), (object, response) -> {
+                    Log.v("Main: ", response.toString());
+                    loginRoutine.setProfileView(object);
+                });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,email");
+                graphRequest.setParameters(parameters);
+                graphRequest.executeAsync();
+
                 loginRoutine.saveFacebookCredentials(loginResult);
                 loginRoutine.authenticateUser();
             }
@@ -78,13 +91,12 @@ public class NewLoginActivity extends AppCompatActivity {
             }
         };
 
-        buttons.put("facebookLoginButton", loginButton);
-
-        loginRoutine = new LoginRoutine(buttons, this, this);
+        //buttons.put("facebookLoginButton", loginButton);
+        loginRoutine.addButton("facebookLoginButton", loginButton);
 
         if (AccessToken.getCurrentAccessToken() != null) {
             Log.d("Access Token:", AccessToken.getCurrentAccessToken().toString());
-            Intent homeIntent = new Intent(this, HomeActivity.class);
+            Intent homeIntent = new Intent(this, TestNavActivity.class);
             startActivity(homeIntent);
         }
     }
@@ -97,6 +109,7 @@ public class NewLoginActivity extends AppCompatActivity {
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Activities.NewLoginActivity"
-    android:background="@color/colorDLBackground">
+    android:theme="@style/DragLabs">
 
     <ImageButton
         android:id="@+id/image_about"

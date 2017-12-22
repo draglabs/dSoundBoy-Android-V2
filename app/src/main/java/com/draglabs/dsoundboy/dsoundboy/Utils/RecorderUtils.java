@@ -131,8 +131,6 @@ public class RecorderUtils {
                 recorderModel.setAudioRecord(null);
                 recordingThread = null;
             }
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
         } catch (RuntimeException e) {
             e.printStackTrace();
         }

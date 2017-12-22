@@ -157,8 +157,8 @@ public class HomeRoutine {
 
     /**
      * Starts recording audio
-     * @param chronometer
-     * @param recorderUtils
+     * @param chronometer the chronometer
+     * @param recorderUtils the recorder utils class
      */
     public void clickRec(Chronometer chronometer, RecorderUtils recorderUtils) {
         createJam();
