@@ -4,16 +4,19 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.media.AudioRecord;
+import android.media.AudioFormat;
+import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.draglabs.dsoundboy.dsoundboy.Models.RecorderModel;
+import com.draglabs.dsoundboy.dsoundboy.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +25,17 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder;
+import cafe.adriel.androidaudiorecorder.model.AudioChannel;
+import cafe.adriel.androidaudiorecorder.model.AudioSampleRate;
+import cafe.adriel.androidaudiorecorder.model.AudioSource;
+import omrecorder.AudioChunk;
+import omrecorder.AudioRecordConfig;
+import omrecorder.OmRecorder;
+import omrecorder.PullTransport;
+import omrecorder.PullableSource;
+import omrecorder.Recorder;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -56,15 +70,89 @@ public class RecorderUtils {
         recorderModel.setBandData(bandData);
         recorderModel.setAudioSavePathInDevice(Environment.getExternalStorageDirectory().getAbsolutePath() + "/dSoundBoyRecordings" + recorderModel.getPathname());
         recorderModel.setPathname(createAudioPathname(bandData, recorderModel.getEXTENSION()));
-        recorderModel.setAudioRecord(new AudioRecord(recorderModel.getRecorderAudioSource(),
+        /*recorderModel.setAudioRecord(new AudioRecord(recorderModel.getRecorderAudioSource(),
                                                         recorderModel.getRecordingSampleRate(),
                                                         recorderModel.getRecordingChannels(),
                                                         recorderModel.getRecordingAudioEncoding(),
-        recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement()));
+        recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement()));*/
+    }
+
+    public void startRecording(Recorder recorder) {
+        recorder.startRecording();
+    }
+
+    public void stopRecording(Recorder recorder) {
+        try {
+            recorder.stopRecording();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void pauseRecording(Recorder recorder) {
+        recorder.pauseRecording();
+    }
+
+    public Recorder setupRecorder(String name, Button recordButton) {
+        Recorder recorder = OmRecorder.wav(new PullTransport.Default(mic(), new PullTransport.OnAudioChunkPulledListener() {
+            @Override
+            public void onAudioChunkPulled(AudioChunk audioChunk) {
+                animateVoice((float)(audioChunk.maxAmplitude() / 200.0), recordButton);
+            }
+        }), file(name));
+        return recorder;
+    }
+
+    private void animateVoice(final float maxPeak, Button recordButton) {
+        recordButton.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start();
+    }
+
+    private PullableSource mic() {
+        return new PullableSource.AutomaticGainControl(
+                new PullableSource.NoiseSuppressor(
+                        new PullableSource.Default(
+                                new AudioRecordConfig.Default(MediaRecorder.AudioSource.MIC,
+                                        AudioFormat.ENCODING_PCM_16BIT, AudioFormat.CHANNEL_IN_MONO, 44100))));
+    }
+
+    @NonNull
+    private File file(String name) {
+        return new File(Environment.getExternalStorageDirectory(), "dSoundBoyRecordings/" + name + ".wav");
+    }
+
+    public void startRecorderNew(Activity activity) {
+        if (checkPermissions()) {
+            String recordingPath = Environment.getExternalStorageDirectory() + "/dSoundBoyRecordings/recorded audio " + new Date().getTime() + ".wav";
+            try {
+                File recording = new File(recordingPath);
+                if (!recording.getParentFile().exists()) {
+                    recording.getParentFile().mkdirs(); // result ignored
+                }
+                if (!recording.exists()) {
+                    recording.createNewFile(); // result ignored
+                }
+                int color = R.color.colorPrimaryDark;
+                int requestCode = 0;
+                AndroidAudioRecorder.with(activity)
+                        .setFilePath(recordingPath)
+                        .setColor(color)
+                        .setRequestCode(requestCode)
+                        .setSource(AudioSource.MIC)
+                        .setChannel(AudioChannel.STEREO)
+                        .setSampleRate(AudioSampleRate.HZ_48000)
+                        .setAutoStart(true)
+                        .setKeepDisplayOn(true)
+                        .record();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            requestPermission();
+        }
     }
 
     /**
-     * Starts recdording
+     * Starts recording
      * @param activity the activity calling this method
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -214,7 +302,8 @@ public class RecorderUtils {
      * @return the new file's pathname
      */
     private String createAudioPathname(String[] data, String extension) {
-        return createAudioPathname(data[0], data[1], data[2], data[3], new Date()) + extension;
+        return createAudioPathname("Band Name", "Description", "Venue", "Email", new Date()) + extension;
+        //return createAudioPathname(data[0], data[1], data[2], data[3], new Date()) + extension;
     }
 
     /**

@@ -29,12 +29,12 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(this, TestNavActivity.class));
         //startActivity(new Intent(this, NewLoginActivity.class));
 
-        Log.d("FB ID: " , AccessToken.getCurrentAccessToken().getUserId());
-        Log.d("FB Access Token: " , AccessToken.getCurrentAccessToken().getToken());
         if (!new PrefUtils(this).hasUniqueUserID() && AccessToken.getCurrentAccessToken() == null) {
             Intent loginIntent = new Intent(this, NewLoginActivity.class);
             startActivity(loginIntent);
         } else {
+            Log.d("FB ID: " , AccessToken.getCurrentAccessToken().getUserId());
+            Log.d("FB Access Token: " , AccessToken.getCurrentAccessToken().getToken());
             Intent homeIntent = new Intent(this, TestNavActivity.class);
             startActivity(homeIntent);
         }

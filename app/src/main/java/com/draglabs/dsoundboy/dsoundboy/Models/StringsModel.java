@@ -19,7 +19,7 @@ public final class StringsModel {
     private static final String USER = BASE_STRING + "/user/";
 
     public static final DateFormat STANDARD_DATE_FORMAT_OLD = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.US);
-    public static final DateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS XXXX z", Locale.US); // TODO: is this correct?
+    public static final DateFormat STANDARD_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS ZZZZ z", Locale.US); // TODO: is this correct?
 
     // CURRENT FEATURES //
     public static final String NEW_JAM = "New Jam";

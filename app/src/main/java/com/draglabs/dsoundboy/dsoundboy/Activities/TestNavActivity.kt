@@ -11,23 +11,32 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.draglabs.dsoundboy.dsoundboy.R
+import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
 import com.facebook.AccessToken
+import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
+import kotlinx.android.synthetic.main.content_test_nav.*
+import java.util.*
 
 class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    //var recorderUtils = RecorderUtils(this, null, this)
+    lateinit var homeRoutine: HomeRoutine
+    lateinit var startTime: Date
+    lateinit var endTime: Date
+    var buttons = HashMap<String, Any>()
+    //var recorder = homeRoutine.recorder
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
+        @Suppress("DEPRECATION")
+        FacebookSdk.sdkInitialize(this)
         setContentView(R.layout.activity_test_nav)
         setSupportActionBar(toolbar)
-
-        fab.setOnClickListener { view ->
-            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show()
-        }
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -36,11 +45,53 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        setListeners()
         setUserView()
+
+        buttons.put("new_jam", button_new_jam_new as Any)
+        buttons.put("new_recording", button_rec_new as Any)
+        buttons.put("join_jam", button_join_jam_new as Any)
+
+        homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
+
+        //Log.v("API ID:", PrefUtils(this).uniqueUserID)
+    }
+
+    private fun setListeners() {
+        fab.setOnClickListener { view ->
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show()
+        }
+
+        button_new_jam_new.setOnClickListener { view ->
+            //APIutils.newJam(this, this, PrefUtils(this).uniqueUserID, "ActionSpot", "My Test Jam", Location("12345"))
+            homeRoutine.createJam()
+        }
+
+        button_rec_new.setOnClickListener { view ->
+            val buttonText = button_rec_new.text
+            if (buttonText == "Rec") {
+                startTime = Date()
+                button_rec_new.text = "Stop"
+                homeRoutine.clickRec(chronometer_new) // not confident about the order of events here
+            } else {
+                endTime = Date()
+                button_rec_new.text = "Start"
+                homeRoutine.clickStop(view, chronometer_new, startTime, endTime)
+                homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
+
+            }
+        }
+
+        button_join_jam_new.setOnClickListener { view ->
+            homeRoutine.joinJam()
+        }
+
+        // new, rec, join, chronometer
     }
 
     private fun setUserView() {
-        var loginRoutine = LoginRoutine(null, this, this)
+        val loginRoutine = LoginRoutine(null, this, this)
 
         val accessToken = AccessToken.getCurrentAccessToken()
         val graphRequest = GraphRequest.newMeRequest(accessToken) { `object`, response ->
@@ -52,7 +103,6 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         graphRequest.parameters = parameters
         graphRequest.executeAsync()
     }
-
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -85,7 +135,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 // Handle the camera action
                 // go to the default record screen
             }
-            R.id.nav_gallery -> {
+            R.id.nav_recordings -> {
                 startActivity(Intent(this, AboutActivity::class.java))
                 // go to the previous recordings
                 // allow export of jams

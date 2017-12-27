@@ -13,14 +13,16 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Chronometer;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils;
 import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity;
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity;
@@ -28,10 +30,13 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfRecordingsActivity;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
+import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils;
 
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+
+import omrecorder.Recorder;
 
 /**
  * <p>The home routine which shows all the recording screen stuff</p>
@@ -43,6 +48,8 @@ public class HomeRoutine {
     private Activity activity;
     private Context context;
     private PrefUtils prefUtils;
+    private RecorderUtils recorderUtils;
+    private Recorder recorder;
 
     /**
      * Constructor for the Home Routine
@@ -50,11 +57,13 @@ public class HomeRoutine {
      * @param activity the activity calling the routine
      * @param context the context calling the routine
      */
-    public HomeRoutine(HashMap<String, Object> buttons, Activity activity, Context context) {
+    public HomeRoutine(HashMap<String, Object> buttons, Activity activity, Context context, String path, Button recordButton) {
         this.buttons = buttons;
         this.activity = activity;
         this.context = context;
         this.prefUtils = new PrefUtils(activity);
+        this.recorderUtils = new RecorderUtils(context, null, activity);
+        this.recorder = recorderUtils.setupRecorder(path, recordButton);
     }
 
     /**
@@ -158,14 +167,15 @@ public class HomeRoutine {
     /**
      * Starts recording audio
      * @param chronometer the chronometer
-     * @param recorderUtils the recorder utils class
      */
-    public void clickRec(Chronometer chronometer, RecorderUtils recorderUtils) {
+    public void clickRec(Chronometer chronometer) {
         createJam();
 
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        recorderUtils.startRecording(activity);
+        //recorderUtils.startRecording(activity);
+        //recorderUtils.startRecorderNew(activity);
+        recorderUtils.startRecording(recorder);
 
         Toast.makeText(context, "Started recording.", Toast.LENGTH_LONG).show();
     }
@@ -173,13 +183,13 @@ public class HomeRoutine {
     /**
      * Stops recording audio
      * @param view the view calling the method
-     * @param recorderUtils the recorder settings
      * @param chronometer stops the chronometer
      * @param recordingStartTime submits the recording's start time to the server
      * @param recordingEndTime submits the recording's end time to the server
      */
-    public void clickStop(View view, RecorderUtils recorderUtils, Chronometer chronometer, Date recordingStartTime, Date recordingEndTime) {
-        recorderUtils.stopRecording();
+    public void clickStop(View view, Chronometer chronometer, Date recordingStartTime, Date recordingEndTime) {
+        //recorderUtils.stopRecording();
+        recorderUtils.stopRecording(recorder);
         chronometer.stop();
 
         Toast.makeText(context, "Stopped recording.", Toast.LENGTH_LONG).show();
@@ -265,6 +275,8 @@ public class HomeRoutine {
             // may have to implement without a while loop
             prefUtils = new PrefUtils(activity);
             showNewJamPinDialog(context, "Jam PIN", prefUtils.getJamPIN());
+        } else {
+            Log.v("Current Jam PIN: ", prefUtils.getJamPIN());
         }
 
         /*String jamPIN = prefUtils.getJamPIN();
@@ -285,9 +297,7 @@ public class HomeRoutine {
      * Joins a jam, shows dialog to enter a jam PIN
      */
     public void joinJam() {
-        prefUtils = new PrefUtils(activity);
-        int jamPIN = showEnterJamPinDialog(context, "Enter a Jam PIN", "yada yada yada");
-        APIutils.joinJam(activity, context, jamPIN, prefUtils.getUniqueUserID()); // TODO: show error if incorrect
+        showEnterJamPinDialog(context); // doesn't show keyboard automatically right away, it should
     }
 
     /*public void clickJoinJam() {
@@ -321,19 +331,41 @@ public class HomeRoutine {
     /**
      * Creates the dialog to enter the new jam PIN
      * @param context the app context
-     * @param title the title of the dialog
-     * @param jamPIN the jam PIN to enter
-     * @return 0
      */
-    private int showEnterJamPinDialog(Context context, String title, String jamPIN) {
+    private void showEnterJamPinDialog(Context context) {
+        LayoutInflater inflater = activity.getLayoutInflater();
+        View alertLayout = inflater.inflate(R.layout.layout_join_jam_dialog, null);
+        final EditText joinJamPin = alertLayout.findViewById(R.id.join_jam_enter_pin_text);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setMessage(jamPIN).setTitle(title);
-        builder.setNeutralButton("Okay", (dialog, which) -> dialog.dismiss());
+        builder.setTitle("Enter a Jam PIN");
+        builder.setView(alertLayout);
+        builder.setCancelable(false);
+        builder.setNegativeButton("Cancel", (dialogInterface, i) ->
+            Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show());
+        builder.setPositiveButton("Done", (dialogInterface, i) -> {
+            String jamPinEntered = joinJamPin.getText().toString();
+            prefUtils = new PrefUtils(activity);
+            prefUtils.saveJamPIN(jamPinEntered);
+            Log.d("Jam PIN Entered: ", prefUtils.getJamPIN());
+            String UUID = checkUUID(prefUtils, activity, context);
+            APIutils.joinJam(activity, context, jamPinEntered, UUID); // TODO: show error if incorrect
+        });
 
         AlertDialog dialog = builder.create();
         dialog.show();
         // TODO: enter jam pin here and return it
-        return 0;
+    }
+
+    private String checkUUID(PrefUtils prefUtils, Activity activity, Context context) {
+        if (prefUtils.hasUniqueUserID()) {
+            Log.v("Checked UUID:", prefUtils.getUniqueUserID());
+            return prefUtils.getUniqueUserID();
+        } else {
+            APIutils.registerUser(activity, context);
+            Log.v("Refreshed UUID:", prefUtils.getUniqueUserID());
+            return prefUtils.getUniqueUserID();
+        }
     }
 
     /**
@@ -342,5 +374,17 @@ public class HomeRoutine {
      */
     public HashMap<String, Object> getButtons() {
         return buttons;
+    }
+
+    public RecorderUtils getRecorderUtils() {
+        return recorderUtils;
+    }
+
+    public void setRecorderUtils(RecorderUtils recorderUtils) {
+        this.recorderUtils = recorderUtils;
+    }
+
+    public Recorder getRecorder() {
+        return recorder;
     }
 }

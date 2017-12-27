@@ -78,7 +78,7 @@ public class APIparams {
      * @return requestParams
      */
     public static RequestParams joinJam(String UUID,
-                                        int pin) {
+                                        String pin) {
 
         RequestParams requestParams = new RequestParams();
 

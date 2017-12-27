@@ -183,4 +183,6 @@
 
     <string name="tools">Tools</string>
     <string name="log_out">Log Out</string>
+    <string name="view_recordings">View Recordings</string>
+    <string name="new_jam">New</string>
 </resources>

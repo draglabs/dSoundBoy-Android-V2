@@ -64,6 +64,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'com.github.adrielcafe:AndroidAudioRecorder:0.3.0'
+    compile 'com.kailashdabhi:om-recorder:1.1.5'
     testCompile 'junit:junit:4.12'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.3-alpha', {
         exclude group: 'com.android.support', module: 'support-annotations'

@@ -422,7 +422,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
     public void clickJoinJam(View view) {
         Snackbar.make(view, "Function under construction.", Snackbar.LENGTH_LONG).show();
 
-        APIutils.joinJam(this, this, Integer.parseInt(jamPINtext.getText().toString()), prefUtils.getUniqueUserID());
+        APIutils.joinJam(this, this, jamPINtext.getText().toString(), prefUtils.getUniqueUserID());
     }
 
     public void jamIDset() {

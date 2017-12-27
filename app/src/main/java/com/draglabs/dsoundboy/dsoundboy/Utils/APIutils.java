@@ -148,11 +148,14 @@ public class APIutils { // TODO: docs for all other utils
      * @param UUID the dlsAPI UUID
      * @param pin the jam PIN
      */
-    public static void joinJam(Activity activity, Context context, int pin, String UUID) {
+    public static void joinJam(Activity activity, Context context, String pin, String UUID) {
         final PrefUtils prefUtils = new PrefUtils(activity);
 
         Header[] headers = APIheaders.standardHeader(UUID);
         RequestParams requestParams = APIparams.joinJam(UUID, pin);
+        Log.v("JoinJam PinParam:", pin);
+        Log.v("JoinJam UUIDParam:", UUID);
+        Log.v("JoinJam RequestParams:", requestParams.toString());
 
         post(context, JOIN_JAM, headers, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -335,7 +338,7 @@ public class APIutils { // TODO: docs for all other utils
                 try {
                     String uniqueID = JsonUtils.getJsonObject(StringsModel.REGISTER_USER, response, StringsModel.jsonTypes.UUID.type());
                     Log.v("Unique ID: ", uniqueID);
-                    prefUtils.saveUniqueUserID(uniqueID);
+                    new PrefUtils(activity).saveUniqueUserID(uniqueID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

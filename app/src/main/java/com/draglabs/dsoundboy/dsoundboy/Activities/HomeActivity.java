@@ -20,6 +20,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -149,7 +150,7 @@ public class HomeActivity extends AppCompatActivity {
         buttons.put("pauseButton", pauseButton);
         buttons.put("pauseImage", pauseImage);
 
-        homeRoutine = new HomeRoutine(buttons, this, this);
+        homeRoutine = new HomeRoutine(buttons, this, this, "HomeActivity", new Button(this));
     }
 
     /**
@@ -293,7 +294,7 @@ public class HomeActivity extends AppCompatActivity {
     public void clickRec(View view) {
         isRecording = true;
         recordingStartTime = new Date();
-        homeRoutine.clickRec(chronometer, recorderUtils);
+        homeRoutine.clickRec(chronometer);
         recButtonText.setText("Exit");
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.VISIBLE);
@@ -320,7 +321,7 @@ public class HomeActivity extends AppCompatActivity {
     public void clickStop(View view) { // TODO: move all this logic into homeRoutine
         isRecording = false;
         recordingEndTime = new Date();
-        homeRoutine.clickStop(view, recorderUtils, chronometer, recordingStartTime, recordingEndTime);
+        homeRoutine.clickStop(view, chronometer, recordingStartTime, recordingEndTime);
         recButtonText.setText("Rec");
         buttons.replace("recButtonText", recButtonText);
         pauseImage.setVisibility(View.INVISIBLE);

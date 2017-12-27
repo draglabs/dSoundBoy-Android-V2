@@ -7,7 +7,7 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity;
+import com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils;
@@ -108,8 +108,8 @@ public class LoginRoutine implements CallbackListener {
         String uniqueUserID = prefUtils.getUniqueUserID();
 
         Toast.makeText(context, "Unique ID: " + prefUtils.getUniqueUserID(), Toast.LENGTH_LONG).show();
-        Log.d("Unique ID: ", uniqueUserID);
-        Intent intent = new Intent(activity, HomeActivity.class);
+        //Log.d("Unique ID: ", uniqueUserID);
+        Intent intent = new Intent(activity, TestNavActivity.class);
         //intent.putExtra("callingClass", "LoginActivity"); // DO IT THIS WAY, SEND BOOL VALUES THROUGH THIS INSTEAD OF SHAREDPREFERENCES!!!!!!!!!
         //intent.putExtra("uniqueUserID", uniqueUserID);
         activity.startActivity(intent);

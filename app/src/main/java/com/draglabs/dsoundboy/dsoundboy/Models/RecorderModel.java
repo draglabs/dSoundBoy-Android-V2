@@ -67,11 +67,11 @@ public class RecorderModel {
         this.random = new Random();
         this.recorderAudioSource = MediaRecorder.AudioSource.MIC;
         this.recorderOutputFormat = MediaRecorder.OutputFormat.MPEG_4;
-        this.recordingEncodingBitRate = 24;
+        this.recordingEncodingBitRate = 16;
         this.recordingSampleRate = 44100;
         this.recordingChannels = 1;
         this.recordingAudioEncoding = MediaRecorder.AudioEncoder.AAC;
-        this.mediaRecorder = mediaRecorderReady();
+        //this.mediaRecorder = mediaRecorderReady();
     }
 
     /**
