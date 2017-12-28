@@ -24,4 +24,7 @@ public interface CallbackListener {
 
     // GetJamDetails
     void getJamDetailsSet();
+
+    // GetAccessToken
+    void getAccessTokenSet();
 }

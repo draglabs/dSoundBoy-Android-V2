@@ -220,4 +220,13 @@ public class LoginRoutine implements CallbackListener {
     public void getJamDetailsSet() {
         Log.v("Jam Details: ", prefUtils.getJamDetails() + "");
     }
+
+    /**
+     * Callback for the setting of the Facebook access token and logs it
+     */
+    @Override
+    public void getAccessTokenSet() {
+        Log.v("Access Token: ", prefUtils.getAccessToken() + "");
+
+    }
 }

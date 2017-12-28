@@ -13,6 +13,7 @@ import android.view.MenuItem
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
@@ -47,6 +48,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         setListeners()
         setUserView()
+        registerUser()
 
         buttons.put("new_jam", button_new_jam_new as Any)
         buttons.put("new_recording", button_rec_new as Any)
@@ -79,7 +81,6 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 button_rec_new.text = "Start"
                 homeRoutine.clickStop(view, chronometer_new, startTime, endTime)
                 homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
-
             }
         }
 
@@ -102,6 +103,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         parameters.putString("fields", "id,name,email")
         graphRequest.parameters = parameters
         graphRequest.executeAsync()
+    }
+
+    private fun registerUser() {
+        APIutils.registerUser(this, this)
     }
 
     override fun onBackPressed() {

@@ -282,6 +282,11 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
     }
 
     @Override
+    public void getAccessTokenSet() {
+        Log.v("Access Token: ", prefUtils.getAccessToken() + "");
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);

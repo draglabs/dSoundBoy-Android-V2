@@ -30,6 +30,7 @@ public class PrefUtils {
     private final String COLLABORATORS = "collaborators";
     private final String USER_ACTIVITY = "user_activity";
     private final String JAM_DETAILS = "jam_details";
+    private final String FB_ACCESS_TOKEN = "fb_access_token";
 
     // TODO: add data for "Enter Band And/Or Recording Info"
 
@@ -90,17 +91,26 @@ public class PrefUtils {
         }
     }
 
+    public void getAccessTokenSet() {
+        for (CallbackListener callback : callbacks) {
+            callback.getAccessTokenSet();
+        }
+    }
+
     public void saveJamID(String jamID) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_ID, jamID);
         editor.apply();
+        Log.v("Saved Jam ID: ", getJamID() + "");
         jamIDset();
     }
 
     public String getJamID() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        return sharedPreferences.getString(JAM_ID, null);
+        String jamID = sharedPreferences.getString(JAM_ID, null);
+        Log.v("Gotten Jam ID: ", getJamID() + "");
+        return jamID;
     }
 
     public void clearJamID() {
@@ -115,12 +125,15 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_PIN, jamPIN);
         editor.apply();
+        Log.v("Saved Jam PIN: ", getJamPIN() + "");
         jamPINset();
     }
 
     public String getJamPIN() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        return sharedPreferences.getString(JAM_PIN, null);
+        String jamPIN = sharedPreferences.getString(JAM_PIN, null);
+        Log.v("Gotten Jam PIN: ", jamPIN);
+        return jamPIN;
     }
 
     public boolean hasJamPIN() {
@@ -139,12 +152,15 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(UNIQUE_USER_ID, uniqueUserID);
         editor.apply();
+        Log.d("Saved UUID: ", getUniqueUserID());
         uniqueUserIDset();
     }
 
     public String getUniqueUserID() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        return sharedPreferences.getString(UNIQUE_USER_ID, null);
+        String UUID = sharedPreferences.getString(UNIQUE_USER_ID, "");
+        Log.d("Gotten UUID: ", UUID);
+        return UUID;
     }
 
     public boolean hasUniqueUserID() { // TODO: rename isAuthorized?
@@ -163,6 +179,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(JAM_START_TIME, jamStartTime);
         editor.apply();
+        Log.v("Saved Jam Start Time: ", getJamStartTime() + "");
         jamStartTimeSet();
     }
 
@@ -183,6 +200,7 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(COLLABORATORS, collaborators);
         editor.apply();
+        Log.v("Saved Collaborators: ", getCollaborators() + "");
         getCollaboratorsSet();
     }
 
@@ -203,8 +221,8 @@ public class PrefUtils {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(USER_ACTIVITY, userActivity);
         editor.apply();
+        Log.v("Saved User Activity: ", getUserActivity() + "");
         getUserActivitySet();
-        Log.d("Saved User Activity: ", userActivity);
     }
 
     public String getUserActivity() {
@@ -259,15 +277,15 @@ public class PrefUtils {
     public void saveAccessToken(String token) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("fb_access_token", token);
+        editor.putString(FB_ACCESS_TOKEN, token);
         editor.apply();
-        Log.v("Getting user ID: ", getUniqueUserID() + "");
-        uniqueUserIDset();
+        Log.v("Saved Access Token: ", getAccessToken() + "");
+        getAccessTokenSet();
     }
 
-    public String getToken() {
+    public String getAccessToken() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
-        return sharedPreferences.getString("fb_access_token", null);
+        return sharedPreferences.getString(FB_ACCESS_TOKEN, null);
     }
 
     public void clearToken() {
@@ -286,12 +304,12 @@ public class PrefUtils {
         editor.putString("fb_gender", gender);
         editor.putString("fb_profileURL", profileURL);
         editor.apply(); // This line is IMPORTANT !!!
-        Log.d("dSoundBoy", "Shared Name : "+first_name+"\nLast Name : "+last_name+"\nEmailModel : "+email+"\nGender : "+gender+"\nProfile Pic : "+profileURL);
+        Log.d("dSoundBoy", "Shared Name : " + first_name + "\nLast Name : " + last_name + "\nEmailModel : " + email + "\nGender : " + gender + "\nProfile Pic : " + profileURL);
     }
 
     public void getFacebookUserInfo() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
-        Log.d("dSoundBoy", "Name : "+prefs.getString("fb_name",null)+"\nEmailModel : "+prefs.getString("fb_email",null));
+        Log.d("dSoundBoy", "Name : " + prefs.getString("fb_name",null) + "\nEmailModel : " + prefs.getString("fb_email",null));
     }
 
     public void clearFacebookUserInfo() { // TODO: use when logging out of account

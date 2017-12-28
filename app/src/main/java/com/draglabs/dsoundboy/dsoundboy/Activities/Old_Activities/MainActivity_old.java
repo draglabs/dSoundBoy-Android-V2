@@ -454,6 +454,11 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         Log.v("Jam Details: ", prefUtils.getJamDetails() + " ");
     }
 
+    @Override
+    public void getAccessTokenSet() {
+        Log.v("Access Token: ", prefUtils.getAccessToken() + "");
+    }
+
     private void setBandInfo() {
         this.emailText = PrefUtils.getArtistEmail(this);
         this.descriptionText = PrefUtils.getRecordingDescription(this);

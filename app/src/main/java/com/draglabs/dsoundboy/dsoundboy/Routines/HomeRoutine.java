@@ -349,6 +349,7 @@ public class HomeRoutine {
             prefUtils.saveJamPIN(jamPinEntered);
             Log.d("Jam PIN Entered: ", prefUtils.getJamPIN());
             String UUID = checkUUID(prefUtils, activity, context);
+            Log.d("UUID into Join Jam:", UUID);
             APIutils.joinJam(activity, context, jamPinEntered, UUID); // TODO: show error if incorrect
         });
 
@@ -358,7 +359,7 @@ public class HomeRoutine {
     }
 
     private String checkUUID(PrefUtils prefUtils, Activity activity, Context context) {
-        if (prefUtils.hasUniqueUserID()) {
+        if (prefUtils.getUniqueUserID() != null || !prefUtils.getUniqueUserID().equals("")) {
             Log.v("Checked UUID:", prefUtils.getUniqueUserID());
             return prefUtils.getUniqueUserID();
         } else {

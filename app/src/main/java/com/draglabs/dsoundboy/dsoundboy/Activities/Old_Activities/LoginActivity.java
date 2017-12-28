@@ -283,6 +283,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     }
 
     /**
+     * Callback for the setting of the Facebook access token and logs it
+     */
+    @Override
+    public void getAccessTokenSet() {
+        Log.v("Access Token: ", prefUtils.getAccessToken() + "");
+    }
+
+    /**
      * Registers with the CallbackManager once login is complete
      * @param requestCode the request code
      * @param resultCode the result code

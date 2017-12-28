@@ -250,4 +250,12 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
     public void getJamDetailsSet() {
         Log.v("Jam Details: ", "Done");
     }
+
+    /**
+     * Callback for the setting of the Facebook access token and logs it
+     */
+    @Override
+    public void getAccessTokenSet() {
+        Log.v("Access Token: ", "Done");
+    }
 }

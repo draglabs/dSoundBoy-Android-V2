@@ -24,6 +24,7 @@ import java.util.*
  */
 
 class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) : CallbackListener {
+
     private val mAuthTask: LoginActivity.UserLoginTask? = null
 
     private var prefUtils: PrefUtils? = null
@@ -123,6 +124,10 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
 
     override fun getJamDetailsSet() {
         Log.v("Jam Details: ", prefUtils!!.jamDetails + "")
+    }
+
+    override fun getAccessTokenSet() {
+        Log.v("Access Token: ", prefUtils!!.accessToken + "")
     }
 
     private fun isEmailValid(email: String): Boolean {

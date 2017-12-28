@@ -29,7 +29,10 @@ public class MainActivity extends AppCompatActivity {
         //startActivity(new Intent(this, TestNavActivity.class));
         //startActivity(new Intent(this, NewLoginActivity.class));
 
-        if (!new PrefUtils(this).hasUniqueUserID() && AccessToken.getCurrentAccessToken() == null) {
+        PrefUtils prefUtils = new PrefUtils(this);
+        String UUID = prefUtils.getUniqueUserID();
+
+        if ((UUID == null || UUID.equals("")) && AccessToken.getCurrentAccessToken() == null) {
             Intent loginIntent = new Intent(this, NewLoginActivity.class);
             startActivity(loginIntent);
         } else {
@@ -38,6 +41,5 @@ public class MainActivity extends AppCompatActivity {
             Intent homeIntent = new Intent(this, TestNavActivity.class);
             startActivity(homeIntent);
         }
-
     }
 }

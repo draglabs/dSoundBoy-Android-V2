@@ -326,10 +326,11 @@ public class APIutils { // TODO: docs for all other utils
         Log.d("Auth Token:", facebookAccessToken);
 
         final PrefUtils prefUtils = new PrefUtils(activity);
-        prefUtils.saveAccessToken(facebookAccessToken);
+        prefUtils.saveAccessToken(facebookAccessToken); // also logs it inside
 
         Header[] headers = APIheaders.contentTypeJson();
         RequestParams requestParams = APIparams.registerUser(facebookID, facebookAccessToken);
+        Log.d("Register User Params: ", requestParams.toString());
 
         post(context, REGISTER_USER, headers, requestParams, new JsonHttpResponseHandler() {
             @Override
@@ -636,10 +637,6 @@ public class APIutils { // TODO: docs for all other utils
             }
         });
     }
-
-
-
-
 
     /**
      * Prepares to generate the XML

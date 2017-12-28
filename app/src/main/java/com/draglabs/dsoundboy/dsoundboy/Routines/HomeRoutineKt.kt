@@ -335,7 +335,8 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         builder.setTitle("Enter a Jam PIN")
         builder.setView(alertLayout)
         builder.setCancelable(false)
-        builder.setNegativeButton("Cancel") { dialogInterface, i -> Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show() }
+        builder.setNegativeButton("Cancel") { dialogInterface, i ->
+            Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show() }
         builder.setPositiveButton("Done") { dialogInterface, i ->
             val jamPinEntered = joinJamPin.text.toString()
             prefUtils = PrefUtils(activity)
