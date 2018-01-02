@@ -335,8 +335,8 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <div class="block">Used for the Start Jam API</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>uniqueID</code> - the API's unique user ID</dd>
-<dd><code>jamLocation</code> - the physical location of the user, latitude and longitude extracted</dd>
+<dd><code>uniqueID</code> - the API's unique userModel ID</dd>
+<dd><code>jamLocation</code> - the physical location of the userModel, latitude and longitude extracted</dd>
 <dd><code>jamName</code> - the name of the jam</dd>
 <dd><code>location</code> - the name of the location of the jam</dd>
 <dd><code>notes</code> - the jam notes</dd>
@@ -378,7 +378,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <div class="block">Used for the Join Jam API</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>UUID</code> - the dlsAPI unique user ID</dd>
+<dd><code>UUID</code> - the dlsAPI unique userModel ID</dd>
 <dd><code>pin</code> - the jam PIN</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>requestParams</dd>
@@ -476,7 +476,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <div class="block">Used for the Authenticate User API with the Jam API</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>facebookID</code> - the user's Facebook ID</dd>
+<dd><code>facebookID</code> - the userModel's Facebook ID</dd>
 <dd><code>facebookAccessToken</code> - the Access Token from the Facebook API</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>requestParams</dd>
@@ -539,7 +539,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <div class="block">Used for the Solo Recording Upload API</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>uniqueID</code> - the API's unique user ID</dd>
+<dd><code>uniqueID</code> - the API's unique userModel ID</dd>
 <dd><code>filename</code> - the name of the recorded file</dd>
 <dd><code>notes</code> - notes from the recording</dd>
 <dd><code>startTime</code> - the start time of the recording</dd>
@@ -560,7 +560,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <div class="block">Used for the Exit Jam API</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>uniqueID</code> - the API's unique user ID</dd>
+<dd><code>uniqueID</code> - the API's unique userModel ID</dd>
 <dd><code>jamID</code> - the jam ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>requestParams</dd>
@@ -578,7 +578,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <div class="block">Used for the Get Collaborators API</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>uniqueID</code> - the API's unique user ID</dd>
+<dd><code>uniqueID</code> - the API's unique userModel ID</dd>
 <dd><code>jamID</code> - the jam ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>requestParams</dd>
@@ -629,7 +629,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>jamID</code> - the jam ID</dd>
-<dd><code>userID</code> - the API's unique user ID</dd>
+<dd><code>userID</code> - the API's unique userModel ID</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>requestParams</dd>
 </dl>

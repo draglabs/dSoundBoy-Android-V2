@@ -199,7 +199,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
      * Callback for the setting of the dlsAPI user ID and logs it
      */
     public void uniqueUserIDset() {
-        Log.v("Unique User ID: ", "Done");
+        Log.v("Unique UserModel ID: ", "Done");
     }
 
     /**
@@ -241,7 +241,7 @@ public class ListOfRecordingsActivity extends AppCompatActivity implements Callb
      * Callback for the setting of the user's activity and logs it
      */
     public void getUserActivitySet() {
-        Log.v("User Activity: ", "Done");
+        Log.v("UserModel Activity: ", "Done");
     }
 
     /**

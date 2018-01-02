@@ -415,7 +415,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
 
     public void uniqueUserIDset() {
         String uniqueUserID = prefUtils.getUniqueUserID();
-        Log.v("Unique User ID (MA): ", uniqueUserID + "");
+        Log.v("Unique UserModel ID (MA): ", uniqueUserID + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
@@ -446,7 +446,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
     }
 
     public void getUserActivitySet() {
-        Log.v("User Activity: ", prefUtils.getUserActivity() + "");
+        Log.v("UserModel Activity: ", prefUtils.getUserActivity() + "");
     }
 
     @Override

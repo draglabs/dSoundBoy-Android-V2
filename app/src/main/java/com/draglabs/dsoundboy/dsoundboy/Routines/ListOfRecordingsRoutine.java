@@ -191,7 +191,7 @@ public class ListOfRecordingsRoutine {
         //Gson gson = new GsonBuilder().setPrettyPrinting().create();
         //Map<String, Object> stringObjectMap = gson.fromJson(userActivity, new TypeToken<Map<String ,Object>>(){}.getType());
         //stringObjectMap.forEach((x, y) -> System.out.println(""));
-        Log.d("User Activity: ", userActivityData);
+        Log.d("UserModel Activity: ", userActivityData);
         try {
             JSONObject jsonObject = new JSONObject(userActivityData);
             JSONArray recordings = jsonObject.getJSONArray("recordings");
@@ -220,7 +220,7 @@ public class ListOfRecordingsRoutine {
 
         PrefUtils prefUtils = new PrefUtils(activity);
         APIutils.getUserActivity(activity, prefUtils.getUniqueUserID(), context);
-        Log.v("Unique User ID: ", prefUtils.getUniqueUserID());
+        Log.v("Unique UserModel ID: ", prefUtils.getUniqueUserID());
 
         prefUtils = new PrefUtils(activity);
         String jamIDs = prefUtils.getUserActivity();

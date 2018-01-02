@@ -155,7 +155,7 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // app code
-                loginResultText.setText("User ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken());
+                loginResultText.setText("UserModel ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken());
             }
 
             @Override
@@ -191,7 +191,7 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
             mEmailSignInButton.setEnabled(true);
         } else {
             //awsUtils = new AWSutils(this); // TODO: use this in uploader instead of here?; reference somehow CredentialsProvider
-            String loginResultTextText = "User ID: + " + AccessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + AccessToken.getCurrentAccessToken().getToken();
+            String loginResultTextText = "UserModel ID: + " + AccessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + AccessToken.getCurrentAccessToken().getToken();
             loginResultText.setText(loginResultTextText);
             continueButton.setEnabled(true);
             mEmailSignInButton.setEnabled(false);
@@ -206,7 +206,7 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
             public void onSuccess(LoginResult loginResult) {
                 // app code
                 accessToken = AccessToken.getCurrentAccessToken();
-                String loginResultTextText = "User ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken();
+                String loginResultTextText = "UserModel ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken();
                 loginResultText.setText(loginResultTextText);
                 continueButton.setEnabled(true);
                 mEmailSignInButton.setEnabled(false);
@@ -247,7 +247,7 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
     }
 
     public void uniqueUserIDset() {
-        Log.v("Unique User ID: ", prefUtils.getUniqueUserID() + "");
+        Log.v("Unique UserModel ID: ", prefUtils.getUniqueUserID() + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
@@ -273,7 +273,7 @@ public class LoginActivity_old extends AppCompatActivity implements LoaderCallba
     }
 
     public void getUserActivitySet() {
-        Log.v("User Activity: ", prefUtils.getUserActivity() + "");
+        Log.v("UserModel Activity: ", prefUtils.getUserActivity() + "");
 
     }
 

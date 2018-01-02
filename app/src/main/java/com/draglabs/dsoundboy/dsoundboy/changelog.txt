@@ -86,7 +86,7 @@ v1.17.08.31
         - added screen to show recordings
             - needs button to play recordings
                 - maybe a progress and stop button
-        - recording name is the user id
+        - recording name is the userModel id
     - next is to add Cognito functionality with S3 credentials once audio is recorded
     - next is to join Jam
 v1.17.09.08
@@ -96,13 +96,13 @@ v1.17.09.08
     - recording note:
         - no start/pause recording, only start and submit (upload) when buttons are pressed, maybe reset though
         - name recording after Facebook ID
-            - two user IDs? one from Shyam and one from Facebook?
+            - two userModel IDs? one from Shyam and one from Facebook?
     - add documentation/instructions screen for app?
     - fix playing recordings and buttons therein in ListOfRecordings
     - finished Cognito sync, and can get all credentials now, have yet to test
         - rather than have the AWSutils initializer in LoginActivity, have it in the recorderUtils while submit?
-            - make sure Cognito user has rights to access and upload to S3 bucket !*!*!*!*!*!*
-    - need to authenticate user with Shyam, and do other things with API
+            - make sure Cognito userModel has rights to access and upload to S3 bucket !*!*!*!*!*!*
+    - need to authenticate userModel with Shyam, and do other things with API
         - add Exit Jam button and work with "enabled"s
         - show list of collaborators
             - launch activity - Jam View
@@ -113,7 +113,7 @@ v1.17.09.11
         - using this library for post: http://loopj.com/android-async-http/
     - need to fix facebook authentication
         - not getting app id
-            - https://freakycoder.com/android-notes-24-how-to-facebook-login-and-get-user-information-8d6df0350f1c
+            - https://freakycoder.com/android-notes-24-how-to-facebook-login-and-get-userModel-information-8d6df0350f1c
     - not using HTTPS, don't have TLS yet
         - using HTTP, getting JSON response as object
     - need to find a way to set the API's userID
@@ -127,7 +127,7 @@ v1.17.09.18
     - hoping that new PrefUtils allows SharedPreferences to work
     - organized additionally with additional packages
         - added callback interface
-            - finally returns unique user id
+            - finally returns unique userModel id
     - added "exit jam" button
     - added edittext with jam info
     - moved around buttons
@@ -150,6 +150,6 @@ v1.17.10.20
     - Changed FileUtils and APIUtils to only take Jams from getUserActivity because the Recordings field is no longer available
     - Added getJamDetails capabilities, currently buggy, and need better implementation
     - Added headers to getUserActivity in APIUtils
-    - Some weird issue with callbacks and app crashing before it can get the user activity
+    - Some weird issue with callbacks and app crashing before it can get the userModel activity
         - Test added a working JamID
             -

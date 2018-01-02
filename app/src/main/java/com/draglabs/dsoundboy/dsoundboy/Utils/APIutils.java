@@ -332,14 +332,18 @@ public class APIutils { // TODO: docs for all other utils
         RequestParams requestParams = APIparams.registerUser(facebookID, facebookAccessToken);
         Log.d("Register User Params: ", requestParams.toString());
 
-        post(context, REGISTER_USER, headers, requestParams, new JsonHttpResponseHandler() {
+        post(REGISTER_USER, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
                 try {
                     String uniqueID = JsonUtils.getJsonObject(StringsModel.REGISTER_USER, response, StringsModel.jsonTypes.UUID.type());
                     Log.v("Unique ID: ", uniqueID);
-                    new PrefUtils(activity).saveUniqueUserID(uniqueID);
+                    //new PrefUtils(activity).saveUniqueUserID(uniqueID);
+                    // TODO: add to room here
+                    PrefUtils.writeUUID(uniqueID); // PATCHED UNTIL ROOM IS WORKING CORRECTLY, maybe this is better?
+                    String gottenUUID = PrefUtils.readUUID();
+                    //DatabaseInitializer.createAndAddUserWithUUID(new AppDatabase(context), uniqueID);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -649,7 +653,7 @@ public class APIutils { // TODO: docs for all other utils
         post(NOTIFY_USER, requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.v("Function: ", "Notify User");
+                Log.v("Function: ", "Notify UserModel");
                 Log.v("Status Code: ", statusCode + "");
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("ResponseModel: ", response.toString());
@@ -659,7 +663,7 @@ public class APIutils { // TODO: docs for all other utils
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                createDialog(context, jamID, "Notify User", "User Notified");
+                createDialog(context, jamID, "Notify UserModel", "UserModel Notified");
             }
 
             @Override

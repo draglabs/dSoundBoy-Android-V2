@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             @Override
             public void onSuccess(LoginResult loginResult) {
                 // app code
-                loginResultText.setText("User ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken());
+                loginResultText.setText("UserModel ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken());
             }
 
             @Override
@@ -182,7 +182,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailSignInButton.setEnabled(true);
         } else {
             //awsUtils = new AWSutils(this); // TODO: use this in uploader instead of here?; reference somehow CredentialsProvider
-            String loginResultTextText = "User ID: + " + AccessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + AccessToken.getCurrentAccessToken().getToken();
+            String loginResultTextText = "UserModel ID: + " + AccessToken.getCurrentAccessToken().getUserId() + "\nAuth Token: " + AccessToken.getCurrentAccessToken().getToken();
             loginResultText.setText(loginResultTextText);
             continueButton.setEnabled(true);
             mEmailSignInButton.setEnabled(false);
@@ -227,7 +227,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Callback for setting the dlsAPI user ID and logs it
      */
     public void uniqueUserIDset() {
-        Log.v("Unique User ID: ", prefUtils.getUniqueUserID() + "");
+        Log.v("Unique UserModel ID: ", prefUtils.getUniqueUserID() + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
@@ -271,7 +271,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
      * Callback for the setting of the user's activity and logs it
      */
     public void getUserActivitySet() {
-        Log.v("User Activity: ", prefUtils.getUserActivity() + "");
+        Log.v("UserModel Activity: ", prefUtils.getUserActivity() + "");
 
     }
 

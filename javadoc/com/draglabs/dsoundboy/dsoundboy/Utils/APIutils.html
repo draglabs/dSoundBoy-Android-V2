@@ -192,7 +192,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
              <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;jamID,
              <a href="https://developer.android.com/reference/android/app/Activity.html?is-external=true" title="class or interface in android.app">Activity</a>&nbsp;activity,
              <a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context)</code>
-<div class="block">Gets the user's jam's details</div>
+<div class="block">Gets the userModel's jam's details</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
@@ -206,7 +206,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/draglabs/dsoundboy/dsoundboy/Utils/APIutils.html#getUserActivity-android.app.Activity-java.lang.String-android.content.Context-">getUserActivity</a></span>(<a href="https://developer.android.com/reference/android/app/Activity.html?is-external=true" title="class or interface in android.app">Activity</a>&nbsp;activity,
                <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;UUID,
                <a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context)</code>
-<div class="block">Gets the user's activity, saves to PrefUtils</div>
+<div class="block">Gets the userModel's activity, saves to PrefUtils</div>
 </td>
 </tr>
 <tr id="i8" class="altColor">
@@ -266,7 +266,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/draglabs/dsoundboy/dsoundboy/Utils/APIutils.html#registerUser-android.app.Activity-android.content.Context-">registerUser</a></span>(<a href="https://developer.android.com/reference/android/app/Activity.html?is-external=true" title="class or interface in android.app">Activity</a>&nbsp;activity,
             <a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context)</code>
-<div class="block">Authenticates the user</div>
+<div class="block">Authenticates the userModel</div>
 </td>
 </tr>
 <tr id="i14" class="altColor">
@@ -285,7 +285,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
           <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;notes,
           <a href="https://developer.android.com/reference/java/util/Date.html?is-external=true" title="class or interface in java.util">Date</a>&nbsp;startTime,
           <a href="https://developer.android.com/reference/java/util/Date.html?is-external=true" title="class or interface in java.util">Date</a>&nbsp;endTime)</code>
-<div class="block">Uploads a single user's recording</div>
+<div class="block">Uploads a single userModel's recording</div>
 </td>
 </tr>
 <tr id="i16" class="altColor">
@@ -302,7 +302,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/draglabs/dsoundboy/dsoundboy/Utils/APIutils.html#updateUser-android.content.Context-java.lang.String-">updateUser</a></span>(<a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context,
           <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;emailAddress)</code>
-<div class="block">Updates the user</div>
+<div class="block">Updates the userModel</div>
 </td>
 </tr>
 </table>
@@ -467,7 +467,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
                                  <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;jamID,
                                  <a href="https://developer.android.com/reference/android/app/Activity.html?is-external=true" title="class or interface in android.app">Activity</a>&nbsp;activity,
                                  <a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context)</pre>
-<div class="block">Gets the user's jam's details</div>
+<div class="block">Gets the userModel's jam's details</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>UUID</code> - the dlsAPI UUID</dd>
@@ -499,7 +499,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <h4>registerUser</h4>
 <pre>public static&nbsp;void&nbsp;registerUser(<a href="https://developer.android.com/reference/android/app/Activity.html?is-external=true" title="class or interface in android.app">Activity</a>&nbsp;activity,
                                 <a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context)</pre>
-<div class="block">Authenticates the user</div>
+<div class="block">Authenticates the userModel</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>activity</code> - the activity performing the authentication</dd>
@@ -515,11 +515,11 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <h4>updateUser</h4>
 <pre>public static&nbsp;void&nbsp;updateUser(<a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context,
                               <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;emailAddress)</pre>
-<div class="block">Updates the user</div>
+<div class="block">Updates the userModel</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>context</code> - the app's context</dd>
-<dd><code>emailAddress</code> - the user's email address</dd>
+<dd><code>emailAddress</code> - the userModel's email address</dd>
 </dl>
 </li>
 </ul>
@@ -548,7 +548,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
 <pre>public static&nbsp;void&nbsp;getUserActivity(<a href="https://developer.android.com/reference/android/app/Activity.html?is-external=true" title="class or interface in android.app">Activity</a>&nbsp;activity,
                                    <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;UUID,
                                    <a href="https://developer.android.com/reference/android/content/Context.html?is-external=true" title="class or interface in android.content">Context</a>&nbsp;context)</pre>
-<div class="block">Gets the user's activity, saves to PrefUtils</div>
+<div class="block">Gets the userModel's activity, saves to PrefUtils</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>activity</code> - the activity calling the jam</dd>
@@ -589,7 +589,7 @@ extends <a href="https://developer.android.com/reference/java/lang/Object.html?i
                               <a href="https://developer.android.com/reference/java/lang/String.html?is-external=true" title="class or interface in java.lang">String</a>&nbsp;notes,
                               <a href="https://developer.android.com/reference/java/util/Date.html?is-external=true" title="class or interface in java.util">Date</a>&nbsp;startTime,
                               <a href="https://developer.android.com/reference/java/util/Date.html?is-external=true" title="class or interface in java.util">Date</a>&nbsp;endTime)</pre>
-<div class="block">Uploads a single user's recording</div>
+<div class="block">Uploads a single userModel's recording</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>uniqueID</code> - dlsAPI UUID</dd>

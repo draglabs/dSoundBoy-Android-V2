@@ -14,7 +14,7 @@ import android.arch.persistence.room.RoomDatabase;
  */
 
 @Entity(tableName = "user", indices = {@Index(value = {"uuid"}, unique = true)}) // are indices necessary?
-public class User extends RoomDatabase {
+public class UserModel extends RoomDatabase {
 
     @PrimaryKey(autoGenerate = true)
     private int uid;
@@ -25,16 +25,16 @@ public class User extends RoomDatabase {
     @ColumnInfo(name = "name")
     private String name;
 
-    @ColumnInfo(name = "personal_email")
+    @ColumnInfo(name = "personalEmail")
     private String personalEmail;
 
-    @ColumnInfo(name = "facebook_email")
+    @ColumnInfo(name = "facebookEmail")
     private String facebookEmail;
 
-    @ColumnInfo(name = "facebook_id")
+    @ColumnInfo(name = "facebookID")
     private String facebookID;
 
-    @ColumnInfo(name = "facebook_access_token")
+    @ColumnInfo(name = "facebookAccessToken")
     private String facebookAccessToken;
 
     public int getUid() {

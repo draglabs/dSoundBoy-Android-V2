@@ -71,7 +71,7 @@ public class LoginRoutine implements CallbackListener {
             public void onSuccess(LoginResult loginResult) {
                 // app code
                 accessToken = AccessToken.getCurrentAccessToken();
-                String loginResultTextText = "User ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken();
+                String loginResultTextText = "UserModel ID: + " + loginResult.getAccessToken().getUserId() + "\nAuth Token: " + loginResult.getAccessToken().getToken();
                 Log.d("Login Result: ", loginResultTextText);
                 //loginResultText.setText(loginResultTextText);
                 //continueButton.setEnabled(true);
@@ -149,7 +149,7 @@ public class LoginRoutine implements CallbackListener {
      * Callback for the setting of the dlsAPI user ID and logs it
      */
     public void uniqueUserIDset() {
-        Log.v("Unique User ID: ", new PrefUtils(activity).getUniqueUserID() + "");
+        Log.v("Unique UserModel ID: ", new PrefUtils(activity).getUniqueUserID() + "");
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
@@ -210,7 +210,7 @@ public class LoginRoutine implements CallbackListener {
      * Callback for the setting of the user's activity and logs it
      */
     public void getUserActivitySet() {
-        Log.v("User Activity: ", prefUtils.getUserActivity() + "");
+        Log.v("UserModel Activity: ", prefUtils.getUserActivity() + "");
 
     }
 

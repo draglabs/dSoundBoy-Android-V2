@@ -10,13 +10,20 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine
+import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
+import com.facebook.Profile
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
@@ -26,9 +33,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     //var recorderUtils = RecorderUtils(this, null, this)
     lateinit var homeRoutine: HomeRoutine
+    lateinit var homeRoutineKt: HomeRoutineKt
     lateinit var startTime: Date
     lateinit var endTime: Date
     var buttons = HashMap<String, Any>()
+    var disposable: Disposable? = null
+    val apiInterface by lazy {
+        ApiInterface.create()
+    }
     //var recorder = homeRoutine.recorder
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,15 +58,16 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        registerUser()
         setListeners()
         setUserView()
-        registerUser()
 
         buttons.put("new_jam", button_new_jam_new as Any)
         buttons.put("new_recording", button_rec_new as Any)
         buttons.put("join_jam", button_join_jam_new as Any)
 
         homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
+        homeRoutineKt = HomeRoutineKt(buttons, this, this, Date().time.toString(), button_rec_new)
 
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
     }
@@ -65,7 +78,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                     .setAction("Action", null).show()
         }
 
-        button_new_jam_new.setOnClickListener { view ->
+        button_new_jam_new.setOnClickListener {
             //APIutils.newJam(this, this, PrefUtils(this).uniqueUserID, "ActionSpot", "My Test Jam", Location("12345"))
             homeRoutine.createJam()
         }
@@ -84,8 +97,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
         }
 
-        button_join_jam_new.setOnClickListener { view ->
-            homeRoutine.joinJam()
+        button_join_jam_new.setOnClickListener {
+            homeRoutineKt.joinJam()
         }
 
         // new, rec, join, chronometer
@@ -106,7 +119,43 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun registerUser() {
-        APIutils.registerUser(this, this)
+        LogUtils.debug("Registering User", "Done");
+        //APIutils.registerUser(this, this)
+        val facebookID = Profile.getCurrentProfile().id
+        val accessToken = AccessToken.getCurrentAccessToken().token
+
+        disposable = apiInterface.registerUser(facebookID, accessToken)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {result ->
+                    PrefUtils.writeUUID(result.id)
+                    LogUtils.debug("UUID", result.id)
+                },
+                {error -> LogUtils.debug("Error Registering User", error.message + "")}
+            )
+
+        LogUtils.debug("Registered User", "Done");
+    }
+
+    private fun newJam(name: String, location: String, latitude: Long, longitude: Long, notes: String) {
+        disposable = apiInterface.newJam(name, location, latitude, longitude, notes)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {result -> LogUtils.debug("NewJam Result", result.toString())},
+                {error -> LogUtils.debug("NewJam Error", error.message + "")}
+            )
+    }
+
+    fun joinJam(jamPIN: String, UUID: String) {
+        disposable = apiInterface.joinJam(jamPIN, UUID)
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(
+                {result -> LogUtils.debug("JoinJam Result", result.toString())},
+                {error -> LogUtils.debug("JoinJam Error", error.message + "")}
+            )
     }
 
     override fun onBackPressed() {
@@ -162,5 +211,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        disposable?.dispose()
     }
 }

@@ -1,3 +1,7 @@
+/*
+ * Daniel Avrukin of Drag Labs. Copyright (c) 2017. All Rights Reserved.
+ */
+
 package com.draglabs.dsoundboy.dsoundboy.Database;
 
 import android.arch.persistence.room.Dao;
@@ -9,30 +13,35 @@ import java.util.List;
 
 /**
  * Created by davrukin on 12/27/2017.
+ * @author Daniel Avrukin
+ *
  */
 
 @Dao
 public interface UserDao {
 
-    @Query("SELECT * FROM User")
-    List<User> getAllUsers();
+    @Query("SELECT * FROM user")
+    List<UserModel> getAllUsers();
 
-    @Query("SELECT * FROM User where name LIKE :name")
-    User findByName(String name);
+    @Query("SELECT * FROM user where name LIKE :name")
+    UserModel findByName(String name);
 
-    @Query("SELECT * FROM User where facebookID like :facebook_id")
-    User findByFacebookID(String facebookID);
+    @Query("SELECT * FROM user where facebookID like :facebookID")
+    UserModel findByFacebookID(String facebookID);
 
-    @Query("SELECT * FROM User where UUID like :uuid")
-    User findByUUID(String UUID);
+    @Query("SELECT * FROM user where uuid like :uuid")
+    UserModel findByUUID(String uuid);
 
-    @Query("SELECT COUNT (*) from User")
+    @Query("SELECT COUNT (*) from user")
     int countUsers();
 
     @Insert
-    void insertAll(User... users);
+    void insertAll(UserModel... userModels);
+
+    @Insert
+    void insert(UserModel userModel);
 
     @Delete
-    void delete(User user);
+    void delete(UserModel userModel);
 
 }

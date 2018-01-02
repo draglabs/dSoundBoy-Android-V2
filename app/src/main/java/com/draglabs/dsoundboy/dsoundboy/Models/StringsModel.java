@@ -28,16 +28,16 @@ public final class StringsModel {
     public static final String JAM_RECORDING_UPLOAD = "Jam Recording Upload";
     public static final String GET_JAM_DETAILS = "Get Jam Details";
     public static final String GET_RECORDINGS = "Get Recordings";
-    public static final String REGISTER_USER = "Register User";
-    public static final String UPDATE_USER = "Update User";
+    public static final String REGISTER_USER = "Register UserModel";
+    public static final String UPDATE_USER = "Update UserModel";
     public static final String GET_ACTIVE_JAM = "Get Active Jam";
-    public static final String GET_USER_ACTIVITY = "Get User Activity";
+    public static final String GET_USER_ACTIVITY = "Get UserModel Activity";
 
     // DEPRECATED FEATURES //
     public static final String SOLO_UPLOAD_RECORDING = "Solo Upload Recording";
     public static final String EXIT_JAM = "Exit Jam";
     public static final String GET_COLLABORATORS = "Get Collaborators";
-    public static final String NOTIFY_USER = "Notify User";
+    public static final String NOTIFY_USER = "Notify UserModel";
 
     /**
      * Strings used for parsing JSON

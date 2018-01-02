@@ -53,7 +53,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
             override fun onSuccess(loginResult: LoginResult) {
                 // app code
                 accessToken = AccessToken.getCurrentAccessToken()
-                val loginResultTextText = "User ID: + " + loginResult.accessToken.userId + "\nAuth Token: " + loginResult.accessToken.token
+                val loginResultTextText = "UserModel ID: + " + loginResult.accessToken.userId + "\nAuth Token: " + loginResult.accessToken.token
                 loginResultText.text = loginResultTextText
                 continueButton.isEnabled = true
                 mEmailSignInButton.isEnabled = false
@@ -92,7 +92,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
     }
 
     override fun uniqueUserIDset() {
-        Log.v("Unique User ID: ", PrefUtils(activity).uniqueUserID + "")
+        Log.v("Unique UserModel ID: ", PrefUtils(activity).uniqueUserID + "")
         // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
     }
 
@@ -118,7 +118,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
     }
 
     override fun getUserActivitySet() {
-        Log.v("User Activity: ", prefUtils!!.userActivity + "")
+        Log.v("UserModel Activity: ", prefUtils!!.userActivity + "")
 
     }
 

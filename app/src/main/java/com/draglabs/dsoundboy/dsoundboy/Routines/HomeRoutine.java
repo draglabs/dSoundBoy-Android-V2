@@ -348,9 +348,10 @@ public class HomeRoutine {
             prefUtils = new PrefUtils(activity);
             prefUtils.saveJamPIN(jamPinEntered);
             Log.d("Jam PIN Entered: ", prefUtils.getJamPIN());
-            String UUID = checkUUID(prefUtils, activity, context);
+            String UUID = checkUUID(prefUtils);
             Log.d("UUID into Join Jam:", UUID);
             APIutils.joinJam(activity, context, jamPinEntered, UUID); // TODO: show error if incorrect
+            //useDisposable(disposable, jamPinEntered, UUID);
         });
 
         AlertDialog dialog = builder.create();
@@ -358,7 +359,28 @@ public class HomeRoutine {
         // TODO: enter jam pin here and return it
     }
 
-    private String checkUUID(PrefUtils prefUtils, Activity activity, Context context) {
+    /*private void useDisposable(Disposable disposable, String jamPIN, String UUID) {
+        io.reactivex.Observable asd = new ApiInterface().joinJam()
+        disposable = new ApiInterface.joinJam(jamPIN, UUID)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe();
+    }*/
+
+    private String checkUUID() {
+        String readUUID = PrefUtils.readUUID();
+
+        if (readUUID != null || !readUUID.equals("")) {
+            Log.v("Checked UUID:", readUUID);
+            return readUUID;
+        } else {
+            APIutils.registerUser(activity, context);
+            Log.v("Refreshed UUID:", readUUID);
+            return readUUID;
+        }
+    }
+
+    private String checkUUID(PrefUtils prefUtils) {
         if (prefUtils.getUniqueUserID() != null || !prefUtils.getUniqueUserID().equals("")) {
             Log.v("Checked UUID:", prefUtils.getUniqueUserID());
             return prefUtils.getUniqueUserID();

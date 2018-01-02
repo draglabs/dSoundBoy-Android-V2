@@ -2,12 +2,20 @@ package com.draglabs.dsoundboy.dsoundboy.Utils;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.draglabs.dsoundboy.dsoundboy.Models.BandInfoModel;
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -321,7 +329,7 @@ public class PrefUtils {
         editor.remove("fb_gender");
         editor.remove("fb_profileURL");
         editor.apply(); // This line is IMPORTANT !!!
-        Log.d("PrefUtils: ", "Facebook User Info Cleared");
+        Log.d("PrefUtils: ", "Facebook UserModel Info Cleared");
     }
 
     public static void setArtistEmail(Activity activity, String artistEmail) {
@@ -446,5 +454,34 @@ public class PrefUtils {
                 prefs.getString("recording_description", null),
                 prefs.getString("artist_name", null),
                 prefs.getString("recording_venue", null)};
+    }
+
+    public static void writeUUID(String UUID) {
+        String path = Environment.getExternalStorageDirectory() + "/dSoundBoySettings/settings.json";
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("uuid", UUID);
+            try (FileWriter file = new FileWriter(path)) {
+                file.write(jsonObject.toString());
+                Log.d("Success Write UUID", jsonObject.toString());
+            }
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String readUUID() {
+        String path = Environment.getExternalStorageDirectory() + "/dSoundBoySettings/settings.json";
+        String UUID = null;
+        try {
+            FileReader fileReader = new FileReader(path);
+            String json = fileReader.toString();
+            JSONObject jsonObject = new JSONObject(json);
+            UUID = jsonObject.getString("uuid");
+        } catch (FileNotFoundException | JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("Success Read UUID", UUID);
+        return UUID;
     }
 }

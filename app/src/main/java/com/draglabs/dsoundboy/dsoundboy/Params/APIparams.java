@@ -166,7 +166,7 @@ public class APIparams {
     }
 
     /**
-     * Used for the Authenticate User API with the Jam API
+     * Used for the Authenticate UserModel API with the Jam API
      * @param facebookID the user's Facebook ID
      * @param facebookAccessToken the Access Token from the Facebook API
      * @return requestParams
@@ -182,7 +182,7 @@ public class APIparams {
     }
 
     /**
-     * Used for the Update User API
+     * Used for the Update UserModel API
      * @return empty requestParams
      */
     public static RequestParams updateUser() {
@@ -198,7 +198,7 @@ public class APIparams {
     }
 
     /**
-     * Used for the Get User Activity API
+     * Used for the Get UserModel Activity API
      * @return empty requestParams
      */
     public static RequestParams getUserActivity() {
@@ -268,7 +268,7 @@ public class APIparams {
     }
 
     /**
-     * Used for the Notify User API
+     * Used for the Notify UserModel API
      * @param jamID the jam ID
      * @return requestParams
      */

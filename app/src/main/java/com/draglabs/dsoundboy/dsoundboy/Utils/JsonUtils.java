@@ -99,15 +99,15 @@ class JsonUtils {
     /**
      * |          Task         	|                     Post Types                     	|                                                   ResponseModel Types                                                   	|
      |:---------------------:	|:--------------------------------------------------:	|:------------------------------------------------------------------------------------------------------------------:	|
-     | Authenticate User     	| facebook_id, access_token                          	| code, user_id, first_name, last_name                                                                               	|
+     | Authenticate UserModel     	| facebook_id, access_token                          	| code, user_id, first_name, last_name                                                                               	|
      | Solo Upload Recording 	| fileName, notes, startTime, endTime, audioFile     	| code, message                                                                                                      	|
      | Start Jam             	| user_id, jam_location, jam_name, jam_lat, jam_long 	| code, id, pin, startTime, endTime                                                                                  	|
      | Join Jam              	| unique_id, pin                                     	| code, id, pin, startTime, endTime                                                                                  	|
      | Jam Recording Upload  	| fileName, notes, startTime, endTime, audioFile     	| code, message                                                                                                      	|
      | Exit Jam              	| user_id, jam_id                                    	| code, message                                                                                                      	|
      | Get Collaborators     	| user_id, jam_id                                    	| code, collaborators array: email, name, facebook_id, id                                                            	|
-     | Get User Activity     	| user_id                                            	| recordings array: s3url, fileName, jamID, startTime, endTime, notes, _id; jams array: id, name, startTime, endTime 	|
-     | Notify User           	| jam_id                                             	| code, message                                                                                                      	|
+     | Get UserModel Activity     	| user_id                                            	| recordings array: s3url, fileName, jamID, startTime, endTime, notes, _id; jams array: id, name, startTime, endTime 	|
+     | Notify UserModel           	| jam_id                                             	| code, message                                                                                                      	|
      * @param callingMethod the calling method
      * @param jsonObject the json object to parse
      * @param data the data type being looked for

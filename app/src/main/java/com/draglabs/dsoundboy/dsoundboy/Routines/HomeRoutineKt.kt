@@ -317,7 +317,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     private fun showNewJamPinDialog(context: Context, title: String, jamPIN: String) {
         val builder = AlertDialog.Builder(context)
         builder.setMessage(jamPIN).setTitle(title)
-        builder.setNeutralButton("Okay") { dialog, which -> dialog.dismiss() }
+        builder.setNeutralButton("Okay") { dialog, _ -> dialog.dismiss() }
         val dialog = builder.create()
         dialog.show()
     }
@@ -335,9 +335,9 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         builder.setTitle("Enter a Jam PIN")
         builder.setView(alertLayout)
         builder.setCancelable(false)
-        builder.setNegativeButton("Cancel") { dialogInterface, i ->
+        builder.setNegativeButton("Cancel") { _, _ ->
             Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show() }
-        builder.setPositiveButton("Done") { dialogInterface, i ->
+        builder.setPositiveButton("Done") { _, _ ->
             val jamPinEntered = joinJamPin.text.toString()
             prefUtils = PrefUtils(activity)
             prefUtils!!.saveJamPIN(jamPinEntered)
@@ -361,6 +361,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
             prefUtils.uniqueUserID
         }
     }
+
 
 
 }
