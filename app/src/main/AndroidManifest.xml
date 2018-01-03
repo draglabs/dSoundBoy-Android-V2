@@ -5,7 +5,8 @@
 
     <uses-sdk
         android:minSdkVersion="21"
-        android:targetSdkVersion="27" />
+        android:targetSdkVersion="27"
+        tools:ignore="GradleOverrides" />
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -29,9 +30,9 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/DragLabs"
-        android:screenOrientation="portrait"
         tools:targetApi="m">
         <meta-data
             android:name="com.facebook.sdk.ApplicationID"
@@ -181,6 +182,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity" />
         </activity>
+        <activity
+            android:name=".Activities.ListOfJamsActivity"
+            android:label="@string/title_activity_list_of_jams"
+            android:theme="@style/DragLabs"></activity>
     </application>
 
 </manifest>

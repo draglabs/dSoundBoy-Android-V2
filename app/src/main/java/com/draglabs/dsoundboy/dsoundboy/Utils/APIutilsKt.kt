@@ -4,16 +4,7 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Utils
 
-import android.content.Context
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
 import com.draglabs.dsoundboy.dsoundboy.Models.StringsModel
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 
 /**
  * Created by davrukin on 12/30/2017.
@@ -30,28 +21,5 @@ class APIutilsKt {
     private val UPDATE_USER = StringsModel.apiPaths.UPDATE_USER.path()
     private val GET_ACTIVE_JAM = StringsModel.apiPaths.GET_ACTIVE_JAM.path()
     private val GET_USER_ACTIVITY = StringsModel.apiPaths.GET_USER_ACTIVITY.path()
-
-    private var disposable: Disposable? = null
-
-    private val apiInterface by lazy {
-        ApiInterface.create()
-    }
-
-    fun beginSearch(searchString: String) {
-        disposable = apiInterface.joinJam("123", "456")
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe()
-    }
-
-    fun testRequest(context: Context, url: String) {
-        val requestQueue = Volley.newRequestQueue(context)
-        val stringRequest = StringRequest(Request.Method.GET, url, Response.Listener {  }, Response.ErrorListener {  })
-        requestQueue.add(stringRequest)
-    }
-
-    fun pauseDisposable(disposable: Disposable) {
-        disposable.dispose()
-    }
 
 }

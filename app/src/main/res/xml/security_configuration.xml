@@ -4,7 +4,7 @@
         <domain includeSubdomains="true">api.draglabs.com</domain>
         <trust-anchors>
             <certificates src="system" />
-            <certificates src="userModel" />
+            <certificates src="user" />
         </trust-anchors>
     </domain-config>
 </network-security-config>

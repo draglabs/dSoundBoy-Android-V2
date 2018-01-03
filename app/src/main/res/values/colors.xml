@@ -16,4 +16,7 @@
     <color name="colorDLBackground">#212F3E</color>
     <color name="colorDLFillGrey">#D9031425</color> <!-- 87% opacity -->
 
+    <color name="colorDLBlue1">#3c5490</color>
+    <color name="colorDLBlue2">#ED3E5798</color> <!-- with 93% opacity ED-->
+    <color name="colorDLGreyBG">#666666</color>
 </resources>

@@ -117,7 +117,7 @@ public class PrefUtils {
     public String getJamID() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activity);
         String jamID = sharedPreferences.getString(JAM_ID, null);
-        Log.v("Gotten Jam ID: ", getJamID() + "");
+        Log.v("Gotten Jam ID: ", jamID);
         return jamID;
     }
 
@@ -472,6 +472,35 @@ public class PrefUtils {
 
     public static String readUUID() {
         String path = Environment.getExternalStorageDirectory() + "/dSoundBoySettings/settings.json";
+        String UUID = null;
+        try {
+            FileReader fileReader = new FileReader(path);
+            String json = fileReader.toString();
+            JSONObject jsonObject = new JSONObject(json);
+            UUID = jsonObject.getString("uuid");
+        } catch (FileNotFoundException | JSONException e) {
+            e.printStackTrace();
+        }
+        Log.d("Success Read UUID", UUID);
+        return UUID;
+    }
+
+    public static void writeUUID(String UUID, Environment environment) {
+        String path = environment.getExternalStorageDirectory() + "/dSoundBoySettings/settings.json";
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("uuid", UUID);
+            try (FileWriter file = new FileWriter(path)) {
+                file.write(jsonObject.toString());
+                Log.d("Success Write UUID", jsonObject.toString());
+            }
+        } catch (JSONException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static String readUUID(Environment environment) {
+        String path = environment.getExternalStorageDirectory() + "/dSoundBoySettings/settings.json";
         String UUID = null;
         try {
             FileReader fileReader = new FileReader(path);

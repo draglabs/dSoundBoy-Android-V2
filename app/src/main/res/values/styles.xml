@@ -26,6 +26,22 @@
         <item name="windowBackground">@color/colorDLBackground</item>
     </style>
 
+    <style name="DragLabsNew" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorDLBlue1</item>
+        <item name="colorPrimaryDark">@color/colorDLBlue1</item>
+        <item name="colorAccent">@color/colorDLBlue2</item>
+        <item name="colorTextPrimary">@color/colorDLTextWhite</item>
+        <item name="windowBackground">@color/colorDLGreyBG</item>
+    </style>
+
+    <style name="DragLabsActionBarNew" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorDLBlue1</item>
+        <item name="colorPrimaryDark">@color/colorDLBlue1</item>
+        <item name="colorAccent">@color/colorDLBlue2</item>
+        <item name="colorTextPrimary">@color/colorDLTextWhite</item>
+        <item name="windowBackground">@color/colorDLGreyBG</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

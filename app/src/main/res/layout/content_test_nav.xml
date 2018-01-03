@@ -9,6 +9,10 @@
     tools:context="com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity"
     tools:showIn="@layout/app_bar_test_nav">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerViewCard"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <Button
         android:id="@+id/button_new_jam_new"

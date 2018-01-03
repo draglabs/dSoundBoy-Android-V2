@@ -15,18 +15,28 @@ class ResponseModelKt {
             val new_jam: Models.Jam
         )
 
-        data class CurrentJam(
-            val current_jam: Models.Jam
+        data class UpdateJam(
+            val update_jam: Models.JamMini
         )
 
         data class JoinJam(
-            val id: String,
-            val name: String,
-            val start_time: String,
-            val end_time: String,
-            val location: String,
-            val notes: String,
-            val collaborators: Models.Collaborator
+            val join_jam: Models.JamMini
+        )
+
+        data class UploadJam(
+            val response: String
+        )
+
+        data class GetJamDetails(
+            val jam: Models.Jam
+        )
+
+        data class GetRecordings(
+            val recordings: Array<Models.Recording>
+        )
+
+        data class CurrentJam(
+            val current_jam: Models.Jam
         )
     }
 
@@ -38,6 +48,18 @@ class ResponseModelKt {
             val fb_email: String,
             val fb_id: String,
             val current_jam: JamFunctions.CurrentJam
+        )
+
+        data class UpdateUser(
+            val message: String // api not really working now
+        )
+
+        data class GetActiveJam(
+            val active_jam: Models.Jam
+        )
+
+        data class GetUserActivity(
+            val jams: Array<Models.Jam>
         )
     }
 
@@ -65,12 +87,23 @@ class ResponseModelKt {
             val name: String,
             val user_id: String,
             val coordinates: LongArray,
-            val collaborators: Collaborator,
-            val recordings: Recording,
+            val collaborators: Array<Collaborator>,
+            val recordings: Array<Recording>,
             val location: String,
             val start_time: String,
             val end_time: String,
-            val notes: String
+            val notes: String,
+            val archive_url: String
+        )
+
+        data class JamMini(
+            val id: String,
+            val name: String,
+            val start_time: String,
+            val end_time: String,
+            val location: String,
+            val notes: String,
+            val collaborators: Array<Models.Collaborator>
         )
     }
 

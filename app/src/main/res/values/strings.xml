@@ -185,4 +185,9 @@
     <string name="log_out">Log Out</string>
     <string name="view_recordings">View Recordings</string>
     <string name="new_jam">New</string>
+    <string name="title_activity_list_of_jams">Jams</string>
+
+    <!-- strings related to jam list view -->
+    <string name="edit_jam_in_view">EDIT</string>
+    <string name="export_jam_in_view">EXPORT</string>
 </resources>

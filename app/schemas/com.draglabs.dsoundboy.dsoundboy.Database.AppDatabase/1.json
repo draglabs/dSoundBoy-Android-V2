@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "4f90a1ea3789cb545920d0323b0e115c",
+    "identityHash": "2e31a56323605390f964b0c27b7fca42",
     "entities": [
       {
         "tableName": "user",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mDatabase` TEXT, `mCallbacks` TEXT, `uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `uuid` TEXT, `name` TEXT, `personalEmail` TEXT, `facebookEmail` TEXT, `facebookID` TEXT, `facebookAccessToken` TEXT, `mOpenHelper` TEXT, `mInvalidationTracker` TEXT, `mAllowMainThreadQueries` INTEGER NOT NULL, `mCloseLock` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mDatabase` TEXT, `mCallbacks` TEXT, `uid` INTEGER PRIMARY KEY AUTOINCREMENT, `uuid` TEXT NOT NULL, `name` TEXT NOT NULL, `personalEmail` TEXT NOT NULL, `facebookEmail` TEXT NOT NULL, `facebookID` TEXT NOT NULL, `facebookAccessToken` TEXT NOT NULL, `param` INTEGER, `mOpenHelper` TEXT, `mInvalidationTracker` TEXT, `mAllowMainThreadQueries` INTEGER NOT NULL, `mCloseLock` TEXT)",
         "fields": [
           {
             "fieldPath": "mDatabase",
@@ -24,42 +24,48 @@
             "fieldPath": "uid",
             "columnName": "uid",
             "affinity": "INTEGER",
-            "notNull": true
+            "notNull": false
           },
           {
-            "fieldPath": "UUID",
+            "fieldPath": "uuid",
             "columnName": "uuid",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "name",
             "columnName": "name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "personalEmail",
             "columnName": "personalEmail",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "facebookEmail",
             "columnName": "facebookEmail",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "facebookID",
             "columnName": "facebookID",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
             "fieldPath": "facebookAccessToken",
             "columnName": "facebookAccessToken",
             "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "param",
+            "columnName": "param",
+            "affinity": "INTEGER",
             "notNull": false
           },
           {
@@ -108,7 +114,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"4f90a1ea3789cb545920d0323b0e115c\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"2e31a56323605390f964b0c27b7fca42\")"
     ]
   }
 }

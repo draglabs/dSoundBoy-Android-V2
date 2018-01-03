@@ -41,6 +41,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     val apiInterface by lazy {
         ApiInterface.create()
     }
+    val postmanUUID = "5a4b230bbe307d06c7ad5c57"
     //var recorder = homeRoutine.recorder
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +59,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        //PrefUtils.writeUUID(postmanUUID)
+        //LogUtils.debug("asdfadsfadsf", PrefUtils.readUUID())
         registerUser()
         setListeners()
         setUserView()
@@ -129,17 +132,17 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {result ->
-                    PrefUtils.writeUUID(result.id)
                     LogUtils.debug("UUID", result.id)
+                    PrefUtils.writeUUID(result.id)
                 },
-                {error -> LogUtils.debug("Error Registering User", error.message + "")}
+                {error -> LogUtils.debug("Error Registering User", "" + error.message)}
             )
 
         LogUtils.debug("Registered User", "Done");
     }
 
-    private fun newJam(name: String, location: String, latitude: Long, longitude: Long, notes: String) {
-        disposable = apiInterface.newJam(name, location, latitude, longitude, notes)
+    private fun newJam(userIDHeader: String, name: String, location: String, latitude: Long, longitude: Long, notes: String) {
+        disposable = apiInterface.newJam(userIDHeader, name, location, latitude, longitude, notes)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -148,8 +151,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             )
     }
 
-    fun joinJam(jamPIN: String, UUID: String) {
-        disposable = apiInterface.joinJam(jamPIN, UUID)
+    fun joinJam(jamPIN: String, UUID: String, userID: String) {
+        disposable = apiInterface.joinJam(jamPIN, UUID, userID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
@@ -190,7 +193,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 // go to the default record screen
             }
             R.id.nav_recordings -> {
-                startActivity(Intent(this, AboutActivity::class.java))
+                startActivity(Intent(this, ListOfJamsActivity::class.java))
                 // go to the previous recordings
                 // allow export of jams
             }
