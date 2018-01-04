@@ -1,65 +1,69 @@
 /*
- * Daniel Avrukin of Drag Labs. Copyright (c) 2017. All Rights Reserved.
+ * Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
  */
 
 package com.draglabs.dsoundboy.dsoundboy.Models
 
+import com.google.gson.annotations.SerializedName
+
 /**
  * Created by davrukin on 12/30/2017.
+ * @author Daniel Avrukin
  */
 
 class ResponseModelKt {
 
     class JamFunctions {
         data class NewJam(
-            val new_jam: Models.Jam
+            var new_jam: Models.Jam
         )
 
         data class UpdateJam(
-            val update_jam: Models.JamMini
+            var update_jam: Models.JamMini
         )
 
         data class JoinJam(
-            val join_jam: Models.JamMini
+            var join_jam: Models.JamMini
         )
 
         data class UploadJam(
-            val response: String
+            var response: String
         )
 
         data class GetJamDetails(
-            val jam: Models.Jam
+            var jam: Models.Jam
         )
 
         data class GetRecordings(
-            val recordings: Array<Models.Recording>
+            var recordings: Array<Models.Recording>
         )
 
         data class CurrentJam(
-            val current_jam: Models.Jam
+            var current_jam: Models.Jam
         )
     }
 
     class UserFunctions {
-        data class RegisterUser(
-            val id: String,
-            val first_name: String,
-            val last_name: String,
-            val fb_email: String,
-            val fb_id: String,
-            val current_jam: JamFunctions.CurrentJam
+        data class RegisterUser( // date format to put where it is: yyyy-MM-dd HH:mm:ss
+            @SerializedName("id") var id: String,
+            @SerializedName("first_name") var first_name: String, // TODO: return string if no current jam, or jam object if one exists
+            @SerializedName("last_name") var last_name: String,
+            @SerializedName("fb_email") var fb_email: String,
+            @SerializedName("fb_id") var fb_id: String,
+            //var current_jam: JamFunctions.CurrentJam
+            @SerializedName("current_jam") var current_jam: Any
         )
 
         data class UpdateUser(
-            val message: String // api not really working now
+            var message: String // api not really working now
         )
 
         data class GetActiveJam(
-            val active_jam: Models.Jam
+            var active_jam: Models.Jam
         )
 
         data class GetUserActivity(
-            val jams: Array<Models.Jam>
+            var jams: Array<Models.Jam>
         )
     }
 
@@ -70,40 +74,40 @@ class ResponseModelKt {
         )
 
         data class Recording(
-            val id: String,
-            val user_id: String,
-            val file_name: String,
-            val jam_id: String,
-            val start_time: String,
-            val end_time: String,
-            val notes: String,
-            val s3url: String
+            var id: String,
+            var user_id: String,
+            var file_name: String,
+            var jam_id: String,
+            var start_time: String,
+            var end_time: String,
+            var notes: String,
+            var s3url: String
         )
 
         data class Jam(
-            val id: String,
-            val pin: String,
-            val is_current: Boolean,
-            val name: String,
-            val user_id: String,
-            val coordinates: LongArray,
-            val collaborators: Array<Collaborator>,
-            val recordings: Array<Recording>,
-            val location: String,
-            val start_time: String,
-            val end_time: String,
-            val notes: String,
-            val archive_url: String
+            var id: String,
+            var pin: String,
+            var is_current: Boolean,
+            var name: String,
+            var user_id: String,
+            var coordinates: LongArray,
+            var collaborators: Array<Collaborator>,
+            var recordings: Array<Recording>,
+            var location: String,
+            var start_time: String,
+            var end_time: String,
+            var notes: String,
+            var archive_url: String
         )
 
         data class JamMini(
-            val id: String,
-            val name: String,
-            val start_time: String,
-            val end_time: String,
-            val location: String,
-            val notes: String,
-            val collaborators: Array<Models.Collaborator>
+            var id: String,
+            var name: String,
+            var start_time: String,
+            var end_time: String,
+            var location: String,
+            var notes: String,
+            var collaborators: Array<Models.Collaborator>
         )
     }
 

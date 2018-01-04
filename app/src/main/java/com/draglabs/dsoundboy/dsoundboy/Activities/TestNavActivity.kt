@@ -1,3 +1,7 @@
+/*
+ * Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+ */
+
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
 import android.content.Intent
@@ -7,16 +11,19 @@ import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.util.ArrayMap
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
+import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
+import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
@@ -27,8 +34,16 @@ import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
+import okhttp3.RequestBody
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.util.*
 
+/**
+ * @author Daniel Avrukin
+ */
 class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     //var recorderUtils = RecorderUtils(this, null, this)
@@ -59,8 +74,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        //PrefUtils.writeUUID(postmanUUID)
-        //LogUtils.debug("asdfadsfadsf", PrefUtils.readUUID())
+        //PrefUtilsKt().storeUUID(this, postmanUUID)
+        //println(PrefUtilsKt().retrieveUUID(this))
+        PrefUtilsKt().deleteUUID(this)
         registerUser()
         setListeners()
         setUserView()
@@ -104,6 +120,16 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             homeRoutineKt.joinJam()
         }
 
+        button_test_auth.setOnClickListener {
+            var text = PrefUtilsKt().retrieveUUID(this)
+            if (text == "not working") {
+                registerUser()
+                LogUtils.debug("Button UUID Broken, registered", text)
+            } else {
+                LogUtils.debug("Button UUID Working", text)
+            }
+        }
+
         // new, rec, join, chronometer
     }
 
@@ -127,18 +153,46 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val facebookID = Profile.getCurrentProfile().id
         val accessToken = AccessToken.getCurrentAccessToken().token
 
-        disposable = apiInterface.registerUser(facebookID, accessToken)
+        val userService = RetrofitClient().getClient().create(ApiInterface::class.java)
+        //val call = userService.registerUser(facebookID, accessToken)
+        val params = ArrayMap<String, String>()
+        params.put("facebook_id", facebookID)
+        params.put("access_token", accessToken)
+        val requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), JSONObject(params).toString())
+        val call = userService.registerUser(requestBody)
+
+        call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
+            override fun onResponse(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, response: Response<ResponseModelKt.UserFunctions.RegisterUser>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    val id = result!!.id
+                    LogUtils.debug("id", id)
+                    PrefUtilsKt().storeUUID(this@TestNavActivity, id)
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                }
+            }
+            override fun onFailure(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, t: Throwable) {
+                LogUtils.debug("onFailure Failed", t.message.toString())
+                LogUtils.debug("onFailure Failed", t.cause.toString())
+                LogUtils.debug("onFailure Failed", t.printStackTrace().toString())
+                LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
+                LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())
+            }
+        })
+        /*disposable = apiInterface.registerUser(facebookID, accessToken)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {result ->
                     LogUtils.debug("UUID", result.id)
-                    PrefUtils.writeUUID(result.id)
+                    PrefUtilsKt().storeUUID(this, result.id)
                 },
                 {error -> LogUtils.debug("Error Registering User", "" + error.message)}
-            )
+            )*/
 
         LogUtils.debug("Registered User", "Done");
+        LogUtils.debug("New UUID", PrefUtilsKt().retrieveUUID(this))
     }
 
     private fun newJam(userIDHeader: String, name: String, location: String, latitude: Long, longitude: Long, notes: String) {

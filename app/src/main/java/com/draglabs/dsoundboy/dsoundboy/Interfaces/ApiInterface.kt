@@ -6,6 +6,8 @@ package com.draglabs.dsoundboy.dsoundboy.Interfaces
 
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import io.reactivex.Observable
+import okhttp3.RequestBody
+import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
@@ -13,6 +15,7 @@ import retrofit2.http.*
 
 /**
  * Created by davrukin on 12/30/2017.
+ * @author Daniel Avrukin
  */
 interface ApiInterface {
 
@@ -74,9 +77,12 @@ interface ApiInterface {
 
     @POST("user/register")
     fun registerUser(
-        @Query("facebook_id") facebookID: String,
-        @Query("access_token") accessToken: String
-    ): Observable<ResponseModelKt.UserFunctions.RegisterUser>
+        //@Field("facebook_id") facebookID: String,
+        //@Field("access_token") accessToken: String
+        @Body params: RequestBody
+        //@Query("facebook_id") facebookID: String,
+        //@Query("access_token") accessToken: String
+    ): Call<ResponseModelKt.UserFunctions.RegisterUser>
 
     @PUT("user/update")
     fun updateUser(
@@ -110,3 +116,41 @@ interface ApiInterface {
 
 
 }
+
+class RetrofitClient {
+
+    fun getClient(): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("http://api.draglabs.com/api/v2.0/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+}
+
+/*class ApiService {
+    val service = ApiInterface
+    var baseURL = "http://api.draglabs.com/api/v2.0/"
+
+    init {
+        val logging = HttpLoggingInterceptor()
+        logging.level = HttpLoggingInterceptor.Level.BODY
+
+        val httpClient = OkHttpClient.Builder()
+        httpClient.addInterceptor(logging)
+
+        val gson = GsonBuilder().setLenient().create()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl(baseURL)
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(httpClient.build())
+            .build()
+
+        service = retrofit.create<ApiInterface.Companion>(ApiInterface::class.java)
+    }
+
+    fun loadUUID(): Observable<ResponseModelKt> {
+        return service.
+    }
+}*/
