@@ -11,34 +11,24 @@ import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.util.ArrayMap
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
-import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
-import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
-import com.facebook.Profile
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
-import okhttp3.RequestBody
-import org.json.JSONObject
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.*
 
 /**
@@ -76,7 +66,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         //PrefUtilsKt().storeUUID(this, postmanUUID)
         //println(PrefUtilsKt().retrieveUUID(this))
-        PrefUtilsKt().deleteUUID(this)
+        PrefUtilsKt.Functions().deleteUUID(this)
+        PrefUtilsKt.Functions().deletePIN(this)
         registerUser()
         setListeners()
         setUserView()
@@ -98,8 +89,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_new_jam_new.setOnClickListener {
-            //APIutils.newJam(this, this, PrefUtils(this).uniqueUserID, "ActionSpot", "My Test Jam", Location("12345"))
-            homeRoutine.createJam()
+            APIutilsKt().performNewJam(this, PrefUtilsKt.Functions().retrieveUUID(this), "test_jam", "ActionSpot", 37, -22, "hi")
+            LogUtils.debug("new pin", PrefUtilsKt.Functions().retrievePIN(this))
+            jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(this)
+            // maybe disable button until there exists a UUID
         }
 
         button_rec_new.setOnClickListener { view ->
@@ -107,7 +100,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             if (buttonText == "Rec") {
                 startTime = Date()
                 button_rec_new.text = "Stop"
-                homeRoutine.clickRec(chronometer_new) // not confident about the order of events here
+                //homeRoutine.clickRec(chronometer_new) // not confident about the order of events here
             } else {
                 endTime = Date()
                 button_rec_new.text = "Start"
@@ -121,7 +114,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_test_auth.setOnClickListener {
-            var text = PrefUtilsKt().retrieveUUID(this)
+            var text = PrefUtilsKt.Functions().retrieveUUID(this)
             if (text == "not working") {
                 registerUser()
                 LogUtils.debug("Button UUID Broken, registered", text)
@@ -150,7 +143,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun registerUser() {
         LogUtils.debug("Registering User", "Done");
         //APIutils.registerUser(this, this)
-        val facebookID = Profile.getCurrentProfile().id
+        /*val facebookID = Profile.getCurrentProfile().id
         val accessToken = AccessToken.getCurrentAccessToken().token
 
         val userService = RetrofitClient().getClient().create(ApiInterface::class.java)
@@ -159,9 +152,11 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         params.put("facebook_id", facebookID)
         params.put("access_token", accessToken)
         val requestBody = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), JSONObject(params).toString())
-        val call = userService.registerUser(requestBody)
+        val call = userService.registerUser(requestBody)*/
 
-        call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
+        APIutilsKt().performRegisterUser(this)
+
+        /*call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
             override fun onResponse(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, response: Response<ResponseModelKt.UserFunctions.RegisterUser>) {
                 if (response.isSuccessful) {
                     val result = response.body()
@@ -179,7 +174,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
                 LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())
             }
-        })
+        })*/
         /*disposable = apiInterface.registerUser(facebookID, accessToken)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
@@ -192,27 +187,27 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             )*/
 
         LogUtils.debug("Registered User", "Done");
-        LogUtils.debug("New UUID", PrefUtilsKt().retrieveUUID(this))
+        LogUtils.debug("New UUID", PrefUtilsKt.Functions().retrieveUUID(this))
     }
 
     private fun newJam(userIDHeader: String, name: String, location: String, latitude: Long, longitude: Long, notes: String) {
-        disposable = apiInterface.newJam(userIDHeader, name, location, latitude, longitude, notes)
+        /*disposable = apiInterface.newJam(userIDHeader, name, location, latitude, longitude, notes)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {result -> LogUtils.debug("NewJam Result", result.toString())},
                 {error -> LogUtils.debug("NewJam Error", error.message + "")}
-            )
+            )*/
     }
 
     fun joinJam(jamPIN: String, UUID: String, userID: String) {
-        disposable = apiInterface.joinJam(jamPIN, UUID, userID)
+        /*disposable = apiInterface.joinJam(jamPIN, UUID, userID)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(
                 {result -> LogUtils.debug("JoinJam Result", result.toString())},
                 {error -> LogUtils.debug("JoinJam Error", error.message + "")}
-            )
+            )*/
     }
 
     override fun onBackPressed() {

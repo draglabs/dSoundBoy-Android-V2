@@ -22,9 +22,7 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfRecordingsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils
-import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import omrecorder.Recorder
 import java.util.*
 
@@ -339,11 +337,14 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
             Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show() }
         builder.setPositiveButton("Done") { _, _ ->
             val jamPinEntered = joinJamPin.text.toString()
-            prefUtils = PrefUtils(activity)
-            prefUtils!!.saveJamPIN(jamPinEntered)
-            Log.d("Jam PIN Entered: ", prefUtils!!.jamPIN)
-            val UUID = checkUUID(PrefUtils(activity), activity, context)
-            APIutils.joinJam(activity, context, jamPinEntered, UUID) // TODO: show error if incorrect
+            PrefUtilsKt.Functions().storePIN(context, jamPinEntered)
+            LogUtils.debug("Jam Pin Entered", jamPinEntered)
+
+            //Log.d("Jam PIN Entered: ", prefUtils!!.jamPIN)
+            //val UUID = checkUUID(PrefUtils(activity), activity, context)
+            //APIutils.joinJam(activity, context, jamPinEntered, UUID) // TODO: show error if incorrect
+
+            APIutilsKt().performJoinJam(context, jamPinEntered, PrefUtilsKt.Functions().retrieveUUID(context)) // TODO: setup checker inside of the retriever to see if there is one
         }
 
         val dialog = builder.create()

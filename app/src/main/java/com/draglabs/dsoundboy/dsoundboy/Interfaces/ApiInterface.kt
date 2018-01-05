@@ -5,7 +5,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Interfaces
 
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
-import io.reactivex.Observable
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -26,50 +25,54 @@ interface ApiInterface {
     @POST("jam/new")
     fun newJam(
         @Header("user_id") user_id: String,
-        @Query("name") name: String,
+        @Body params: RequestBody
+        /*@Query("name") name: String,
         @Query("location") location: String,
         @Query("lat") lat: Long,
         @Query("lng") lng: Long,
-        @Query("notes") notes: String
-    ): Observable<ResponseModelKt.JamFunctions.NewJam>
+        @Query("notes") notes: String*/
+    ): Call<ResponseModelKt.JamFunctions.NewJam>
 
     @POST("jam/update")
     fun updateJam(
         //@Header("id") id: String,
-        @Query("name") name: String,
+        @Body params: RequestBody
+        /*@Query("name") name: String,
         @Query("id") id: String,
         @Query("location") location: String,
-        @Query("notes") notes: String
-    ): Observable<ResponseModelKt.JamFunctions.UpdateJam>
+        @Query("notes") notes: String*/
+    ): Call<ResponseModelKt.JamFunctions.UpdateJam>
 
     @POST("jam/join")
     fun joinJam(
-        @Header("id") id: String,
-        @Query("pin") pin: String,
-        @Query("user_id") userID: String
-    ): Observable<ResponseModelKt.JamFunctions.JoinJam>
+        //@Header("id") id: String,
+        @Body params: RequestBody
+        /*@Query("pin") pin: String,
+        @Query("user_id") userID: String*/
+    ): Call<ResponseModelKt.JamFunctions.JoinJam>
 
     @POST("jam/upload") // multi-part upload
     fun uploadJam(
         @Header("id") id: String,
-        @Query("user_id") user_id: String,
+        @Body params: RequestBody
+        /*@Query("user_id") user_id: String,
         @Query("file_name") file_name: String,
         @Query("location") location: String,
         @Query("jam_id") jam_id: String,
         @Query("start_time") start_time: String,
-        @Query("end_time") end_time: String
-    ): Observable<ResponseModelKt.JamFunctions.UploadJam>
+        @Query("end_time") end_time: String*/
+    ): Call<ResponseModelKt.JamFunctions.UploadJam>
 
     @GET("jam/details/{id}")
     fun getJamDetails(
         @Path("id") id: String,
         @Header("user_id") user_id: String
-    ): Observable<ResponseModelKt.JamFunctions.GetJamDetails>
+    ): Call<ResponseModelKt.JamFunctions.GetJamDetails>
 
     @GET("jam/recording/{id}")
     fun getRecordings(
         @Path("id") id: String
-    ): Observable<ResponseModelKt.JamFunctions.GetRecordings>
+    ): Call<ResponseModelKt.JamFunctions.GetRecordings>
 
     /*
     USER FUNCTIONS
@@ -87,17 +90,17 @@ interface ApiInterface {
     @PUT("user/update")
     fun updateUser(
         @Header("email") email: String
-    ): Observable<ResponseModelKt.UserFunctions.UpdateUser>
+    ): Call<ResponseModelKt.UserFunctions.UpdateUser>
 
     @GET("user/jam/active")
     fun getActiveJam(
         @Header("user_id") user_id: String
-    ): Observable<ResponseModelKt.UserFunctions.GetActiveJam>
+    ): Call<ResponseModelKt.UserFunctions.GetActiveJam>
 
     @GET("user/activity")
     fun getUserActivity(
         @Header("user_id") user_id: String
-    ): Observable<ResponseModelKt.UserFunctions.GetUserActivity>
+    ): Call<ResponseModelKt.UserFunctions.GetUserActivity>
 
     /*
     COMPANIONS

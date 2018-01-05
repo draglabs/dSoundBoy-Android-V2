@@ -15,7 +15,19 @@ class ResponseModelKt {
 
     class JamFunctions {
         data class NewJam(
-            var new_jam: Models.Jam
+            //var new_jam: Models.Jam
+            @SerializedName("id") var id: String,
+            @SerializedName("pin") var pin: String,
+            @SerializedName("is_current") var is_current: Boolean,
+            @SerializedName("name") var name: String,
+            @SerializedName("user_id") var user_id: String,
+            @SerializedName("coordinates") var coordinates: LongArray,
+            @SerializedName("collaborators") var collaborators: Any,
+            @SerializedName("recordings") var recordings: Any,
+            @SerializedName("location") var location: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("notes") var notes: String
         )
 
         data class UpdateJam(
@@ -23,7 +35,13 @@ class ResponseModelKt {
         )
 
         data class JoinJam(
-            var join_jam: Models.JamMini
+            @SerializedName("id") var id: String,
+            @SerializedName("name") var name: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("location") var location: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("collaborators") var collaborators: Any
         )
 
         data class UploadJam(
@@ -70,44 +88,44 @@ class ResponseModelKt {
     class Models {
         data class Collaborator(
             // details not currently available, proposed details
-            var id: String // UUID
+            @SerializedName("id") var id: String // UUID
         )
 
         data class Recording(
-            var id: String,
-            var user_id: String,
-            var file_name: String,
-            var jam_id: String,
-            var start_time: String,
-            var end_time: String,
-            var notes: String,
-            var s3url: String
+            @SerializedName("id") var id: String,
+            @SerializedName("user_id") var user_id: String,
+            @SerializedName("file_name") var file_name: String,
+            @SerializedName("jame_id") var jam_id: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("s3url") var s3url: String
         )
 
         data class Jam(
-            var id: String,
-            var pin: String,
-            var is_current: Boolean,
-            var name: String,
-            var user_id: String,
-            var coordinates: LongArray,
-            var collaborators: Array<Collaborator>,
-            var recordings: Array<Recording>,
-            var location: String,
-            var start_time: String,
-            var end_time: String,
-            var notes: String,
-            var archive_url: String
+            @SerializedName("id") var id: String,
+            @SerializedName("pin") var pin: String,
+            @SerializedName("is_current") var is_current: Boolean,
+            @SerializedName("name") var name: String,
+            @SerializedName("user_id") var user_id: String,
+            @SerializedName("coordinates") var coordinates: LongArray,
+            @SerializedName("collaborators") var collaborators: Array<Collaborator>,
+            @SerializedName("recordings") var recordings: Array<Recording>,
+            @SerializedName("location") var location: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("archive_url") var archive_url: String
         )
 
         data class JamMini(
-            var id: String,
-            var name: String,
-            var start_time: String,
-            var end_time: String,
-            var location: String,
-            var notes: String,
-            var collaborators: Array<Models.Collaborator>
+            @SerializedName("id") var id: String,
+            @SerializedName("name") var name: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("location") var location: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>
         )
     }
 

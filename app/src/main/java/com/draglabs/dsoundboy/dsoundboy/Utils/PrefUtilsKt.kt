@@ -13,23 +13,86 @@ import android.preference.PreferenceManager
  */
 class PrefUtilsKt {
 
-    fun storeUUID(context: Context, UUID: String) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = preferences.edit()
-        editor.putString("UUID", UUID)
-        editor.apply()
+    class Functions {
+
+        // TODO: GET JAM NAME FROM SERVER< AND CALL THE ONE IN THE RECYCLERVIEW THAT, LATER GET A LIST OF JAM NAMES AND USE THOSE FROM GETUSERACTIVITY
+
+        /* JAM NAME FEATURES */
+
+        fun storeJamName(context: Context, jamName: String) {
+            Tools().storeItem(context, "jam_name", jamName)
+        }
+
+        fun deleteJamName(context: Context) {
+            Tools().deleteItem(context, "jam_name")
+        }
+
+        fun retrieveJamName(context: Context): String {
+            return Tools().retrieveItem(context, "jam_name")
+        }
+
+        /* PIN FUNCTIONS */
+
+        fun storePIN(context: Context, pin: String) {
+            Tools().storeItem(context, "pin", pin)
+        }
+
+        fun deletePIN(context: Context) {
+            Tools().deleteItem(context, "pin")
+        }
+
+        fun retrievePIN(context: Context): String {
+            return Tools().retrieveItem(context, "pin")
+        }
+
+        /* JAM ID FUNCTIONS */
+
+        fun storeJamID(context: Context, pin: String) {
+            Tools().storeItem(context, "jam_id", pin)
+        }
+
+        fun deleteJamID(context: Context) {
+            Tools().deleteItem(context, "jam_id")
+        }
+
+        fun retrieveJamID(context: Context): String {
+            return Tools().retrieveItem(context, "jam_id")
+        }
+
+        /* UUID FUNCTIONS */
+
+        fun storeUUID(context: Context, UUID: String) {
+            Tools().storeItem(context, "UUID", UUID)
+        }
+
+        fun retrieveUUID(context: Context): String {
+            return Tools().retrieveItem(context, "UUID")
+        }
+
+        fun deleteUUID(context: Context) {
+            Tools().deleteItem(context, "UUID")
+            LogUtils.debug("Deleted UUID", retrieveUUID(context))
+        }
     }
 
-    fun retrieveUUID(context: Context): String {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        return preferences.getString("UUID", "not working")
-    }
+    private class Tools {
+        fun storeItem(context: Context, tag: String, item: String) {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val editor = preferences.edit()
+            editor.putString(tag, item)
+            editor.apply()
+        }
 
-    fun deleteUUID(context: Context) {
-        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
-        val editor = preferences.edit()
-        editor.putString("UUID", null)
-        editor.apply()
-        LogUtils.debug("Deleted UUID", retrieveUUID(context))
+        fun deleteItem(context: Context, tag: String) {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            val editor = preferences.edit()
+            editor.putString(tag, null)
+            editor.apply()
+        }
+
+        fun retrieveItem(context: Context, tag: String): String {
+            val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            return preferences.getString(tag, "not working")
+        }
     }
 }
