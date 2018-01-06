@@ -25,6 +25,7 @@ import java.util.List;
  * Tutorial link: https://freakycoder.com/android-notes-24-how-to-facebook-login-and-get-user-information-8d6df0350f1c
  */
 
+@Deprecated
 public class PrefUtils {
 
     private Activity activity;

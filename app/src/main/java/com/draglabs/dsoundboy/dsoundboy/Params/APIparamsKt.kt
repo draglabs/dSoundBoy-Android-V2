@@ -10,9 +10,12 @@ import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.facebook.AccessToken
 import com.facebook.Profile
+import okhttp3.MediaType
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import org.json.JSONObject
 import retrofit2.Call
+import java.io.File
 
 /**
  * Created by davrukin on 1/4/2018.
@@ -48,6 +51,22 @@ class APIparamsKt {
         val requestBody = createRequestBody(params)
 
         return userService.joinJam(requestBody)
+    }
+
+    fun callUploadJam(filePath: String, userID: String, fileName: String, location: String, jamID: String,  startTime: String, endTime: String): Call<ResponseModelKt.JamFunctions.UploadJam> {
+        val params = ArrayMap<String, Any>()
+        params.put("user_id", userID)
+        params.put("file_name", fileName)
+        params.put("location", location)
+        params.put("jam_id", jamID)
+        params.put("start_time", startTime)
+        params.put("end_time", endTime)
+        val requestBody = createRequestBody(params)
+
+        val file = File(filePath)
+        val fileBody = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(MediaType.parse("audio/*"), file))
+
+        return userService.uploadJam(requestBody, fileBody)
     }
 
     fun callRegisterUser(): Call<ResponseModelKt.UserFunctions.RegisterUser> {

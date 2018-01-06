@@ -2,35 +2,27 @@ package com.draglabs.dsoundboy.dsoundboy.Routines
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Fragment
 import android.content.Context
 import android.content.Intent
-import android.location.Location
-import android.location.LocationManager
 import android.net.Uri
-import android.os.Bundle
 import android.os.SystemClock
 import android.support.design.widget.Snackbar
-import android.support.v4.widget.DrawerLayout
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.*
 import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
-import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfRecordingsActivity
+import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import omrecorder.Recorder
 import java.util.*
 
 /**
- *
  * The home routine which shows all the recording screen stuff
- *
  * Created by davrukin on 11/3/17.
+ * @author Daniel Avrukin
  */
 class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context, path: String, recordButton: Button) {
 
@@ -54,63 +46,6 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         this.prefUtils = PrefUtils(activity)
         this.recorderUtils = RecorderUtils(context, null, activity)
         this.recorder = recorderUtils!!.setupRecorder(path, recordButton)
-    }
-
-    /**
-     * What happens when selecting an item in the menu list
-     * @param position the item's position in the list
-     * @param settingsMenuItemTitles the titles of the menu items
-     * @param settingsMenuDrawerLayout the layout of the drawer
-     * @param settingsMenuItemList the list of the items in the drawer
-     */
-    fun selectItem(position: Int, settingsMenuItemTitles: Array<String>, settingsMenuDrawerLayout: DrawerLayout, settingsMenuItemList: ListView) {
-        // from sample: https://developer.android.com/training/implementing-navigation/nav-drawer.html
-        // create a few fragment and specify the activity to launch based on position
-        val fragment = Fragment()
-        val args = Bundle()
-        args.putInt(ItemFragment.ARG_ITEM_NAME, position)
-        fragment.arguments = args
-
-        // insert fragment by replacing existing fragment
-        val fragmentManager = activity.fragmentManager
-        fragmentManager.beginTransaction().replace(R.id.content, fragment).commit()
-
-        // highlight the selected item, update the title, and close the drawer
-        settingsMenuItemList.setItemChecked(position, true)
-        activity.title = settingsMenuItemTitles[position]
-        settingsMenuDrawerLayout.closeDrawer(settingsMenuItemList)
-    }
-
-    /**
-     * Contains a single fragment that stores the nav drawer
-     */
-    class ItemFragment : Fragment() {
-
-        /**
-         * Creates the view for the fragment
-         * @param layoutInflater inflates the layout
-         * @param container contains the view group
-         * @param savedInstanceState the saved instance state
-         * @return the view created by the fragment
-         */
-        override fun onCreateView(layoutInflater: LayoutInflater, container: ViewGroup?,
-                                  savedInstanceState: Bundle): View? {
-            val rootView = layoutInflater.inflate(R.layout.navigation_view_1, container, false)
-            val i = arguments.getInt(ARG_ITEM_NAME)
-            val itemName = resources.getStringArray(R.array.menu_item_names)[i]
-            val itemID = resources.getIdentifier(itemName.toLowerCase(Locale.getDefault()), "drawable",
-                    activity.packageName)
-            // imageview line ignored from sample
-            // ((ImageView) rootView.findViewById(R.id.image)).setImageResource(imageId);
-            // where to show next activity?
-            activity.title = itemName
-            return rootView
-        }
-
-        companion object {
-            // from https://developer.android.com/training/implementing-navigation/nav-drawer.html
-            val ARG_ITEM_NAME = "item_name"
-        }
     }
 
     /**
@@ -142,7 +77,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      */
     fun clickViewRecordings() {
         // APIutils.getUserActivity(this, uniqueUserID, this);
-        val intent = Intent(activity, ListOfRecordingsActivity::class.java)
+        val intent = Intent(activity, ListOfJamsActivity::class.java)
         activity.startActivity(intent)
     }
 
@@ -159,7 +94,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * @param chronometer the chronometer
      */
     fun clickRec(chronometer: Chronometer) {
-        createJam()
+        //createJam()
 
         chronometer.base = SystemClock.elapsedRealtime()
         chronometer.start()
@@ -177,14 +112,14 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * @param recordingStartTime submits the recording's start time to the server
      * @param recordingEndTime submits the recording's end time to the server
      */
-    fun clickStop(view: View, chronometer: Chronometer, recordingStartTime: Date, recordingEndTime: Date) {
+    fun clickStop(context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
         //recorderUtils.stopRecording();
         recorderUtils!!.stopRecording(recorder)
         chronometer.stop()
 
         Toast.makeText(context, "Stopped recording.", Toast.LENGTH_LONG).show()
 
-        submitToServer(view, RecorderUtils(context, null, activity), recordingStartTime, recordingEndTime)
+        submitToServer(context, view, RecorderUtils(context, null, activity), startTime, endTime)
     }
 
     /**
@@ -194,9 +129,9 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * @param recordingStartTime the recording's start time
      * @param recordingEndTime the recording's end time
      */
-    private fun submitToServer(view: View, recorderUtils: RecorderUtils, recordingStartTime: Date?, recordingEndTime: Date?) {
-        var recordingStartTime = recordingStartTime
-        var recordingEndTime = recordingEndTime
+    private fun submitToServer(context: Context, view: View, recorderUtils: RecorderUtils, startTime: Date?, endTime: Date?) {
+        var recordingStartTime = startTime
+        var recordingEndTime = endTime
 
         /*Thread thread = new Thread(() -> APIutils.jamRecordingUpload(uniqueUserID, jamID, "davrukin-test", recordingPath, "notes", recordingStartTime, recordingEndTime, view));
         thread.run();*/
@@ -213,15 +148,20 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
             recordingEndTime = Date()
         }
 
-        prefUtils = PrefUtils(activity)
+        //prefUtils = PrefUtils(activity)
         val recordingPath = recorderUtils.audioSavePathInDevice
-        APIutils.jamRecordingUpload(
+        /*APIutils.jamRecordingUpload(
                 context,
                 prefUtils!!.uniqueUserID,
                 prefUtils!!.jamID,
                 recordingPath, PrefUtils.getRecordingDescription(activity),
                 recordingStartTime, recordingEndTime,
-                view)
+                view)*/
+
+        val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+        val jamName = PrefUtilsKt.Functions().retrieveJamName(context)
+        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
 
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -255,41 +195,33 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     /**
      * Creates a jam, shows a new jam PIN if there isn't one already, gets the device's location
      */
-    fun createJam() {
-        //LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
-        val provider = LocationManager.GPS_PROVIDER
-        //locationManager.requestLocationUpdates(provider, 5000, 10, this);
-        val location = Location(provider)
-        prefUtils = PrefUtils(activity)
+    fun createJam(context: Context, jam_pin_view: TextView) {
+        APIutilsKt().performNewJam(context, PrefUtilsKt.Functions().retrieveUUID(context), "test_jam", "ActionSpot", 37, -22, "hi")
+        LogUtils.debug("new pin", PrefUtilsKt.Functions().retrievePIN(context))
+        jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(context)
 
-        if (!prefUtils!!.hasJamPIN()) {
+        //LocationManager locationManager = (LocationManager)getSystemService(LOCATION_SERVICE);
+        //val provider = LocationManager.GPS_PROVIDER
+        //locationManager.requestLocationUpdates(provider, 5000, 10, this);
+        //val location = Location(provider)
+        //prefUtils = PrefUtils(activity)
+
+        /*if (!prefUtils!!.hasJamPIN()) {
             APIutils.newJam(activity, context, prefUtils!!.uniqueUserID, PrefUtils.getRecordingVenue(activity), PrefUtils.getRecordingDescription(activity), location)
             // may have to implement without a while loop
             prefUtils = PrefUtils(activity)
             showNewJamPinDialog(context, "Jam PIN", prefUtils!!.jamPIN)
         } else {
             Log.v("Current Jam PIN: ", prefUtils!!.jamPIN)
-        }
-
-        /*String jamPIN = prefUtils.getJamPIN();
-        Log.v("Jam PIN: ", jamPIN); // TODO: SHOW JSON RESPONSE IF ERROR AS INDEFINITE SNACKBAR OR TOAST
-        String newJamPIN = jamPIN.substring(0, 3) + "-" + jamPIN.substring(3, 6) + "-" + jamPIN.substring(6, 9);
-        showNewJamPinDialog(context, "Jam PIN", newJamPIN);*/
+        }*/
     }
-
-    /**
-     * Exits a jam
-     */
-    fun exitJam() {
-        prefUtils = PrefUtils(activity)
-        APIutils.exitJam(prefUtils!!.uniqueUserID, prefUtils!!.jamID)
-    }
-
     /**
      * Joins a jam, shows dialog to enter a jam PIN
      */
-    fun joinJam() {
+    fun joinJam(jam_pin_view: TextView) {
         showEnterJamPinDialog(context) // doesn't show keyboard automatically right away, it should
+        LogUtils.debug("entered pin", PrefUtilsKt.Functions().retrievePIN(context))
+        jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(context)
     }
 
     /*public void clickJoinJam() {
@@ -305,20 +237,6 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
 
         Toast.makeText(this, emailText + "\n" + descriptionText + "\n" + artistNameText + "\n" + venueText, Toast.LENGTH_LONG).show();
     }*/
-
-    /**
-     * Creates the dialog to show the new jam PIN
-     * @param context the app context
-     * @param title the title of the dialog
-     * @param jamPIN the new jam PIN
-     */
-    private fun showNewJamPinDialog(context: Context, title: String, jamPIN: String) {
-        val builder = AlertDialog.Builder(context)
-        builder.setMessage(jamPIN).setTitle(title)
-        builder.setNeutralButton("Okay") { dialog, _ -> dialog.dismiss() }
-        val dialog = builder.create()
-        dialog.show()
-    }
 
     /**
      * Creates the dialog to enter the new jam PIN

@@ -5,6 +5,7 @@
 package com.draglabs.dsoundboy.dsoundboy.Interfaces
 
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
+import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Retrofit
@@ -51,10 +52,12 @@ interface ApiInterface {
         @Query("user_id") userID: String*/
     ): Call<ResponseModelKt.JamFunctions.JoinJam>
 
+    @Multipart
     @POST("jam/upload") // multi-part upload
     fun uploadJam(
-        @Header("id") id: String,
-        @Body params: RequestBody
+        //@Header("id") id: String,
+        @Body params: RequestBody,
+        @Part filePart: MultipartBody.Part
         /*@Query("user_id") user_id: String,
         @Query("file_name") file_name: String,
         @Query("location") location: String,

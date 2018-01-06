@@ -71,8 +71,111 @@ class PrefUtilsKt {
 
         fun deleteUUID(context: Context) {
             Tools().deleteItem(context, "UUID")
-            LogUtils.debug("Deleted UUID", retrieveUUID(context))
         }
+
+        /* LOCATION FUNCTIONS */
+
+        fun storeLatitude(context: Context, latitude: String) {
+            Tools().storeItem(context, "latitude", latitude)
+        }
+
+        fun retrieveLatitude(context: Context): String {
+            return Tools().retrieveItem(context, "latitude")
+        }
+
+        fun deleteLatitude(context: Context) {
+            Tools().deleteItem(context, "latitude")
+        }
+
+        fun storeLongitude(context: Context, longitude: String) {
+            Tools().storeItem(context, "longitude", longitude)
+        }
+
+        fun retrieveLongitude(context: Context): String {
+            return Tools().retrieveItem(context, "longitude")
+        }
+
+        fun deleteLongitude(context: Context) {
+            Tools().deleteItem(context, "longitude")
+        }
+
+        fun dofun(function: String, itemType: String, item: String) {
+            when (function) {
+                "store" -> when (itemType) {
+                    "jam_name" -> {
+
+                    }
+                    "pin" -> {
+
+                    }
+                    "jam_pin" -> {
+
+                    }
+                    "uuid" -> {
+
+                    }
+                    "lat" -> {
+
+                    }
+                    "lng" -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+                "retrieve" -> when (itemType) {
+                    "jam_name" -> {
+
+                    }
+                    "pin" -> {
+
+                    }
+                    "jam_pin" -> {
+
+                    }
+                    "uuid" -> {
+
+                    }
+                    "lat" -> {
+
+                    }
+                    "lng" -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+                "delete" -> when (itemType) {
+                    "jam_name" -> {
+
+                    }
+                    "pin" -> {
+
+                    }
+                    "jam_pin" -> {
+
+                    }
+                    "uuid" -> {
+
+                    }
+                    "lat" -> {
+
+                    }
+                    "lng" -> {
+
+                    }
+                    else -> {
+
+                    }
+                }
+                else -> {
+
+                }
+            }
+        }
+
     }
 
     private class Tools {
@@ -81,6 +184,7 @@ class PrefUtilsKt {
             val editor = preferences.edit()
             editor.putString(tag, item)
             editor.apply()
+            LogUtils.debug("Stored item", "tag: $tag; item: $item")
         }
 
         fun deleteItem(context: Context, tag: String) {
@@ -88,10 +192,13 @@ class PrefUtilsKt {
             val editor = preferences.edit()
             editor.putString(tag, null)
             editor.apply()
+            LogUtils.debug("Deleted item", "tag: $tag")
+
         }
 
         fun retrieveItem(context: Context, tag: String): String {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+            LogUtils.debug("Retrieved item", "tag: $tag")
             return preferences.getString(tag, "not working")
         }
     }

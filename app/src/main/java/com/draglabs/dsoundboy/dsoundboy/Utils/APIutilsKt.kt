@@ -66,6 +66,28 @@ class APIutilsKt {
         })
     }
 
+    fun performUploadJam(context: Context, filePath: String, userID: String, fileName: String, location: String, jamID: String, startTime: String, endTime: String) {
+        val call = APIparamsKt().callUploadJam(filePath, userID, fileName, location, jamID, startTime, endTime)
+
+        call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UploadJam> {
+            override fun onResponse(call: Call<ResponseModelKt.JamFunctions.UploadJam>, response: Response<ResponseModelKt.JamFunctions.UploadJam>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    LogUtils.debug("Upload Response Body", result.toString())
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                    LogUtils.debug("Code", "" + response.code())
+                    LogUtils.debug("Message", response.message())
+                    LogUtils.debug("Message", response.message())
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UploadJam>, t: Throwable) {
+                logOnFailure(t)
+            }
+        })
+    }
+
     fun performRegisterUser(context: Context) {
         val call = APIparamsKt().callRegisterUser()
 

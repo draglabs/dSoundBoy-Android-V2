@@ -42,6 +42,7 @@ import omrecorder.Recorder;
  * <p>The home routine which shows all the recording screen stuff</p>
  * <p>Created by davrukin on 11/3/17.</p>
  */
+@Deprecated
 public class HomeRoutine {
 
     private HashMap<String, Object> buttons;
@@ -168,6 +169,7 @@ public class HomeRoutine {
      * Starts recording audio
      * @param chronometer the chronometer
      */
+    @Deprecated
     public void clickRec(Chronometer chronometer) {
         createJam();
 
@@ -187,6 +189,7 @@ public class HomeRoutine {
      * @param recordingStartTime submits the recording's start time to the server
      * @param recordingEndTime submits the recording's end time to the server
      */
+    @Deprecated
     public void clickStop(View view, Chronometer chronometer, Date recordingStartTime, Date recordingEndTime) {
         //recorderUtils.stopRecording();
         recorderUtils.stopRecording(recorder);

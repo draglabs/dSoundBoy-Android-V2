@@ -112,6 +112,7 @@ dependencies {
     // Test helpers for Room
     //testImplementation "android.arch.persistence.room:testing:1.0.0"
     implementation 'com.google.android.gms:play-services-maps:11.8.0'
+    implementation 'com.google.android.gms:play-services-location:11.8.0'
 }
 
 repositories {
