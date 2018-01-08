@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
-import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
+import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
@@ -15,11 +16,12 @@ import java.util.*
 
 /**
  * The new and improved login activity, with just a single button!
+ * @author Daniel Avrukin
  */
 class NewLoginActivity : AppCompatActivity() {
 
     private var callbackManager: CallbackManager? = null
-    private var loginRoutine: LoginRoutine? = null
+    private var loginRoutineKt: LoginRoutineKt? = null
     private var accessToken: AccessToken? = null
     private var accessTokenTracker: AccessTokenTracker? = null
 
@@ -32,6 +34,7 @@ class NewLoginActivity : AppCompatActivity() {
 
         FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
 
+        @Suppress("DEPRECATION")
         FacebookSdk.sdkInitialize(this)
         callbackManager = CallbackManager.Factory.create()
 
@@ -39,7 +42,7 @@ class NewLoginActivity : AppCompatActivity() {
 
         val buttons = HashMap<String, Any>()
 
-        loginRoutine = LoginRoutine(buttons, this, this)
+        loginRoutineKt = LoginRoutineKt(buttons, this, this)
 
         val loginButton = findViewById<View>(R.id.login_button) as LoginButton
         loginButton.setReadPermissions("email")
@@ -51,15 +54,16 @@ class NewLoginActivity : AppCompatActivity() {
 
                 val graphRequest = GraphRequest.newMeRequest(loginResult.accessToken) { `object`, response ->
                     Log.v("Main: ", response.toString())
-                    loginRoutine!!.setProfileView(`object`)
+                    loginRoutineKt!!.setProfileView(`object`)
                 }
                 val parameters = Bundle()
                 parameters.putString("fields", "id,name,email")
                 graphRequest.parameters = parameters
                 graphRequest.executeAsync()
 
-                loginRoutine!!.saveFacebookCredentials(loginResult)
-                loginRoutine!!.authenticateUser()
+                //loginRoutineKt!!.saveFacebookCredentials(loginResult)
+                //loginRoutineKt!!.authenticateUser()
+                APIutilsKt().performRegisterUser(this@NewLoginActivity)
             }
 
             override fun onCancel() {
@@ -79,7 +83,7 @@ class NewLoginActivity : AppCompatActivity() {
         }
 
         //buttons.put("facebookLoginButton", loginButton);
-        loginRoutine!!.addButton("facebookLoginButton", loginButton)
+        loginRoutineKt!!.addButton("facebookLoginButton", loginButton)
 
         if (AccessToken.getCurrentAccessToken() != null) {
             Log.d("Access Token:", AccessToken.getCurrentAccessToken().toString())
@@ -112,7 +116,7 @@ class NewLoginActivity : AppCompatActivity() {
      * @param view the view calling the login
      */
     fun clickFacebookLogin(view: View) {
-        loginRoutine!!.clickFacebookLogin()
+        loginRoutineKt!!.clickFacebookLogin()
     }
 
     /**

@@ -4,42 +4,33 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.support.design.widget.Snackbar
-import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import com.draglabs.dsoundboy.dsoundboy.Activities.HomeActivity
-import com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities.LoginActivity
-import com.draglabs.dsoundboy.dsoundboy.Interfaces.CallbackListener
+import com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity
 import com.draglabs.dsoundboy.dsoundboy.R
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.*
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
+import com.facebook.login.widget.ProfilePictureView
+import org.json.JSONException
+import org.json.JSONObject
 import java.util.*
 
 /**
  * Created by davrukin on 11/2/17.
+ * @author Daniel Avrukin
  */
 
-class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) : CallbackListener {
+class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) {
 
-    private val mAuthTask: LoginActivity.UserLoginTask? = null
+    //private val mAuthTask: LoginActivity.UserLoginTask? = null
 
-    private var prefUtils: PrefUtils? = null
-    private val callbackManager: CallbackManager
+    private val callbackManager: CallbackManager = CallbackManager.Factory.create()
     private val accessTokenTracker: AccessTokenTracker? = null
     private var accessToken: AccessToken? = null
-
-    private var uniqueUserID: String? = null
-
-    init {
-
-        this.prefUtils = PrefUtils(activity)
-        this.callbackManager = CallbackManager.Factory.create()
-
-    }
 
     fun clickFacebookLogin() {
         //facebookLoginButton.setReadPermissions("email");
@@ -73,61 +64,39 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
         })
     }
 
+    fun setProfileView(response: JSONObject) {
+        try {
+            val name = response.getString("name")
+            val email = response.getString("email")
+            val pictureView = activity.findViewById<View>(R.id.user_picture) as ProfilePictureView
+            pictureView.presetSize = ProfilePictureView.NORMAL
+            pictureView.profileId = response.getString("id")
+
+            val userNameTextView = activity.findViewById<View>(R.id.user_name) as TextView
+            val userEmailTextView = activity.findViewById<View>(R.id.user_email) as TextView
+            userNameTextView.text = name
+            userEmailTextView.text = email
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+
+    }
+
+    fun saveFacebookCredentials(loginResult: LoginResult) {
+        //PrefUtilsKt.Functions().storeFbAccessToken // is this necessary?
+    }
+
+    fun addButton(string: String, `object`: Any) {
+        buttons.put(string, `object`)
+    }
+
     fun clickContinueButton(view: View) {
-        APIutils.registerUser(activity, context)
-        prefUtils = PrefUtils(activity)
-        prefUtils!!.addListener(this)
-        uniqueUserIDset()
-        uniqueUserID = prefUtils!!.uniqueUserID
+        APIutilsKt().performRegisterUser(context)
 
-        Snackbar.make(view, "Unique ID: " + prefUtils!!.uniqueUserID, Snackbar.LENGTH_LONG).show()
-        val intent = Intent(activity, HomeActivity::class.java)
-        intent.putExtra("callingClass", "LoginActivity") // DO IT THIS WAY, SEND BOOL VALUES THROUGH THIS INSTEAD OF SHAREDPREFERENCES!!!!!!!!!
-        intent.putExtra("uniqueUserID", uniqueUserID)
-        /*intent.putExtra("enterInfoEnabled", true);
-        intent.putExtra("startStopEnabled", false);
-        intent.putExtra("resetEnabled", false);
-        intent.putExtra("submitEnabled", false);*/
+        Snackbar.make(view, "Unique ID: " + PrefUtilsKt.Functions().retrieveUUID(context), Snackbar.LENGTH_LONG).show()
+        val intent = Intent(activity, TestNavActivity::class.java)
+
         activity.startActivity(intent)
-    }
-
-    override fun uniqueUserIDset() {
-        Log.v("Unique UserModel ID: ", PrefUtils(activity).uniqueUserID + "")
-        // TODO: Set it as a variable somewhere? Anyway the Jams activity sees this info too
-    }
-
-    override fun jamIDset() {
-        Log.v("Jam ID: ", prefUtils!!.jamID + "")
-    }
-
-    override fun jamPINset() {
-        Log.v("Jam PIN: ", prefUtils!!.jamPIN + "")
-    }
-
-    override fun jamStartTimeSet() {
-        Log.v("Jam Start Time: ", prefUtils!!.jamStartTime + "")
-    }
-
-    override fun jamEndTimeSet() {
-        Log.v("Jam End Time: ", prefUtils!!.jamEndTime + "")
-    }
-
-    override fun getCollaboratorsSet() {
-        Log.v("Collaborators: ", prefUtils!!.collaborators + "")
-
-    }
-
-    override fun getUserActivitySet() {
-        Log.v("UserModel Activity: ", prefUtils!!.userActivity + "")
-
-    }
-
-    override fun getJamDetailsSet() {
-        Log.v("Jam Details: ", prefUtils!!.jamDetails + "")
-    }
-
-    override fun getAccessTokenSet() {
-        Log.v("Access Token: ", prefUtils!!.accessToken + "")
     }
 
     private fun isEmailValid(email: String): Boolean {

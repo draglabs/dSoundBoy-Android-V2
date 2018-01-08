@@ -45,6 +45,7 @@ import cz.msebera.android.httpclient.HttpEntity;
  * <p>Created by davrukin on 8/14/17.</p>
  */
 @SuppressWarnings("DefaultFileTemplate")
+@Deprecated
 public class APIutils { // TODO: docs for all other utils
 
     private static final String POST_EMAIL_URL = "";
