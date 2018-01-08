@@ -19,7 +19,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
-import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
@@ -43,7 +42,6 @@ import java.util.*
 class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     //var recorderUtils = RecorderUtils(this, null, this)
-    lateinit var homeRoutine: HomeRoutine
     lateinit var homeRoutineKt: HomeRoutineKt
     lateinit var startTime: Date
     lateinit var endTime: Date
@@ -94,7 +92,6 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         buttons.put("new_recording", button_rec_new as Any)
         buttons.put("join_jam", button_join_jam_new as Any)
 
-        homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
         homeRoutineKt = HomeRoutineKt(buttons, this, this, Date().time.toString(), button_rec_new)
 
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
@@ -143,11 +140,11 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun registerUser() {
-        LogUtils.debug("Registering User", "Done");
+        LogUtils.debug("Registering User", "Done")
 
         APIutilsKt().performRegisterUser(this)
 
-        LogUtils.debug("Registered User", "Done");
+        LogUtils.debug("Registered User", "Done")
         LogUtils.debug("New UUID", PrefUtilsKt.Functions().retrieveUUID(this))
     }
 
@@ -234,9 +231,11 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             }
             R.id.nav_manage -> {
                 // optional or modify
+                startActivity(Intent(this, EnterInfoActivity::class.java))
             }
             R.id.nav_settings -> {
                 // show settings such as recording settings
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
             R.id.nav_log_out -> {
                 AccessToken.setCurrentAccessToken(null)
@@ -246,14 +245,6 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     override fun onStart() {

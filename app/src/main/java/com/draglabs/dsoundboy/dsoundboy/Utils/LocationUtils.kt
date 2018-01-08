@@ -28,7 +28,7 @@ import com.google.android.gms.location.LocationServices
  * @author Daniel Avrukin
  */
 
-class LocationUtils() {
+class LocationUtils {
 
     fun onStart(locationVars: TestNavActivity.LocationVars) {
         if (locationVars.googleApiClient != null) {
@@ -84,12 +84,12 @@ class LocationUtils() {
         locationVars.locationRequest = LocationRequest.create()
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
                 .setInterval(locationVars.updateInterval)
-                .setFastestInterval(locationVars.fastestInterval);
+                .setFastestInterval(locationVars.fastestInterval)
         // Request location updates
         if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
+            return
         }
-        LocationServices.FusedLocationApi.requestLocationUpdates(locationVars.googleApiClient, locationVars.locationRequest, locationVars.listener);
+        LocationServices.FusedLocationApi.requestLocationUpdates(locationVars.googleApiClient, locationVars.locationRequest, locationVars.listener)
     }
 
     fun initializeLocationClient(callbacks: GoogleApiClient.ConnectionCallbacks, listener: GoogleApiClient.OnConnectionFailedListener, context: Context, locationVars: TestNavActivity.LocationVars) {

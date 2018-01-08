@@ -230,7 +230,7 @@ public class HomeRoutine {
                 context,
                 prefUtils.getUniqueUserID(),
                 prefUtils.getJamID(),
-                recordingPath, PrefUtils.getRecordingDescription(activity),
+                recordingPath, PrefUtils.Companion.getRecordingDescription(activity),
                 recordingStartTime, recordingEndTime,
                 view);
 
@@ -274,7 +274,7 @@ public class HomeRoutine {
         prefUtils = new PrefUtils(activity);
 
         if (!prefUtils.hasJamPIN()) {
-            APIutils.newJam(activity, context, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(activity), PrefUtils.getRecordingDescription(activity), location);
+            APIutils.newJam(activity, context, prefUtils.getUniqueUserID(), PrefUtils.Companion.getRecordingVenue(activity), PrefUtils.Companion.getRecordingDescription(activity), location);
             // may have to implement without a while loop
             prefUtils = new PrefUtils(activity);
             showNewJamPinDialog(context, "Jam PIN", prefUtils.getJamPIN());
@@ -371,7 +371,7 @@ public class HomeRoutine {
     }*/
 
     private String checkUUID() {
-        String readUUID = PrefUtils.readUUID();
+        String readUUID = PrefUtils.Companion.readUUID();
 
         if (readUUID != null || !readUUID.equals("")) {
             Log.v("Checked UUID:", readUUID);

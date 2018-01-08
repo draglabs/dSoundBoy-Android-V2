@@ -7,6 +7,7 @@ import cz.msebera.android.httpclient.ParseException;
 /**
  * <p>Contains headers for dlsAPI calls</p>
  * <p>Created by davrukin on 12/6/2017.</p>
+ * @author Daniel Avrukin
  */
 public class APIheaders {
 

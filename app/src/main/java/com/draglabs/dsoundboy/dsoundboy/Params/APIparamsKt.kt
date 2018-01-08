@@ -8,6 +8,7 @@ import android.util.ArrayMap
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
+import com.draglabs.dsoundboy.dsoundboy.Models.StringsModelKt
 import com.facebook.AccessToken
 import com.facebook.Profile
 import okhttp3.MediaType
@@ -32,13 +33,27 @@ class APIparamsKt {
 
     private val userService = RetrofitClient().getClient().create(ApiInterface::class.java)
 
+    private val name            = StringsModelKt.JsonParsingKeys.NAME
+    private val location        = StringsModelKt.JsonParsingKeys.LOCATION
+    private val lat             = StringsModelKt.JsonParsingKeys.LAT
+    private val lng             = StringsModelKt.JsonParsingKeys.LNG
+    private val notes           = StringsModelKt.JsonParsingKeys.NOTES
+    private val pin             = StringsModelKt.JsonParsingKeys.PIN
+    private val user_id         = StringsModelKt.JsonParsingKeys.USER_ID
+    private val file_name       = StringsModelKt.JsonParsingKeys.FILE_NAME
+    private val jam_id          = StringsModelKt.JsonParsingKeys.JAM_ID
+    private val start_time      = StringsModelKt.JsonParsingKeys.START_TIME
+    private val end_time        = StringsModelKt.JsonParsingKeys.END_TIME
+    private val facebook_id     = StringsModelKt.JsonParsingKeys.FACEBOOK_ID
+    private val access_token    = StringsModelKt.JsonParsingKeys.ACCESS_TOKEN
+
     fun callNewJam(UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String): Call<ResponseModelKt.JamFunctions.NewJam> {
         val params = ArrayMap<String, Any>()
-        params.put("name", name)
-        params.put("location", location)
-        params.put("lat", lat)
-        params.put("lng", lng)
-        params.put("notes", notes)
+        params.put(this.name, name)
+        params.put(this.location, location)
+        params.put(this.lat, lat)
+        params.put(this.lng, lng)
+        params.put(this.notes, notes)
         val requestBody = createRequestBody(params)
 
         return userService.newJam(UUID, requestBody)
@@ -46,8 +61,8 @@ class APIparamsKt {
 
     fun callJoinJam(pin: String, UUID: String): Call<ResponseModelKt.JamFunctions.JoinJam> {
         val params = ArrayMap<String, Any>()
-        params.put("pin", pin)
-        params.put("user_id", UUID)
+        params.put(this.pin, pin)
+        params.put(this.user_id, UUID)
         val requestBody = createRequestBody(params)
 
         return userService.joinJam(requestBody)
@@ -55,12 +70,12 @@ class APIparamsKt {
 
     fun callUploadJam(filePath: String, userID: String, fileName: String, location: String, jamID: String,  startTime: String, endTime: String): Call<ResponseModelKt.JamFunctions.UploadJam> {
         val params = ArrayMap<String, Any>()
-        params.put("user_id", userID)
-        params.put("file_name", fileName)
-        params.put("location", location)
-        params.put("jam_id", jamID)
-        params.put("start_time", startTime)
-        params.put("end_time", endTime)
+        params.put(this.user_id, userID)
+        params.put(this.file_name, fileName)
+        params.put(this.location, location)
+        params.put(this.jam_id, jamID)
+        params.put(this.start_time, startTime)
+        params.put(this.end_time, endTime)
         val requestBody = createRequestBody(params)
 
         val file = File(filePath)
@@ -75,8 +90,8 @@ class APIparamsKt {
 
         //val userService = RetrofitClient().getClient().create(ApiInterface::class.java)
         val params = ArrayMap<String, Any>()
-        params.put("facebook_id", facebookID)
-        params.put("access_token", accessToken)
+        params.put(this.facebook_id, facebookID)
+        params.put(this.access_token, accessToken)
         val requestBody = createRequestBody(params)
 
         return userService.registerUser(requestBody)

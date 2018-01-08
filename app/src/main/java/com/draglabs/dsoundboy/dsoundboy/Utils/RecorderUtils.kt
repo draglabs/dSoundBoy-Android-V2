@@ -45,7 +45,7 @@ class RecorderUtils
  * @param activity the activity calling this constructor
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-constructor(private val context: Context, bandData: Array<String>, private val activity: Activity) {
+constructor(private val context: Context, bandData: ArrayList<String>?, private val activity: Activity) {
     private val recorderModel: RecorderModel
     private var recordingThread: Thread? = null
 
@@ -60,9 +60,9 @@ constructor(private val context: Context, bandData: Array<String>, private val a
         this.recorderModel = RecorderModel()
         this.recordingThread = Thread()
 
-        recorderModel.bandData = bandData
+        //recorderModel.bandData = bandData
         recorderModel.audioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/dSoundBoyRecordings" + recorderModel.pathname
-        recorderModel.pathname = createAudioPathname(bandData, recorderModel.extension)
+        recorderModel.pathname = createAudioPathname(recorderModel.extension)
         /*recorderModel.setAudioRecord(new AudioRecord(recorderModel.getRecorderAudioSource(),
                                                         recorderModel.getRecordingSampleRate(),
                                                         recorderModel.getRecordingChannels(),
@@ -147,10 +147,10 @@ constructor(private val context: Context, bandData: Array<String>, private val a
         if (checkPermissions()) {
             if (recorderModel.mediaRecorder != null) {
                 recorderModel.pathname = createAudioPathname(
-                        PrefUtils.getArtistName(activity),
-                        PrefUtils.getRecordingDescription(activity),
-                        PrefUtils.getRecordingVenue(activity),
-                        PrefUtils.getArtistEmail(activity),
+                        PrefUtils.getArtistName(activity)!!,
+                        PrefUtils.getRecordingDescription(activity)!!,
+                        PrefUtils.getRecordingVenue(activity)!!,
+                        PrefUtils.getArtistEmail(activity)!!,
                         Date()) + recorderModel.extension
 
                 recorderModel.audioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/dSoundBoyRecordings/" + recorderModel.pathname
@@ -292,6 +292,16 @@ constructor(private val context: Context, bandData: Array<String>, private val a
      * @return the new file's pathname
      */
     private fun createAudioPathname(data: Array<String>, extension: String): String {
+        return createAudioPathname("Band Name", "Description", "Venue", "Email", Date()) + extension
+        //return createAudioPathname(data[0], data[1], data[2], data[3], new Date()) + extension;
+    }
+
+    /**
+     * Creates a pathname based on an array of strings containing the band's data
+     * @param extension the file extension
+     * @return the new file's pathname
+     */
+    private fun createAudioPathname(extension: String): String {
         return createAudioPathname("Band Name", "Description", "Venue", "Email", Date()) + extension
         //return createAudioPathname(data[0], data[1], data[2], data[3], new Date()) + extension;
     }

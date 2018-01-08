@@ -47,10 +47,10 @@ public class EnterInfoActivity_old extends AppCompatActivity {
         artistName = (EditText)findViewById(R.id.artist_name_text);
         venue = (EditText)findViewById(R.id.venue_text);
 
-        email.setText(PrefUtils.getArtistEmail(this));
-        description.setText(PrefUtils.getRecordingDescription(this));
-        artistName.setText(PrefUtils.getArtistName(this));
-        venue.setText(PrefUtils.getRecordingVenue(this));
+        email.setText(PrefUtils.Companion.getArtistEmail(this));
+        description.setText(PrefUtils.Companion.getRecordingDescription(this));
+        artistName.setText(PrefUtils.Companion.getArtistName(this));
+        venue.setText(PrefUtils.Companion.getRecordingVenue(this));
     }
 
     public void clickSave(View view) {
@@ -64,7 +64,7 @@ public class EnterInfoActivity_old extends AppCompatActivity {
         recordingVenueText = venue.getText().toString();
 
         bandInfoModel = new BandInfoModel(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText);
-        PrefUtils.setBandInfo(this, bandInfoModel);
+        PrefUtils.Companion.setBandInfo(this, bandInfoModel);
 
         Intent sendBandInfo = new Intent(this, MainActivity.class);
         sendBandInfo.putExtra("callingClass", "EnterInfoActivity");

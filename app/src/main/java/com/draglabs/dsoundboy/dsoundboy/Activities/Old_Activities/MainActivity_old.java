@@ -167,7 +167,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
 
         setBandInfo();
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?
-        recorderUtils = new RecorderUtils(this, bandInfo, MainActivity_old.this);
+        recorderUtils = new RecorderUtils(this, null, this);
 
         @SuppressWarnings("UnusedAssignment") String callingClass = null;
         if (getIntent().getStringExtra("callingClass") != null) {
@@ -272,7 +272,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
                         this,
                         prefUtils.getUniqueUserID(),
                         prefUtils.getJamID(),
-                        recordingPath, PrefUtils.getRecordingDescription(getThisActivity()),
+                        recordingPath, PrefUtils.Companion.getRecordingDescription(getThisActivity()),
                         recordingStartTimeServer, recordingEndTimeServer,
                         view);
 
@@ -394,7 +394,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         //locationManager.requestLocationUpdates(provider, 5000, 10, this);
         Location location = new Location(provider);
         prefUtils = new PrefUtils(this);
-        APIutils.newJam(this, this, prefUtils.getUniqueUserID(), PrefUtils.getRecordingVenue(this), PrefUtils.getRecordingDescription(this), location);
+        APIutils.newJam(this, this, prefUtils.getUniqueUserID(), PrefUtils.Companion.getRecordingVenue(this), PrefUtils.Companion.getRecordingDescription(this), location);
         String jamPIN = prefUtils.getJamPIN();
         //noinspection StatementWithEmptyBody
         if (prefUtils.hasJamPIN()) { // what did I want to do here?
@@ -460,10 +460,10 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
     }
 
     private void setBandInfo() {
-        this.emailText = PrefUtils.getArtistEmail(this);
-        this.descriptionText = PrefUtils.getRecordingDescription(this);
-        this.artistNameText = PrefUtils.getArtistName(this);
-        this.venueText = PrefUtils.getArtistEmail(this);
+        this.emailText = PrefUtils.Companion.getArtistEmail(this);
+        this.descriptionText = PrefUtils.Companion.getRecordingDescription(this);
+        this.artistNameText = PrefUtils.Companion.getArtistName(this);
+        this.venueText = PrefUtils.Companion.getArtistEmail(this);
 
         Toast.makeText(this, emailText + "\n" + descriptionText + "\n" + artistNameText + "\n" + venueText, Toast.LENGTH_LONG).show();
     }

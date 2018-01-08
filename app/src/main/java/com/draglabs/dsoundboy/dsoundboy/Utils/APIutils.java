@@ -91,11 +91,11 @@ public class APIutils { // TODO: docs for all other utils
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
 
-                prefUtils.saveJamPIN((String)JsonUtils.getItem(response, StringsModel.jsonTypes.PIN.type()));
-                prefUtils.saveJamID((String)JsonUtils.getItem(response, StringsModel.jsonTypes.JAM_ID.type()));
-                prefUtils.saveJamStartTime((String)JsonUtils.getItem(response, StringsModel.jsonTypes.START_TIME.type()));
-                prefUtils.saveJamEndTime((String)JsonUtils.getItem(response, StringsModel.jsonTypes.END_TIME.type()));
-                createDialog(activity, "", "Jam PIN", (String)JsonUtils.getItem(response, StringsModel.jsonTypes.PIN.type()));
+                prefUtils.saveJamPIN((String) JsonUtils.INSTANCE.getItem(response, StringsModel.jsonTypes.PIN.type()));
+                prefUtils.saveJamID((String) JsonUtils.INSTANCE.getItem(response, StringsModel.jsonTypes.JAM_ID.type()));
+                prefUtils.saveJamStartTime((String) JsonUtils.INSTANCE.getItem(response, StringsModel.jsonTypes.START_TIME.type()));
+                prefUtils.saveJamEndTime((String) JsonUtils.INSTANCE.getItem(response, StringsModel.jsonTypes.END_TIME.type()));
+                createDialog(activity, "", "Jam PIN", (String) JsonUtils.INSTANCE.getItem(response, StringsModel.jsonTypes.PIN.type()));
 
                 /*try {
                     String jamPIN = JsonUtils.getJsonObject(StringsModel.NEW_JAM, response, StringsModel.jsonTypes.PIN.type());
@@ -162,10 +162,10 @@ public class APIutils { // TODO: docs for all other utils
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
                 try {
-                    String jamPIN = JsonUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.PIN.type());
-                    String jamID = JsonUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.JAM_ID.type());
-                    String jamStartTime = JsonUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.START_TIME.type());
-                    String jamEndTime = JsonUtils.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.END_TIME.type());
+                    String jamPIN = JsonUtils.INSTANCE.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.PIN.type());
+                    String jamID = JsonUtils.INSTANCE.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.JAM_ID.type());
+                    String jamStartTime = JsonUtils.INSTANCE.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.START_TIME.type());
+                    String jamEndTime = JsonUtils.INSTANCE.getJsonObject(StringsModel.JOIN_JAM, response, StringsModel.jsonTypes.END_TIME.type());
                     Log.v("Jam PIN: ", jamPIN + "");
                     Log.v("Jam ID: ", jamID + "");
                     Log.v("Jam Start Time: ", jamStartTime + "");
@@ -206,7 +206,7 @@ public class APIutils { // TODO: docs for all other utils
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
                 try {
-                    String message = JsonUtils.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type());
+                    String message = JsonUtils.INSTANCE.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("Response Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -242,7 +242,7 @@ public class APIutils { // TODO: docs for all other utils
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
                 try {
-                    String message = JsonUtils.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type());
+                    String message = JsonUtils.INSTANCE.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -276,7 +276,7 @@ public class APIutils { // TODO: docs for all other utils
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
                 try {
-                    String jamDetails = JsonUtils.getJsonObject(StringsModel.GET_JAM_DETAILS, response, StringsModel.jsonTypes.DATA.type());
+                    String jamDetails = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_JAM_DETAILS, response, StringsModel.jsonTypes.DATA.type());
                     Log.v("Jam Details: ", jamDetails);
                     new PrefUtils(activity).saveJamDetails(jamDetails); // TODO: enable later
                 } catch (JSONException e) {
@@ -337,12 +337,12 @@ public class APIutils { // TODO: docs for all other utils
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 logSuccessResponse(statusCode, headers, response);
                 try {
-                    String uniqueID = JsonUtils.getJsonObject(StringsModel.REGISTER_USER, response, StringsModel.jsonTypes.UUID.type());
+                    String uniqueID = JsonUtils.INSTANCE.getJsonObject(StringsModel.REGISTER_USER, response, StringsModel.jsonTypes.UUID.type());
                     Log.v("Unique ID: ", uniqueID);
                     //new PrefUtils(activity).saveUniqueUserID(uniqueID);
                     // TODO: add to room here
-                    PrefUtils.writeUUID(uniqueID); // PATCHED UNTIL ROOM IS WORKING CORRECTLY, maybe this is better?
-                    String gottenUUID = PrefUtils.readUUID();
+                    PrefUtils.Companion.writeUUID(uniqueID); // PATCHED UNTIL ROOM IS WORKING CORRECTLY, maybe this is better?
+                    String gottenUUID = PrefUtils.Companion.readUUID();
                     //DatabaseInitializer.createAndAddUserWithUUID(new AppDatabase(context), uniqueID);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -471,7 +471,7 @@ public class APIutils { // TODO: docs for all other utils
                         Log.v("Jams: ", jams);
                         prefUtils.saveUserActivity(jams);
                     }*/
-                    String jams = JsonUtils.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, StringsModel.jsonTypes.JAMS.type());
+                    String jams = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, StringsModel.jsonTypes.JAMS.type());
                     Log.v("Jams: ", jams);
                     new PrefUtils(activity).saveUserActivity(jams);
                 } catch (JSONException e) {
@@ -545,7 +545,7 @@ public class APIutils { // TODO: docs for all other utils
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = JsonUtils.getJsonObject(StringsModel.SOLO_UPLOAD_RECORDING, response, StringsModel.jsonTypes.MESSAGE.type());
+                    String message = JsonUtils.INSTANCE.getJsonObject(StringsModel.SOLO_UPLOAD_RECORDING, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -581,7 +581,7 @@ public class APIutils { // TODO: docs for all other utils
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = JsonUtils.getJsonObject(StringsModel.EXIT_JAM, response, StringsModel.jsonTypes.MESSAGE.type());
+                    String message = JsonUtils.INSTANCE.getJsonObject(StringsModel.EXIT_JAM, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -620,7 +620,7 @@ public class APIutils { // TODO: docs for all other utils
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("ResponseModel: ", response.toString());
                 try {
-                    String collaborators = JsonUtils.getJsonObject(StringsModel.GET_COLLABORATORS, response, StringsModel.jsonTypes.MESSAGE.type());
+                    String collaborators = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_COLLABORATORS, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("Collaborators: ", collaborators);
                     prefUtils.saveCollaborators(collaborators);
                 } catch (JSONException e) {
@@ -658,7 +658,7 @@ public class APIutils { // TODO: docs for all other utils
                 Log.v("Headers: ", Arrays.toString(headers));
                 Log.v("ResponseModel: ", response.toString());
                 try {
-                    String message = JsonUtils.getJsonObject(StringsModel.NOTIFY_USER, response, StringsModel.jsonTypes.MESSAGE.type());
+                    String message = JsonUtils.INSTANCE.getJsonObject(StringsModel.NOTIFY_USER, response, StringsModel.jsonTypes.MESSAGE.type());
                     Log.v("ResponseModel Message: ", message);
                 } catch (JSONException e) {
                     e.printStackTrace();

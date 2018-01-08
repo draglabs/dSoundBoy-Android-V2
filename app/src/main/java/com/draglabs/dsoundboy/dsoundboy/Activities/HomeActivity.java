@@ -105,11 +105,11 @@ public class HomeActivity extends AppCompatActivity {
 
         //chronometer.setFormat("HH:MM:SS:ss");
 
-        bandInfo = PrefUtils.getBandData(this);
+        bandInfo = PrefUtils.Companion.getBandData(this);
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.RECORD_AUDIO },10);
         } else {
-            recorderUtils = new RecorderUtils(this, bandInfo, this);
+            recorderUtils = new RecorderUtils(this, null, this);
         }
 
         Toast.makeText(this, "" + Profile.getCurrentProfile(), Toast.LENGTH_LONG).show();

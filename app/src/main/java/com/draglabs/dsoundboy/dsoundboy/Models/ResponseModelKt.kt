@@ -13,6 +13,21 @@ import com.google.gson.annotations.SerializedName
 
 class ResponseModelKt {
 
+    /*object values {
+        private val id = StringsModelKt.JsonParsingKeys.ID
+        private val pin = StringsModelKt.JsonParsingKeys.PIN
+        private val is_current = StringsModelKt.JsonParsingKeys.IS_CURRENT
+        private val name = StringsModelKt.JsonParsingKeys.NAME
+        private val user_id = StringsModelKt.JsonParsingKeys.USER_ID
+        private val coordinates = StringsModelKt.JsonParsingKeys.COORDINATES
+        private val collaborators = StringsModelKt.JsonParsingKeys.COLLABORATORS
+        private val recordings = StringsModelKt.JsonParsingKeys.RECORDINGS
+        private val location = StringsModelKt.JsonParsingKeys.LOCATION
+        private val start_time = StringsModelKt.JsonParsingKeys.START_TIME
+        private val end_time = StringsModelKt.JsonParsingKeys.END_TIME
+        private val notes = StringsModelKt.JsonParsingKeys.NOTES
+    }*/
+
     class JamFunctions {
         data class NewJam(
             //var new_jam: Models.Jam

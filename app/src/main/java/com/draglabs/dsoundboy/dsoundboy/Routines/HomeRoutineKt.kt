@@ -41,10 +41,11 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     private var prefUtils: PrefUtils? = null
     var recorderUtils: RecorderUtils? = null
     val recorder: Recorder
+    val bandData: ArrayList<String>? = null
 
     init {
         this.prefUtils = PrefUtils(activity)
-        this.recorderUtils = RecorderUtils(context, null, activity)
+        this.recorderUtils = RecorderUtils(context, bandData, activity)
         this.recorder = recorderUtils!!.setupRecorder(path, recordButton)
     }
 
@@ -109,8 +110,8 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * Stops recording audio
      * @param view the view calling the method
      * @param chronometer stops the chronometer
-     * @param recordingStartTime submits the recording's start time to the server
-     * @param recordingEndTime submits the recording's end time to the server
+     * @param startTime submits the recording's start time to the server
+     * @param endTime submits the recording's end time to the server
      */
     fun clickStop(context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
         //recorderUtils.stopRecording();
@@ -126,8 +127,8 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * Submits the file to the server
      * @param view the view calling the method
      * @param recorderUtils the recorder settings
-     * @param recordingStartTime the recording's start time
-     * @param recordingEndTime the recording's end time
+     * @param startTime the recording's start time
+     * @param endTime the recording's end time
      */
     private fun submitToServer(context: Context, view: View, recorderUtils: RecorderUtils, startTime: Date?, endTime: Date?) {
         var recordingStartTime = startTime
