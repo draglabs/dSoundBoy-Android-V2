@@ -9,6 +9,7 @@ import cz.msebera.android.httpclient.ParseException;
  * <p>Created by davrukin on 12/6/2017.</p>
  * @author Daniel Avrukin
  */
+@Deprecated
 public class APIheaders {
 
     /**

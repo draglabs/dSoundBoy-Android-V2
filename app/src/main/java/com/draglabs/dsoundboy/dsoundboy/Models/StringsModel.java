@@ -7,8 +7,10 @@ import java.util.Locale;
 /**
  * <p>Holds strings used throughout the program, separate from the XML strings file</p>
  * <p>Created by davrukin on 9/12/17.</p>
+ * @author Daniel Avrukin
  */
 @SuppressWarnings("DefaultFileTemplate")
+@Deprecated
 public final class StringsModel {
 
     private static final String END_POINT = "http://api.draglabs.com/api";

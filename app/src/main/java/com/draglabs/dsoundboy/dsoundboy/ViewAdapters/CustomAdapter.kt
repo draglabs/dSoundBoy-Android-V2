@@ -16,9 +16,10 @@ import com.draglabs.dsoundboy.dsoundboy.R
 
 /**
  * Created by davrukin on 1/3/2018.
+ * @author Daniel Avrukin
  */
-class CustomAdapter(private val context: Context, private val list: List<JamViewModel>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
-
+class CustomAdapter(private val context: Context, private val list: List<JamViewModel>): RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
+// I guess this represents a single card
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textJamInfo: TextView
         var editButton: Button
@@ -43,8 +44,12 @@ class CustomAdapter(private val context: Context, private val list: List<JamView
     }
 
     override fun onBindViewHolder(holder: CustomAdapter.ViewHolder, position: Int) {
-        val jam : JamViewModel = list[position]
-        holder.textJamInfo.text = jam.text
+        val jam: JamViewModel = list[position]
+        holder.textJamInfo.text = jam.name
+        // TODO: call compressor api here with the user id and the jam id, retrieve the link, store it, and retrieve it when utilizing the share menu
+        // TODO: edit opens up a dialog or a new activity where the fields can be edited and they then send an UpdateJam request
+        // TODO: the export button sends an email?
+        // TODO: need to write docs for the Compressor API
         holder.editButton.setOnClickListener { Toast.makeText(context, "Edit Button Clicked", Toast.LENGTH_LONG).show() }
         holder.exportButton.setOnClickListener { Toast.makeText(context, "Export Button Clicked", Toast.LENGTH_LONG).show() }
         holder.shareButton.setOnClickListener { Toast.makeText(context, "Share Button Clicked", Toast.LENGTH_LONG).show() }

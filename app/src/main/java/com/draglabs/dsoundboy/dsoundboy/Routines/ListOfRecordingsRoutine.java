@@ -32,8 +32,10 @@ import java.util.HashMap;
 /**
  * <p>Contains functions for the ListOfRecordings Activity</p>
  * <p>Created by davrukin on 11/27/2017.</p>
+ * @author Daniel Avrukin
  */
 @SuppressWarnings("unchecked")
+@Deprecated
 public class ListOfRecordingsRoutine {
 
     // TODO: streamline functions, remove unnecessary ones from the Activity and leave the needed ones here in the Routine

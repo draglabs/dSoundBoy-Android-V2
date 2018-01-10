@@ -12,6 +12,7 @@ import java.util.Locale;
 /**
  * <p>Holds a location for a recording</p>
  * <p>Created by davrukin on 11/3/17.</p>
+ * @author Daniel Avrukin
  */
 
 public class MyLocationModel {

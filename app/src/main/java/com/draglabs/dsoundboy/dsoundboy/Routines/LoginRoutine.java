@@ -30,7 +30,9 @@ import java.util.HashMap;
 /**
  * <p>Performs login tasks</p>
  * <p>Created by davrukin on 11/2/17.</p>
+ * @author Daniel Avrukin
  */
+@Deprecated
 public class LoginRoutine implements CallbackListener {
 
     private HashMap<String, Object> buttons;

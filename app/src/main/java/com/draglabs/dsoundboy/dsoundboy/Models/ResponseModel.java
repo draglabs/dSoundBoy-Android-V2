@@ -11,7 +11,9 @@ import cz.msebera.android.httpclient.Header;
 /**
  * Holds a JSON response that is returned
  * Created by davrukin on 9/11/17.
+ * @author Daniel Avrukin
  */
+@Deprecated
 public class ResponseModel {
 
     private int statusCode;

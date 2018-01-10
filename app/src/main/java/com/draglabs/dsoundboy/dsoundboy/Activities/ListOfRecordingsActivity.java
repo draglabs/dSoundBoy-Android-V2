@@ -22,7 +22,9 @@ import java.util.HashMap;
 
 /**
  * Lists all the recordings from the user and his/her jams
+ * @author Daniel Avrukin
  */
+@Deprecated
 public class ListOfRecordingsActivity extends AppCompatActivity implements CallbackListener {
 
     private Toolbar toolbar;

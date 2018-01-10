@@ -15,8 +15,10 @@ import java.util.Locale;
 /**
  * <p>Created by davrukin on 11/17/17.</p>
  * <p>Holds and returns parameters for all the API functions.</p>
+ * @author Daniel Avrukin
  */
 
+@Deprecated
 public class APIparams {
 
     /**

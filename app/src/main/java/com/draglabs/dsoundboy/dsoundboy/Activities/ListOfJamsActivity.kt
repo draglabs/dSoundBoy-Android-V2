@@ -32,7 +32,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         val list = ArrayList<JamViewModel>()
         prepareList(list)
 
-        val cardView = findViewById<RecyclerView>(R.id.card_view)
+        val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
 
         val adapter = CustomAdapter(this, list)
         cardView.adapter = adapter
@@ -50,7 +50,7 @@ class ListOfJamsActivity : AppCompatActivity() {
     }
 
     private fun prepareList(list: ArrayList<JamViewModel>) {
-        // TODO: add items to list by doing API call to GetUserActivity, displaying jams, and mapping the buttons to the pertinent functions
+        // TODO: go into custom view adapter or inflater to set the buttons and views to the pertinent functions with the pertinent variables
         list.add((JamViewModel("This is a test jam", "name", "location", "link")))
         list.add((JamViewModel("The buttons do nothing", "name", "location", "link")))
 
