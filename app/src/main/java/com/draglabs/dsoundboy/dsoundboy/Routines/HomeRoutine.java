@@ -63,7 +63,7 @@ public class HomeRoutine {
         this.activity = activity;
         this.context = context;
         this.prefUtils = new PrefUtils(activity);
-        this.recorderUtils = new RecorderUtils(context, null, activity);
+        this.recorderUtils = new RecorderUtils(context, activity);
         this.recorder = recorderUtils.setupRecorder(path, recordButton);
     }
 
@@ -225,14 +225,14 @@ public class HomeRoutine {
         }
 
         prefUtils = new PrefUtils(activity);
-        String recordingPath = recorderUtils.getAudioSavePathInDevice();
-        APIutils.jamRecordingUpload(
+        //String recordingPath = recorderUtils.getAudioSavePathInDevice();
+        /*APIutils.jamRecordingUpload(
                 context,
                 prefUtils.getUniqueUserID(),
                 prefUtils.getJamID(),
                 recordingPath, PrefUtils.Companion.getRecordingDescription(activity),
                 recordingStartTime, recordingEndTime,
-                view);
+                view);*/
 
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);

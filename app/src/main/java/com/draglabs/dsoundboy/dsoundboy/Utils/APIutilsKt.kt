@@ -5,11 +5,13 @@
 package com.draglabs.dsoundboy.dsoundboy.Utils
 
 import android.content.Context
+import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Params.APIparamsKt
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 /**
  * Created by davrukin on 12/30/2017.
@@ -74,11 +76,12 @@ class APIutilsKt {
                 if (response.isSuccessful) {
                     val result = response.body()
                     LogUtils.debug("Upload Response Body", result.toString())
+                    LogUtils.debug("Upload Response Message", "Code: ${response.code()}; Message: ${response.message()}")
                 } else {
                     LogUtils.debug("Failed Response", response.errorBody()!!.toString())
                     LogUtils.debug("Code", "" + response.code())
                     LogUtils.debug("Message", response.message())
-                    LogUtils.debug("Message", response.message())
+                    LogUtils.debug("Headers", response.headers().toString())
                 }
             }
 
@@ -109,6 +112,37 @@ class APIutilsKt {
                 LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
                 LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())
             }
+        })
+    }
+
+    fun performGetUserActivity(context: Context) {
+        val call = APIparamsKt().callGetUserActivity(context)
+
+        call.enqueue(object: Callback<ResponseModelKt.UserFunctions.GetUserActivity> {
+            override fun onResponse(call: Call<ResponseModelKt.UserFunctions.GetUserActivity>, response: Response<ResponseModelKt.UserFunctions.GetUserActivity>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    val jams = ArrayList<JamViewModel>()
+                    if (result != null) {
+                        for (jam in result.jams) {
+                            jams.add(JamViewModel(jam.id, jam.name, jam.location, jam.link))
+                        }
+                        val arrayList = FileUtils().serializeArrayList(jams)
+                        LogUtils.debug("Jams", arrayList)
+                        PrefUtilsKt.Functions().storeJams(context, arrayList)
+                    } else {
+                        // TODO: no jams, account for something here
+                    }
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                    LogUtils.debug("Code", "" + response.code())
+                    LogUtils.debug("Message", response.message())
+                }
+            }
+            override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivity>, t: Throwable) {
+                logOnFailure(t)
+                LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
+                LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())            }
         })
     }
 

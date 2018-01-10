@@ -15,16 +15,8 @@ import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.widget.Button
 import android.widget.Toast
-import cafe.adriel.androidaudiorecorder.AndroidAudioRecorder
-import cafe.adriel.androidaudiorecorder.model.AudioChannel
-import cafe.adriel.androidaudiorecorder.model.AudioSampleRate
-import cafe.adriel.androidaudiorecorder.model.AudioSource
-import com.draglabs.dsoundboy.dsoundboy.Models.RecorderModel
-import com.draglabs.dsoundboy.dsoundboy.R
 import omrecorder.*
 import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -45,38 +37,39 @@ class RecorderUtils
  * @param activity the activity calling this constructor
  */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-constructor(private val context: Context, bandData: ArrayList<String>?, private val activity: Activity) {
-    private val recorderModel: RecorderModel
-    private var recordingThread: Thread? = null
+constructor(private val context: Context, private val activity: Activity) {
+    //private val recorderModelKt: RecorderModelKt
+    //private var recordingThread: Thread? = null
 
     /**
      * Gets the local path where the audio is saved
      * @return the local path where the audio is saved
      */
-    val audioSavePathInDevice: String
-        get() = recorderModel.audioSavePathInDevice
+    //val audioSavePathInDevice: String = recorderModel.audioSavePathInDevice
 
-    init {
-        this.recorderModel = RecorderModel()
-        this.recordingThread = Thread()
+    //init {
+        //this.recorderModel = RecorderModel()
+        //this.recordingThread = Thread()
 
         //recorderModel.bandData = bandData
-        recorderModel.audioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/dSoundBoyRecordings" + recorderModel.pathname
-        recorderModel.pathname = createAudioPathname(recorderModel.extension)
+        //recorderModel.audioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/dSoundBoyRecordings" + recorderModel.pathname
+        //recorderModel.pathname = createAudioPathname(recorderModel.extension)
         /*recorderModel.setAudioRecord(new AudioRecord(recorderModel.getRecorderAudioSource(),
                                                         recorderModel.getRecordingSampleRate(),
                                                         recorderModel.getRecordingChannels(),
                                                         recorderModel.getRecordingAudioEncoding(),
         recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement()));*/
-    }
+    //}
 
     fun startRecording(recorder: Recorder) {
         recorder.startRecording()
+        LogUtils.debug("Recorder", "Started")
     }
 
     fun stopRecording(recorder: Recorder) {
         try {
             recorder.stopRecording()
+            LogUtils.debug("Recorder", "Stopped")
         } catch (e: IOException) {
             e.printStackTrace()
         }
@@ -84,17 +77,18 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
 
     fun pauseRecording(recorder: Recorder) {
         recorder.pauseRecording()
+        LogUtils.debug("Recorder", "Paused")
     }
 
     fun setupRecorder(name: String, recordButton: Button): Recorder {
-        return OmRecorder.wav(PullTransport.Default(mic(), PullTransport.OnAudioChunkPulledListener { audioChunk -> animateVoice((audioChunk.maxAmplitude() / 200.0).toFloat(), recordButton) }), file(name))
+        return OmRecorder.wav(PullTransport.Default(mic(), PullTransport.OnAudioChunkPulledListener { audioChunk -> animateVoice((audioChunk.maxAmplitude() / 200.0).toFloat(), recordButton) }), File(name))
     }
 
     private fun animateVoice(maxPeak: Float, recordButton: Button) {
         recordButton.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start()
     }
 
-    private fun mic(): PullableSource {
+    private fun mic(): PullableSource { // TODO: Create function in settings to allow changing of these parameters
         return PullableSource.AutomaticGainControl(
                 PullableSource.NoiseSuppressor(
                         PullableSource.Default(
@@ -102,11 +96,20 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
                                         AudioFormat.ENCODING_PCM_16BIT, AudioFormat.CHANNEL_IN_MONO, 44100))))
     }
 
-    private fun file(name: String): File {
-        return File(Environment.getExternalStorageDirectory(), "dSoundBoyRecordings/$name.wav")
+    private val recordingsDirectory = "/dSoundBoyRecordings/"
+    private val rootPath = "${Environment.getExternalStorageDirectory()}" + recordingsDirectory
+    //private val extension = ".wav"
+
+    private fun file(name: String): File { // TODO: Maybe set the file name from PrefUtils.Functions().retrieveJamName?
+        return File(Environment.getExternalStorageDirectory(), recordingsDirectory + name)
     }
 
-    fun startRecorderNew(activity: Activity) {
+    fun getFilePath(name: String): String { // TODO: later add parameters for the extension
+        return rootPath + name
+    }
+
+
+    /*fun startRecorderNew(activity: Activity) {
         if (checkPermissions()) {
             val recordingPath = Environment.getExternalStorageDirectory().toString() + "/dSoundBoyRecordings/recorded audio " + Date().time + ".wav"
             try {
@@ -136,12 +139,13 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
         } else {
             requestPermission()
         }
-    }
+    }*/
 
     /**
      * Starts recording
      * @param activity the activity calling this method
      */
+    /*@Deprecated("Using OM Recorder Now")
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     fun startRecording(activity: Activity) {
         if (checkPermissions()) {
@@ -190,14 +194,15 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
         } else {
             requestPermission()
         }
-    }
+    }*/
 
     /**
      * Stops recording
      */
+    @Deprecated("Using OM Recorder Now")
     fun stopRecording() {
         // TODO: when "Submit" is clicked, finalize recording with this method
-        recorderModel.endTime = Date()
+        /*recorderModel.endTime = Date()
 
         try {
             if (recorderModel.audioRecord != null) {
@@ -211,15 +216,15 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
             e.printStackTrace()
         }
 
-        Toast.makeText(context, "Recording Completed.", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Recording Completed.", Toast.LENGTH_LONG).show()*/
     }
 
     /**
      * Resets the recording
      */
-    fun resetRecording() {
+    /*fun resetRecording() {
         recorderModel.mediaRecorder.reset()
-    }
+    }*/
 
     /**
      * Converts an array of the short data type to an array of bytes, used for the recorder
@@ -241,6 +246,7 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
      * Write the audio data to the file
      * @param pathname the local path to the file
      */
+    /*@Deprecated("Using OM Recorder Now")
     private fun writeAudioDataToFile(pathname: String) {
         val shorts = ShortArray(recorderModel.bufferElementsToRec)
 
@@ -269,8 +275,7 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
         } catch (e: IOException) {
             e.printStackTrace()
         }
-
-    }
+    }*/
 
     /**
      * Creates a random audio pathname
@@ -280,7 +285,7 @@ constructor(private val context: Context, bandData: ArrayList<String>?, private 
     fun createRandomAudioPathname(length: Int): String {
         val stringBuilder = StringBuilder(length)
         for (i in 0 until length) {
-            stringBuilder.append(recorderModel.randoM_AUDIO_FILE_NAME[recorderModel.random.nextInt(recorderModel.randoM_AUDIO_FILE_NAME.length)])
+            //stringBuilder.append(recorderModel.RANDOM_AUDIO_FILE_NAME[recorderModel.random.nextInt(recorderModel.randoM_AUDIO_FILE_NAME.length)])
         }
         return stringBuilder.toString()
     }

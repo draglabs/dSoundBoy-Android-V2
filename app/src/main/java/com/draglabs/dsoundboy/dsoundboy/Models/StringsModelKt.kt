@@ -95,6 +95,17 @@ object StringsModelKt {
         val GET_USER_ACTIVITY = USER + "activity"
     }
 
+    object FacebookUserDataParams {
+        val FB_NAME = "fb_name"
+        val FB_EMAIL = "fb_email"
+        val FB_IMAGE = "fb_image"
+        val LOCAL_PATH = "local_path"
+    }
+
+    object ViewJamData {
+        val JAMS = "jams"
+    }
+
     @Deprecated(message = deprecationString)
     object JamFeaturesOld {
         val SOLO_UPLOAD_RECORDING = "Solo Upload Recording"

@@ -15,6 +15,7 @@ import com.draglabs.dsoundboy.dsoundboy.R;
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtils;
 
 @SuppressLint("Registered")
+@Deprecated
 public class EnterInfoActivity_old extends AppCompatActivity {
 
     private EditText email;

@@ -18,6 +18,7 @@ import java.util.*
  * @author Daniel Avrukin
  */
 
+@Deprecated("Using OM Recorder Now")
 class RecorderModelKt {
 
     var startTime: Date? = null

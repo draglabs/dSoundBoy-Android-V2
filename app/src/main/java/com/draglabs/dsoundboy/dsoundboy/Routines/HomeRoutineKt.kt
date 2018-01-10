@@ -15,7 +15,10 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
-import com.draglabs.dsoundboy.dsoundboy.Utils.*
+import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils
 import omrecorder.Recorder
 import java.util.*
 
@@ -26,27 +29,16 @@ import java.util.*
  */
 class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context, path: String, recordButton: Button) {
 
-        /**
-     * Constructor for the Home Routine
-     * @param buttons the buttons seen on the UI
-     * @param activity the activity calling the routine
-     * @param context the context calling the routine
-    */
-
-        /**
-         * Returns the UI elements
-         * @return buttons
-         */
-
-    private var prefUtils: PrefUtils? = null
     var recorderUtils: RecorderUtils? = null
-    val recorder: Recorder
-    val bandData: ArrayList<String>? = null
+    var recorder: Recorder
+    var path: String? = null
+    var recordButton: Button? = null
 
     init {
-        this.prefUtils = PrefUtils(activity)
-        this.recorderUtils = RecorderUtils(context, bandData, activity)
+        this.path = path
+        this.recorderUtils = RecorderUtils(context, activity)
         this.recorder = recorderUtils!!.setupRecorder(path, recordButton)
+        this.recordButton = recordButton
     }
 
     /**
@@ -101,6 +93,11 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         chronometer.start()
         //recorderUtils.startRecording(activity);
         //recorderUtils.startRecorderNew(activity);
+        //val time = Date().time.toString()
+        //val path = PrefUtilsKt.Functions().retrieveJamName(context) + " " + time
+        val path = PrefUtilsKt.Functions().retrieveLocalPath(context)
+        LogUtils.debug("ClickRec Path", path)
+        recorder = recorderUtils!!.setupRecorder(path, this.recordButton!!)
         recorderUtils!!.startRecording(recorder)
 
         Toast.makeText(context, "Started recording.", Toast.LENGTH_LONG).show()
@@ -120,7 +117,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
 
         Toast.makeText(context, "Stopped recording.", Toast.LENGTH_LONG).show()
 
-        submitToServer(context, view, RecorderUtils(context, null, activity), startTime, endTime)
+        submitToServer(context, view, startTime, endTime)
     }
 
     /**
@@ -130,7 +127,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * @param startTime the recording's start time
      * @param endTime the recording's end time
      */
-    private fun submitToServer(context: Context, view: View, recorderUtils: RecorderUtils, startTime: Date?, endTime: Date?) {
+    private fun submitToServer(context: Context, view: View, startTime: Date?, endTime: Date?) {
         var recordingStartTime = startTime
         var recordingEndTime = endTime
 
@@ -150,7 +147,6 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         }
 
         //prefUtils = PrefUtils(activity)
-        val recordingPath = recorderUtils.audioSavePathInDevice
         /*APIutils.jamRecordingUpload(
                 context,
                 prefUtils!!.uniqueUserID,
@@ -162,6 +158,9 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
         val jamName = PrefUtilsKt.Functions().retrieveJamName(context)
         val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+
+        val recordingPath = PrefUtilsKt.Functions().retrieveLocalPath(context)
+
         APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
 
         /*int id = 1;
@@ -271,14 +270,16 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         // TODO: enter jam pin here and return it
     }
 
-    private fun checkUUID(prefUtils: PrefUtils, activity: Activity, context: Context): String {
-        return if (prefUtils.hasUniqueUserID()) {
-            Log.v("Checked UUID:", prefUtils.uniqueUserID)
-            prefUtils.uniqueUserID
+    private fun checkUUID(context: Context): String {
+        var UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+        return if (UUID != "not working") {
+            Log.v("Checked UUID:", UUID)
+            UUID
         } else {
-            APIutils.registerUser(activity, context)
-            Log.v("Refreshed UUID:", prefUtils.uniqueUserID)
-            prefUtils.uniqueUserID
+            APIutilsKt().performRegisterUser(context)
+            UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+            Log.v("Refreshed UUID:", UUID)
+            UUID
         }
     }
 

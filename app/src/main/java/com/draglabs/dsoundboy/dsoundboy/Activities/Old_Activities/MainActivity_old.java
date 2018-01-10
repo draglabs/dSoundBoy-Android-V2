@@ -50,6 +50,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @SuppressLint("Registered")
+@Deprecated
 public class MainActivity_old extends AppCompatActivity implements CallbackListener {
 
     private Button about;
@@ -167,7 +168,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
 
         setBandInfo();
         bandInfo = createArray(emailText, descriptionText, artistNameText, venueText); // can't be null values below, maybe instantiate elsewhere?
-        recorderUtils = new RecorderUtils(this, null, this);
+        recorderUtils = new RecorderUtils(this, this);
 
         @SuppressWarnings("UnusedAssignment") String callingClass = null;
         if (getIntent().getStringExtra("callingClass") != null) {
@@ -262,7 +263,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(this);
         notificationCompatBuilder.setContentTitle("Recording Upload").setContentText("Upload in progress").setSmallIcon(R.drawable.drag_labs_logo);
         Handler handler = new Handler(Looper.getMainLooper());
-        Runnable runnable = new Thread(() -> {
+        /*Runnable runnable = new Thread(() -> {
             for (int i = 0; i < 100; i += 5) {
                 notificationCompatBuilder.setProgress(100, i, false);
                 notificationManager.notify(id, notificationCompatBuilder.build());
@@ -280,8 +281,8 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
                 notificationManager.notify(id, notificationCompatBuilder.build());
             }
 
-        });
-        handler.post(runnable);
+        });*/
+        //handler.post(runnable);
 
         /*this.recordingPath = recorderUtils.getAudioSavePathInDevice();
         // TODO: SET CORRECT RECORDING PATH, START, AND END TIME
@@ -302,7 +303,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
         //recorderUtils.startStopRecording(startStopClickCount, chronometer, recordingImage);
         if (startStopClickCount % 2 != 0) {
             //recorderUtils.startStopRecording(startStopClickCount, chronometer, recordingImage);
-            recorderUtils.startRecording(this);
+            //recorderUtils.startRecording(this);
 
             Toast.makeText(this, "Started recording.", Toast.LENGTH_LONG).show();
             chronometer.start();
@@ -330,7 +331,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
 
         chronometer.setBase(SystemClock.elapsedRealtime());
         chronometer.start();
-        recorderUtils.startRecording(this);
+        //recorderUtils.startRecording(this);
         recordingImage.setVisibility(View.VISIBLE);
         stop.setEnabled(true);
     }
@@ -351,7 +352,7 @@ public class MainActivity_old extends AppCompatActivity implements CallbackListe
     }
 
     public void clickReset(View view) { // IF IT IS RESET, IT IS NOT DELETED. FILE IS STILL THERE. ADD THIS INTO DOCUMENTATION FOR APP
-        recorderUtils.resetRecording();
+        //recorderUtils.resetRecording();
 
         Toast.makeText(this, "Reset recording.", Toast.LENGTH_LONG).show();
 

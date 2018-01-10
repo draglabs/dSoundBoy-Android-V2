@@ -20,11 +20,8 @@ import android.view.MenuItem
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
-import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutine
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
-import com.draglabs.dsoundboy.dsoundboy.Utils.LocationUtils
-import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
@@ -34,6 +31,8 @@ import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import java.util.*
 
 /**
@@ -85,14 +84,17 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //PrefUtilsKt.Functions().deletePIN(this)
         clickTestAuth()
         setListeners()
-        setUserView()
+        async {setUserView()}
         initializeLocationClient()
+        updatePinView()
 
         buttons.put("new_jam", button_new_jam_new as Any)
         buttons.put("new_recording", button_rec_new as Any)
         buttons.put("join_jam", button_join_jam_new as Any)
 
-        homeRoutineKt = HomeRoutineKt(buttons, this, this, Date().time.toString(), button_rec_new)
+        val filename = FileUtils().generateAndSaveFilename(this)
+
+        homeRoutineKt = HomeRoutineKt(buttons, this, this, filename, button_rec_new)
 
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
     }
@@ -125,13 +127,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
     }
 
-    private fun setUserView() {
-        val loginRoutine = LoginRoutine(null, this, this)
+    suspend private fun setUserView() {
+        delay(1500) // this is here because it would cause the app to crash since it didn't retrieve the data from the server right away
+        val loginRoutineKt = LoginRoutineKt(buttons, this, this)
 
         val accessToken = AccessToken.getCurrentAccessToken()
         val graphRequest = GraphRequest.newMeRequest(accessToken) { `object`, response ->
             Log.v("Main: ", response.toString())
-            loginRoutine.setProfileView(`object`)
+            loginRoutineKt.setProfileView(`object`)
         }
         val parameters = Bundle()
         parameters.putString("fields", "id,name,email")
@@ -149,28 +152,30 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun clickRec(context: Context, view: View) {
-        val buttonText = button_rec_new.text
-        if (buttonText == "Rec") {
+        updatePinView()
+        if (button_rec_new.text == "Rec") {
             startTime = Date()
-            button_rec_new.text = "Stop"
             // not confident about the order of events here
             homeRoutineKt.clickRec(chronometer_new) // no current jam, recorder button creates a new one
+            button_rec_new.text = "Stop"
             // if is currently recording, new jam button stops recording, uploads it, and creates a new jam
             // use get active jam to tell if there is one currently
         } else {
             endTime = Date()
-            button_rec_new.text = "Start"
             homeRoutineKt.clickStop(context, view, chronometer_new, startTime, endTime)
+            button_rec_new.text = "Rec"
             //homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
         }
     }
 
     private fun clickJoin() {
         homeRoutineKt.joinJam(jam_pin_view)
+        updatePinView()
     }
 
     private fun clickNew() {
         homeRoutineKt.createJam(this, jam_pin_view)
+        updatePinView()
 
         /*APIutilsKt().performNewJam(this, PrefUtilsKt.Functions().retrieveUUID(this), "test_jam", "ActionSpot", 37, -22, "hi")
         LogUtils.debug("new pin", PrefUtilsKt.Functions().retrievePIN(this))
@@ -189,6 +194,15 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     // TODO: add check uuid function, to prevent crashes, or just show snackbars or toasts when errors come up, so the app doesn't crash
+
+    private fun updatePinView() {
+        val pin = PrefUtilsKt.Functions().retrievePIN(this)
+        if (pin == "not working") {
+            jam_pin_view.text = "No Jam PIN"
+        } else {
+            jam_pin_view.text = pin
+        }
+    }
 
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
@@ -221,7 +235,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 // Handle the camera action
                 // go to the default record screen
             }
-            R.id.nav_recordings -> {
+            R.id.nav_jams -> {
                 startActivity(Intent(this, ListOfJamsActivity::class.java))
                 // go to the previous recordings
                 // allow export of jams
@@ -229,7 +243,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_slideshow -> {
                 // optional or modify
             }
-            R.id.nav_manage -> {
+            R.id.nav_band_info -> {
                 // optional or modify
                 startActivity(Intent(this, EnterInfoActivity::class.java))
             }

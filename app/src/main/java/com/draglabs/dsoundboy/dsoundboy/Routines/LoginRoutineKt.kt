@@ -15,7 +15,6 @@ import com.facebook.*
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import com.facebook.login.widget.ProfilePictureView
-import org.json.JSONException
 import org.json.JSONObject
 import java.util.*
 
@@ -65,21 +64,20 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
     }
 
     fun setProfileView(response: JSONObject) {
-        try {
-            val name = response.getString("name")
-            val email = response.getString("email")
-            val pictureView = activity.findViewById<View>(R.id.user_picture) as ProfilePictureView
-            pictureView.presetSize = ProfilePictureView.NORMAL
-            pictureView.profileId = response.getString("id")
+        val name = response.getString("name")
+        val email = response.getString("email")
+        val id = response.getString("id")
+        PrefUtilsKt.Functions().storeFbName(context, name)
+        PrefUtilsKt.Functions().storeFbEmail(context, email)
+        PrefUtilsKt.Functions().storeFbImage(context, id)
+        val pictureView = activity.findViewById<View>(R.id.user_picture) as ProfilePictureView
+        pictureView.presetSize = ProfilePictureView.NORMAL
+        pictureView.profileId = id
 
-            val userNameTextView = activity.findViewById<View>(R.id.user_name) as TextView
-            val userEmailTextView = activity.findViewById<View>(R.id.user_email) as TextView
-            userNameTextView.text = name
-            userEmailTextView.text = email
-        } catch (e: JSONException) {
-            e.printStackTrace()
-        }
-
+        val userNameTextView = activity.findViewById<View>(R.id.user_name) as TextView
+        val userEmailTextView = activity.findViewById<View>(R.id.user_email) as TextView
+        userNameTextView.text = name
+        userEmailTextView.text = email
     }
 
     fun saveFacebookCredentials(loginResult: LoginResult) {

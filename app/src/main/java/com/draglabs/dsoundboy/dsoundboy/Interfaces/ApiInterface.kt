@@ -56,7 +56,7 @@ interface ApiInterface {
     @POST("jam/upload") // multi-part upload
     fun uploadJam(
         //@Header("id") id: String,
-        @Body params: RequestBody,
+        @Part params: MultipartBody.Part,
         @Part filePart: MultipartBody.Part
         /*@Query("user_id") user_id: String,
         @Query("file_name") file_name: String,

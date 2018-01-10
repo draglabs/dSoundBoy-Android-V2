@@ -34,6 +34,7 @@ class NewLoginActivity : AppCompatActivity() {
 
         FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
 
+
         @Suppress("DEPRECATION")
         FacebookSdk.sdkInitialize(this)
         callbackManager = CallbackManager.Factory.create()

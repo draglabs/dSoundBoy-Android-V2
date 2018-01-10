@@ -130,7 +130,7 @@ class ResponseModelKt {
             @SerializedName("start_time") var start_time: String,
             @SerializedName("end_time") var end_time: String,
             @SerializedName("notes") var notes: String,
-            @SerializedName("archive_url") var archive_url: String
+            @SerializedName("link") var link: String
         )
 
         data class JamMini(

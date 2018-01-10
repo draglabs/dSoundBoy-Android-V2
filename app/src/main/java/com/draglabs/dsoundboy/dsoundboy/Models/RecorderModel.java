@@ -32,7 +32,7 @@ When you call the RecorderModel class inside of another method use the follow sy
 
  */
 
-
+@Deprecated
 public class RecorderModel {
 
     private Date startTime;

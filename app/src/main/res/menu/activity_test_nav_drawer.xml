@@ -9,17 +9,17 @@
             android:icon="@drawable/recording"
             android:title="@string/aar_recording" />
         <item
-            android:id="@+id/nav_recordings"
+            android:id="@+id/nav_jams"
             android:icon="@drawable/ic_menu_slideshow"
-            android:title="@string/view_recordings" />
+            android:title="@string/view_jams" />
         <item
             android:id="@+id/nav_slideshow"
             android:icon="@drawable/ic_menu_gallery"
             android:title="Slideshow" />
         <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_band_info"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Band Info" />
     </group>
 
     <item android:title="@string/tools">

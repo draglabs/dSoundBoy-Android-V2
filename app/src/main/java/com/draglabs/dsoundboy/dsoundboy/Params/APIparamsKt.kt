@@ -4,11 +4,13 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Params
 
+import android.content.Context
 import android.util.ArrayMap
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Models.StringsModelKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
 import com.facebook.Profile
 import okhttp3.MediaType
@@ -47,6 +49,8 @@ class APIparamsKt {
     private val facebook_id     = StringsModelKt.JsonParsingKeys.FACEBOOK_ID
     private val access_token    = StringsModelKt.JsonParsingKeys.ACCESS_TOKEN
 
+    private val jsonTypeStringForRequest = "application/json; charset=utf-8"
+
     fun callNewJam(UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String): Call<ResponseModelKt.JamFunctions.NewJam> {
         val params = ArrayMap<String, Any>()
         params.put(this.name, name)
@@ -54,7 +58,7 @@ class APIparamsKt {
         params.put(this.lat, lat)
         params.put(this.lng, lng)
         params.put(this.notes, notes)
-        val requestBody = createRequestBody(params)
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.newJam(UUID, requestBody)
     }
@@ -63,7 +67,7 @@ class APIparamsKt {
         val params = ArrayMap<String, Any>()
         params.put(this.pin, pin)
         params.put(this.user_id, UUID)
-        val requestBody = createRequestBody(params)
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.joinJam(requestBody)
     }
@@ -76,12 +80,15 @@ class APIparamsKt {
         params.put(this.jam_id, jamID)
         params.put(this.start_time, startTime)
         params.put(this.end_time, endTime)
-        val requestBody = createRequestBody(params)
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         val file = File(filePath)
-        val fileBody = MultipartBody.Part.createFormData("file", file.name, RequestBody.create(MediaType.parse("audio/*"), file))
 
-        return userService.uploadJam(requestBody, fileBody)
+        val multiPartBodyParams = createMultipartBody("", "", requestBody)
+        val multiPartBodyFile = createMultipartBody("file", file.name, RequestBody.create(MediaType.parse("audio/*"), file))
+
+        return userService.uploadJam(multiPartBodyParams, multiPartBodyFile)
+        //return userService.uploadJam(requestBody, fileBody)
     }
 
     fun callRegisterUser(): Call<ResponseModelKt.UserFunctions.RegisterUser> {
@@ -92,13 +99,21 @@ class APIparamsKt {
         val params = ArrayMap<String, Any>()
         params.put(this.facebook_id, facebookID)
         params.put(this.access_token, accessToken)
-        val requestBody = createRequestBody(params)
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.registerUser(requestBody)
     }
 
-    private fun createRequestBody(params: ArrayMap<String, Any>): RequestBody {
-        return RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"), JSONObject(params).toString())
+    fun callGetUserActivity(context: Context): Call<ResponseModelKt.UserFunctions.GetUserActivity> {
+        return userService.getUserActivity(PrefUtilsKt.Functions().retrieveUUID(context))
+    }
+
+    private fun createRequestBody(params: ArrayMap<String, Any>, bodyType: String): RequestBody {
+        return RequestBody.create(okhttp3.MediaType.parse(bodyType), JSONObject(params).toString())
+    }
+
+    private fun createMultipartBody(name: String, fileName: String, requestBody: RequestBody): MultipartBody.Part {
+        return MultipartBody.Part.createFormData(name, fileName, requestBody)
     }
 
 }

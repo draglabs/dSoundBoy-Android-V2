@@ -19,7 +19,7 @@
     <string name="start_stop">Start/Stop</string>
     <string name="start">Start</string>
     <string name="stop">Stop</string>
-    <string name="band_info">Enter Band and/or Recording Info</string>
+    <string name="band_info">Band Info</string>
     <string name="title_activity_enter_info">Band Recording Info</string>
     <string name="email">Email</string>
     <string name="description">Description</string>
@@ -183,7 +183,7 @@
 
     <string name="tools">Tools</string>
     <string name="log_out">Log Out</string>
-    <string name="view_recordings">View Recordings</string>
+    <string name="view_jams">View Jams</string>
     <string name="new_jam">New</string>
     <string name="title_activity_list_of_jams">Jams</string>
     <string name="button_test_auth">Test Auth</string>
