@@ -146,6 +146,29 @@ class APIutilsKt {
         })
     }
 
+    fun performCompressor(context: Context, jamID: String) {
+        val call = APIparamsKt().callCompressor(context, jamID)
+
+        call.enqueue(object: Callback<ResponseModelKt.CompressorFunctions.Compressor> {
+            override fun onResponse(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, response: Response<ResponseModelKt.CompressorFunctions.Compressor>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    LogUtils.debug("Upload Response Body", result.toString())
+                    LogUtils.debug("Upload Response Message", "Code: ${response.code()}; Message: ${response.message()}")
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                    LogUtils.debug("Code", "" + response.code())
+                    LogUtils.debug("Message", response.message())
+                    LogUtils.debug("Headers", response.headers().toString())
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, t: Throwable) {
+                logOnFailure(t)
+            }
+        })
+    }
+
     private fun logOnFailure(t: Throwable) {
         LogUtils.debug("onFailure Failed", t.message.toString())
         LogUtils.debug("onFailure Failed", t.cause.toString())

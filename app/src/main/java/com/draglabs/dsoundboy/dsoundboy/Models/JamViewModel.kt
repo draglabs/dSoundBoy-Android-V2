@@ -4,6 +4,8 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Models
 
+import java.io.Serializable
+
 /**
  * Created by davrukin on 1/3/2018.
  * @author Daniel Avrukin
@@ -13,5 +15,5 @@ data class JamViewModel(
     val name: String,
     val location: String,
     val link: String
-)
+) : Serializable
 

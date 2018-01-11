@@ -72,6 +72,12 @@ class APIparamsKt {
         return userService.joinJam(requestBody)
     }
 
+    fun callGetJamDetails(context: Context, jamID: String): Call<ResponseModelKt.JamFunctions.GetJamDetails> {
+        val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+
+        return userService.getJamDetails(jamID, uuid)
+    }
+
     fun callUploadJam(filePath: String, userID: String, fileName: String, location: String, jamID: String,  startTime: String, endTime: String): Call<ResponseModelKt.JamFunctions.UploadJam> {
         val params = ArrayMap<String, Any>()
         params.put(this.user_id, userID)
@@ -106,6 +112,17 @@ class APIparamsKt {
 
     fun callGetUserActivity(context: Context): Call<ResponseModelKt.UserFunctions.GetUserActivity> {
         return userService.getUserActivity(PrefUtilsKt.Functions().retrieveUUID(context))
+    }
+
+    fun callCompressor(context: Context, jamID: String): Call<ResponseModelKt.CompressorFunctions.Compressor> {
+        val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        val params = ArrayMap<String, Any>()
+        params.put(this.user_id, uuid)
+        params.put(this.jam_id, jamID)
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
+
+        return userService.compress(requestBody)
     }
 
     private fun createRequestBody(params: ArrayMap<String, Any>, bodyType: String): RequestBody {

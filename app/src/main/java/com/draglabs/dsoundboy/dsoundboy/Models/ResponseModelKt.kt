@@ -100,6 +100,12 @@ class ResponseModelKt {
         )
     }
 
+    class CompressorFunctions {
+        data class Compressor(
+            var response: String
+        )
+    }
+
     class Models {
         data class Collaborator(
             // details not currently available, proposed details

@@ -105,6 +105,16 @@ interface ApiInterface {
         @Header("user_id") user_id: String
     ): Call<ResponseModelKt.UserFunctions.GetUserActivity>
 
+
+    /*
+    COMPRESSOR FUNCTIONS
+    */
+
+    @POST("jam/archive")
+    fun compress(
+        @Body params: RequestBody
+    ): Call<ResponseModelKt.CompressorFunctions.Compressor>
+
     /*
     COMPANIONS
     */

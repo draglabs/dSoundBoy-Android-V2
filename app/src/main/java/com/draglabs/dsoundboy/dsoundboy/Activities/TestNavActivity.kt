@@ -14,14 +14,18 @@ import android.support.design.widget.Snackbar
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
+import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
+import com.draglabs.dsoundboy.dsoundboy.ViewAdapters.CustomAdapter
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
@@ -30,6 +34,7 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
+import kotlinx.android.synthetic.main.content_list_of_jams.*
 import kotlinx.android.synthetic.main.content_test_nav.*
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
@@ -63,6 +68,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     var locationUtils: LocationUtils? = null
 
+    private var jams = ArrayList<JamViewModel>()
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var customAdapter: CustomAdapter
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
@@ -70,6 +79,13 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         FacebookSdk.sdkInitialize(this)
         setContentView(R.layout.activity_test_nav)
         setSupportActionBar(toolbar)
+
+        getJams()
+
+        linearLayoutManager = LinearLayoutManager(this)
+        recycler_view.layoutManager = linearLayoutManager
+        customAdapter = CustomAdapter(this, jams)
+        recycler_view.adapter = customAdapter
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -82,11 +98,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //println(PrefUtilsKt().retrieveUUID(this))
         //PrefUtilsKt.Functions().deleteUUID(this)
         //PrefUtilsKt.Functions().deletePIN(this)
-        clickTestAuth()
-        setListeners()
-        async {setUserView()}
-        initializeLocationClient()
-        updatePinView()
+        initialize()
 
         buttons.put("new_jam", button_new_jam_new as Any)
         buttons.put("new_recording", button_rec_new as Any)
@@ -97,6 +109,15 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         homeRoutineKt = HomeRoutineKt(buttons, this, this, filename, button_rec_new)
 
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
+    }
+
+
+    private fun initialize() {
+        clickTestAuth()
+        setListeners()
+        async {setUserView()}
+        initializeLocationClient()
+        updatePinView()
     }
 
     private fun setListeners() {
@@ -157,13 +178,13 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             startTime = Date()
             // not confident about the order of events here
             homeRoutineKt.clickRec(chronometer_new) // no current jam, recorder button creates a new one
-            button_rec_new.text = "Stop"
+            button_rec_new.text = getString(R.string.stop_recording_text) // "Stop"
             // if is currently recording, new jam button stops recording, uploads it, and creates a new jam
             // use get active jam to tell if there is one currently
         } else {
             endTime = Date()
             homeRoutineKt.clickStop(context, view, chronometer_new, startTime, endTime)
-            button_rec_new.text = "Rec"
+            button_rec_new.text = getString(R.string.start_recording_text) // "Rec"
             //homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
         }
     }
@@ -202,6 +223,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         } else {
             jam_pin_view.text = pin
         }
+    }
+
+    private fun getJams() {
+        jams = ListOfJamsRoutine().getJams(this)
     }
 
     override fun onBackPressed() {
@@ -264,6 +289,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     override fun onStart() {
         super.onStart()
         locationUtils?.onStart(locationVars)
+        /*if (jams.size == 0) {
+            getJams()
+        }*/
     }
 
     override fun onStop() {

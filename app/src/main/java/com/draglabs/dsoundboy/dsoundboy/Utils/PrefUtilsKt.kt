@@ -132,6 +132,11 @@ class PrefUtilsKt {
             Tools().deleteItem(context, Vars.link)
         }
 
+        fun hasLink(context: Context): Boolean {
+            val link = Tools().retrieveItem(context, Vars.link)
+            return !(link == "not working" || link == "deleted")
+        }
+
         /** FACEBOOK DATA FUNCTIONS */
 
         fun storeFbName(context: Context, fb_name: String) {
@@ -291,7 +296,7 @@ class PrefUtilsKt {
             val preferences = PreferenceManager.getDefaultSharedPreferences(context)
             val editor = preferences.edit()
             val oldItem = preferences.getString(tag, "not working")
-            editor.putString(tag, null)
+            editor.putString(tag, "deleted")
             editor.apply()
             LogUtils.debug("Deleted item", "tag: $tag; old item: $oldItem")
 

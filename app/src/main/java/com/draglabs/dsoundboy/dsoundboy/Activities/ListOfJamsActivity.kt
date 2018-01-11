@@ -4,15 +4,11 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
-import android.content.res.Configuration
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
-import com.draglabs.dsoundboy.dsoundboy.ViewAdapters.CustomAdapter
 import kotlinx.android.synthetic.main.activity_list_of_jams.*
 import java.util.*
 
@@ -32,7 +28,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         val list = ArrayList<JamViewModel>()
         prepareList(list)
 
-        val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
+        /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
 
         val adapter = CustomAdapter(this, list)
         cardView.adapter = adapter
@@ -46,7 +42,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         }
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             cardView.layoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
-        }
+        }*/
     }
 
     private fun prepareList(list: ArrayList<JamViewModel>) {
