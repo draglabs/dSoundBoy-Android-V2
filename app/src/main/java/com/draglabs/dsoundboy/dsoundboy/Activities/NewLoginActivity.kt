@@ -116,7 +116,7 @@ class NewLoginActivity : AppCompatActivity() {
      * Performs the Facebook Login
      * @param view the view calling the login
      */
-    fun clickFacebookLogin(view: View) {
+    fun clickFacebookLogin() {
         loginRoutineKt!!.clickFacebookLogin()
     }
 
@@ -124,7 +124,7 @@ class NewLoginActivity : AppCompatActivity() {
      * Clicking this takes the user to the DragLabs home page
      * @param view the view calling this method
      */
-    fun clickLogoLink(view: View) {
+    fun clickLogoLink() {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"))
         startActivity(browserIntent)
     }

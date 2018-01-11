@@ -6,8 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
-
-import com.draglabs.dsoundboy.dsoundboy.Models.BandInfoModel
 import com.draglabs.dsoundboy.dsoundboy.R
 
 /**
@@ -61,10 +59,10 @@ class EnterInfoActivity : AppCompatActivity() {
         val artistNameText = artistName!!.text.toString()
         val recordingVenueText = venue!!.text.toString()
 
-        val bandInfoModel = BandInfoModel(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText)
+        //val bandInfoModel = BandInfoModel(artistEmailText, recordingDescriptionText, artistNameText, recordingVenueText)
         //PrefUtils.setBandInfo(this, bandInfoModel) // no longer needed
 
-        val sendBandInfo = Intent(this, HomeActivity::class.java)
+        val sendBandInfo = Intent(this, TestNavActivity::class.java)
 
         Toast.makeText(this, "Band Data Saved.", Toast.LENGTH_SHORT).show()
         Toast.makeText(this, "Go back and click \"Submit\" when done recording.", Toast.LENGTH_SHORT).show()

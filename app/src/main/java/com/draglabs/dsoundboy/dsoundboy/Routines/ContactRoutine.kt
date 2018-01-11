@@ -5,7 +5,6 @@ import android.support.design.widget.Snackbar
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutils
 
 /**
  * Sends an email to accounts@draglabs.com
@@ -50,7 +49,7 @@ class ContactRoutine {
     private fun sendEmail(context: Context, email: String, subject: String, body: String) {
         Toast.makeText(context, email + "\n" + subject + "\n" + body, Toast.LENGTH_LONG).show()
 
-        APIutils.sendEmail(email, "[ANDROID] " + subject, body)
+        //APIutils.sendEmail(email, "[ANDROID] " + subject, body)
     }
 
 }
