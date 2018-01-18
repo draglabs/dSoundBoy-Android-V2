@@ -23,7 +23,7 @@ import java.util.*
  * Created by davrukin on 1/3/2018.
  * @author Daniel Avrukin
  */
-class CustomAdapter(private val context: Context, private val list: ArrayList<JamViewModel>): RecyclerView.Adapter<CustomAdapter.JamHolder>() {
+class CustomAdapter(private val context: Context, private val view: View, private val list: ArrayList<JamViewModel>): RecyclerView.Adapter<CustomAdapter.JamHolder>() {
 // I guess this represents a single card
     class JamHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
@@ -76,11 +76,12 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
     }
 
     override fun onBindViewHolder(holder: CustomAdapter.JamHolder, position: Int) {
+        var progressBar = view.findViewById<ProgressBar>(R.id.export_progress_bar)
         val jam: JamViewModel? = list[position]
         if (jam != null) {
             holder.textJamInfo.text = jam.name
             holder.editButton.setOnClickListener { CustomAdapterRoutine().clickEdit(context, jam.jamID) }
-            holder.exportButton.setOnClickListener { CustomAdapterRoutine().clickExport(context, jam.jamID, jam.link) }
+            holder.exportButton.setOnClickListener { CustomAdapterRoutine().clickExport(context, progressBar, jam.jamID, jam.link) }
             holder.shareButton.setOnClickListener { CustomAdapterRoutine().clickShare(context, jam.jamID, jam.link) }
         }
         // TODO: call compressor api here with the user id and the jam id, retrieve the link, store it, and retrieve it when utilizing the share menu

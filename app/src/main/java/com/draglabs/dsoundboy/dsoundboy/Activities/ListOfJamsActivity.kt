@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.widget.ProgressBar
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
@@ -30,6 +31,8 @@ class ListOfJamsActivity : AppCompatActivity() {
 
     private var realm = RealmUtils().startRealm()
 
+    private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_list_of_jams)
@@ -41,9 +44,8 @@ class ListOfJamsActivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
-        customAdapter = CustomAdapter(this, listOfJams)
+        customAdapter = CustomAdapter(this, recyclerView, listOfJams)
         recyclerView.adapter = customAdapter
-
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
 

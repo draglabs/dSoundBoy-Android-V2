@@ -249,6 +249,7 @@ class APIutilsKt {
             override fun onResponse(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, response: Response<ResponseModelKt.CompressorFunctions.Compressor>) {
                 if (response.isSuccessful) {
                     val result = response.body()
+
                     LogUtils.debug("Upload Response Body", result.toString())
                     LogUtils.debug("Upload Response Message", "Code: ${response.code()}; Message: ${response.message()}")
                 } else {
