@@ -9,6 +9,9 @@ import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.FileUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
+import io.realm.Realm
+import io.realm.RealmResults
 import java.util.*
 
 /**
@@ -17,13 +20,16 @@ import java.util.*
  */
 class ListOfJamsRoutine {
 
-    fun getJams(context: Context): ArrayList<JamViewModel> {
-        APIutilsKt().performGetUserActivity(context)
+    fun getJams(realm: Realm, context: Context): RealmResults<JamViewModel>? {
+        APIutilsKt().performGetUserActivityArray(context)
 
-        val itemsList = PrefUtilsKt.Functions().retrieveJams(context)
-        val list = FileUtils().stringToArrayList(itemsList)
+        //val itemsList = PrefUtilsKt.Functions().retrieveJams(context)
+        //val realm = RealmUtils().startRealm()
+        val itemsList = RealmUtils().retrieveJams(realm)
+        //val list = FileUtils().stringToArrayList(itemsList)
 
-        return list
+        realm.close()
+        return itemsList
     }
 
 }

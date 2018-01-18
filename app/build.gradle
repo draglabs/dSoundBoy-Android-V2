@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 //apply plugin: 'kotlin-apt'
 //apply plugin: 'kapt'
 
@@ -59,6 +60,10 @@ kotlin {
 
 kapt {
     generateStubs = true
+}
+
+realm {
+    syncEnabled = true
 }
 
 dependencies {

@@ -15,10 +15,12 @@ import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
@@ -32,12 +34,13 @@ import com.facebook.GraphRequest
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
-import kotlinx.android.synthetic.main.content_list_of_jams.*
 import kotlinx.android.synthetic.main.content_test_nav.*
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import org.w3c.dom.Text
 import java.util.*
 
 /**
@@ -68,9 +71,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     var locationUtils: LocationUtils? = null
 
-    private var jams = ArrayList<JamViewModel>()
+    private var jams: RealmResults<JamViewModel>? = null
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var customAdapter: CustomAdapter
+    private lateinit var recyclerView: RecyclerView
+
+    private var realm = RealmUtils().startRealm()
+
+    lateinit var jamPinView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,12 +88,13 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         setContentView(R.layout.activity_test_nav)
         setSupportActionBar(toolbar)
 
-        getJams()
+        //getJams()
 
-        linearLayoutManager = LinearLayoutManager(this)
-        recycler_view.layoutManager = linearLayoutManager
-        customAdapter = CustomAdapter(this, jams)
-        recycler_view.adapter = customAdapter
+        //recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        //linearLayoutManager = LinearLayoutManager(this)
+        //recyclerView.layoutManager = linearLayoutManager
+        //customAdapter = CustomAdapter(this, jams)
+        //recyclerView.adapter = customAdapter
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -113,6 +122,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
 
     private fun initialize() {
+        jamPinView = findViewById<TextView>(R.id.jam_pin_view)
         clickTestAuth()
         setListeners()
         async {setUserView()}
@@ -187,6 +197,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             button_rec_new.text = getString(R.string.start_recording_text) // "Rec"
             //homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
         }
+        updatePinView()
     }
 
     private fun clickJoin() {
@@ -219,14 +230,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun updatePinView() {
         val pin = PrefUtilsKt.Functions().retrievePIN(this)
         if (pin == "not working") {
-            jam_pin_view.text = "No Jam PIN"
+            jamPinView.text = "No Jam PIN"
         } else {
-            jam_pin_view.text = pin
+            jamPinView.text = pin
         }
     }
 
     private fun getJams() {
-        jams = ListOfJamsRoutine().getJams(this)
+        jams = ListOfJamsRoutine().getJams(realm, this)
     }
 
     override fun onBackPressed() {
@@ -248,8 +259,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+            R.id.action_settings -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
+                return true
+            } else -> return super.onOptionsItemSelected(item)
         }
     }
 

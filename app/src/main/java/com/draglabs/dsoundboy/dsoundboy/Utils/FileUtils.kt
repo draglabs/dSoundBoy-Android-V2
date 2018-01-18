@@ -59,6 +59,6 @@ class FileUtils {
 
     fun stringToArrayList(string: String): ArrayList<JamViewModel> {
         val array = Gson().fromJson(string, JamViewModel::class.java)
-        return Arrays.asList(array) as ArrayList
+        return Arrays.asList(array) as ArrayList<JamViewModel>
     }
 }

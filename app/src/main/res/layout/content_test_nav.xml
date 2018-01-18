@@ -5,17 +5,10 @@
     android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorDLBlue2"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity"
     tools:showIn="@layout/app_bar_test_nav">
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerViewCard"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout_editor_absoluteX="0dp"
-        tools:layout_editor_absoluteY="0dp"
-        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/button_new_jam_new"

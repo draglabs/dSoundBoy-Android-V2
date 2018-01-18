@@ -3,14 +3,13 @@
   ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
   -->
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view_item"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="150dp"
+    android:orientation="vertical">
 
     <!-- the map view, for now an image -->
 
@@ -43,7 +42,7 @@
 
         <Button
             android:id="@+id/jam_view_export_button"
-            android:layout_width="70dp"
+            android:layout_width="100dp"
             android:layout_height="35dp"
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="128dp"
@@ -62,7 +61,7 @@
 
         <Button
             android:id="@+id/jam_view_edit_button"
-            android:layout_width="70dp"
+            android:layout_width="100dp"
             android:layout_height="35dp"
             android:layout_alignStart="@+id/text_jam_info"
             android:layout_below="@+id/jam_view_share_button"

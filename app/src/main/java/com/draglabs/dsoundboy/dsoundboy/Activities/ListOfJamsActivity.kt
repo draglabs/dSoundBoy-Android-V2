@@ -4,11 +4,19 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
+import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
+import com.draglabs.dsoundboy.dsoundboy.ViewAdapters.CustomAdapter
+import io.realm.Realm
+import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_list_of_jams.*
 import java.util.*
 
@@ -16,17 +24,26 @@ class ListOfJamsActivity : AppCompatActivity() {
 
     // TODO: use kotlin coroutine to run getJams() async and await response in order to populate the cards
 
-    private var jams = ArrayList<JamViewModel>()
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var customAdapter: CustomAdapter
+    private lateinit var recyclerView: RecyclerView
+
+    private var realm = RealmUtils().startRealm()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_list_of_jams)
         setSupportActionBar(toolbar)
 
-        getJams()
+        val jams = getJams(realm) // show the view, populate data as it shows
+        val listOfJams = prepareList(jams)
 
-        val list = ArrayList<JamViewModel>()
-        prepareList(list)
+        recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        linearLayoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = linearLayoutManager
+        customAdapter = CustomAdapter(this, listOfJams)
+        recyclerView.adapter = customAdapter
+
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
 
@@ -45,17 +62,29 @@ class ListOfJamsActivity : AppCompatActivity() {
         }*/
     }
 
-    private fun prepareList(list: ArrayList<JamViewModel>) {
+    private fun prepareList(jams: RealmResults<JamViewModel>?): ArrayList<JamViewModel> {
         // TODO: go into custom view adapter or inflater to set the buttons and views to the pertinent functions with the pertinent variables
-        list.add((JamViewModel("This is a test jam", "name", "location", "link")))
-        list.add((JamViewModel("The buttons do nothing", "name", "location", "link")))
+        //list.add((JamViewModel("This is a test jam", "name", "location", "link")))
+        //list.add((JamViewModel("The buttons do nothing", "name", "location", "link")))
+        val list = ArrayList<JamViewModel>()
+        list.add(JamViewModel("jamID", "name", "location", "link"))
+        val dummyArray = getDummyData()
+        list.add(JamViewModel(dummyArray[0], dummyArray[1], dummyArray[2], dummyArray[3]))
 
-        for (name in jams) {
-            list.add(name)
-        }
+        jams?.forEach { name -> list.add(name) }
+
+        return list
     }
 
-    private fun getJams() {
-        jams = ListOfJamsRoutine().getJams(this)
+    private fun getJams(realm: Realm): RealmResults<JamViewModel>? {
+        return ListOfJamsRoutine().getJams(realm, this)
+    }
+
+    private fun getDummyData(): Array<String> {
+        val jamID = PrefUtilsKt.Functions().retrieveJamID(this)
+        val jamName = PrefUtilsKt.Functions().retrieveJamName(this)
+        val jamLocation = "Starbucks Coffee, Redwood City, CA"
+        val jamLink = PrefUtilsKt.Functions().retrieveLink(this)
+        return arrayOf(jamID, jamName, jamLocation, jamLink)
     }
 }

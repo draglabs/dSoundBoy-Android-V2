@@ -23,7 +23,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:extractNativeLibs="false"
         android:fullBackupContent="@xml/backup_descriptor"
@@ -32,7 +32,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:screenOrientation="portrait"
         android:supportsRtl="true"
-        android:theme="@style/DragLabs"
+        android:theme="@style/DragLabsNew"
         tools:targetApi="m">
         <meta-data
             android:name="com.facebook.sdk.ApplicationID"
@@ -40,7 +40,7 @@
 
         <activity
             android:name=".Activities.MainActivity"
-            android:theme="@style/DragLabs">
+            android:theme="@style/DragLabsNew">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -141,7 +141,7 @@
             android:name=".Activities.TestNavActivity"
             android:label="@string/title_activity_test_nav"
             android:parentActivityName=".Activities.MainActivity"
-            android:theme="@style/DragLabs">
+            android:theme="@style/DragLabsNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity" />
@@ -150,7 +150,7 @@
             android:name=".Activities.ListOfJamsActivity"
             android:label="@string/title_activity_list_of_jams"
             android:parentActivityName=".Activities.TestNavActivity"
-            android:theme="@style/DragLabs" >
+            android:theme="@style/DragLabsNew" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.TestNavActivity"/>

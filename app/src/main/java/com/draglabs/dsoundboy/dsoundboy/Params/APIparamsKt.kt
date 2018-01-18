@@ -114,6 +114,10 @@ class APIparamsKt {
         return userService.getUserActivity(PrefUtilsKt.Functions().retrieveUUID(context))
     }
 
+    fun callGetUserActivityArray(context: Context): Call<ResponseModelKt.UserFunctions.GetUserActivityArray> {
+        return userService.getUserActivityArray(PrefUtilsKt.Functions().retrieveUUID(context))
+    }
+
     fun callCompressor(context: Context, jamID: String): Call<ResponseModelKt.CompressorFunctions.Compressor> {
         val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
         //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)

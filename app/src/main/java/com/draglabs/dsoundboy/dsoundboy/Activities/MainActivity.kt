@@ -8,6 +8,7 @@ import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
+import io.realm.Realm
 
 
 /**
@@ -25,6 +26,8 @@ class MainActivity : AppCompatActivity() {
         MainRoutine().facebookAuthorize(this)
         //new MainRoutine().googleAuthorize();
         setContentView(R.layout.activity_main)
+
+        Realm.init(this)
 
         //startActivity(new Intent(this, TestNavActivity.class));
         //startActivity(new Intent(this, NewLoginActivity.class));

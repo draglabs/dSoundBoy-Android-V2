@@ -10,16 +10,18 @@ import io.realm.annotations.RealmClass
 import java.io.Serializable
 
 /**
- * Created by davrukin on 1/3/2018.
+ * Created by davrukin on 1/11/2018.
  * @author Daniel Avrukin
  */
 @RealmClass
-open class JamViewModel(
-       // @PrimaryKey var id: Int,
-        @PrimaryKey var jamID: String,
-        var name: String,
-        var location: String,
-        var link: String
+open class UserModel(
+    @PrimaryKey var UUID: String,
+    var lat: String,
+    var lng: String,
+    var fbName: String,
+    var fbEmail: String,
+    var fbImage: String,
+    var localPath: String
 ) : Serializable, RealmObject() {
-    constructor() : this("", "", "", "")
+    constructor() : this("", "", "", "", "", "", "")
 }

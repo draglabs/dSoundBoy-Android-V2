@@ -68,6 +68,32 @@ class APIutilsKt {
         })
     }
 
+    fun performGetJamDetails(context: Context, jamID: String) {
+        val call = APIparamsKt().callGetJamDetails(context, jamID)
+
+        call.enqueue(object: Callback<ResponseModelKt.JamFunctions.GetJamDetails> {
+            override fun onResponse(call: Call<ResponseModelKt.JamFunctions.GetJamDetails>, response: Response<ResponseModelKt.JamFunctions.GetJamDetails>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    val jam = result!!.jam
+                    val link = jam.link
+                    PrefUtilsKt.Functions().storeLink(context, link)
+                    LogUtils.debug("Gotten Link", link)
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                    LogUtils.debug("Code", "" + response.code())
+                    LogUtils.debug("Message", response.message())
+                    LogUtils.debug("Headers", response.headers().toString())                }
+            }
+
+            override fun onFailure(call: Call<ResponseModelKt.JamFunctions.GetJamDetails>, t: Throwable) {
+                logOnFailure(t)
+                LogUtils.debug("onFailure Call", call.toString())
+                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
+                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())                  }
+        })
+    }
+
     fun performUploadJam(context: Context, filePath: String, userID: String, fileName: String, location: String, jamID: String, startTime: String, endTime: String) {
         val call = APIparamsKt().callUploadJam(filePath, userID, fileName, location, jamID, startTime, endTime)
 
@@ -120,18 +146,44 @@ class APIutilsKt {
 
         call.enqueue(object: Callback<ResponseModelKt.UserFunctions.GetUserActivity> {
             override fun onResponse(call: Call<ResponseModelKt.UserFunctions.GetUserActivity>, response: Response<ResponseModelKt.UserFunctions.GetUserActivity>) {
+                LogUtils.debug("response from gua", response.toString())
                 if (response.isSuccessful) {
                     val result = response.body()
                     val jams = ArrayList<JamViewModel>()
                     if (result != null) {
-                        for (jam in result.jams) {
-                            jams.add(JamViewModel(jam.id, jam.name, jam.location, jam.link))
-                        }
-                        val arrayList = FileUtils().serializeArrayList(jams)
-                        LogUtils.debug("Jams", arrayList)
-                        PrefUtilsKt.Functions().storeJams(context, arrayList)
+                        LogUtils.debug("Result of GUA", result.toString())
+                        /*val length = result.jam.length()
+                        var i = 0
+                        while (i < length) {
+                            val element = result.jam[i] as JSONObject
+                            val id = element.get("id") as String
+                            val name = element.get("name") as String
+                            val location = element.get("location") as String
+                            val link = element.get("link") as String
+                            val jamViewModel = JamViewModel(i, id, name, location, link)
+                            jams.add(jamViewModel)
+                            i++
+                        }*/
+                        /*val jamsArray = result.jams
+                        LogUtils.debug("Jams Array", jamsArray.toString())
+                        for (element in jamsArray) {
+                            val id = element.id
+                            val name = element.name
+                            val location = element.location
+                            val link = element.link
+                            val jamViewModel = JamViewModel(id, name, location, link)
+                            jams.add(jamViewModel)
+                        }*/
+                        //jams[0] = JamViewModel(0, result.id, result.name, result.location, result.link)
+                        ////result.jam.mapIndexedTo(jams) { index, jam -> JamViewModel(index, jam.id, jam.name, jam.location, jam.link) }
+                        //val arrayList = FileUtils().serializeArrayList(jams)
+                        //LogUtils.debug("Jams", arrayList)
+                        LogUtils.debug("Jams", jams.toString())
+                        //PrefUtilsKt.Functions().storeJams(context, arrayList)
+                        RealmUtils().storeJams(jams)
                     } else {
                         // TODO: no jams, account for something here
+                        LogUtils.debug("Result", "Result is null")
                     }
                 } else {
                     LogUtils.debug("Failed Response", response.errorBody()!!.toString())
@@ -141,8 +193,52 @@ class APIutilsKt {
             }
             override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivity>, t: Throwable) {
                 logOnFailure(t)
-                LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())            }
+                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
+                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())            }
+        })
+    }
+
+    fun performGetUserActivityArray(context: Context) {
+        val call = APIparamsKt().callGetUserActivityArray(context)
+
+        call.enqueue(object: Callback<ResponseModelKt.UserFunctions.GetUserActivityArray> {
+            override fun onResponse(call: Call<ResponseModelKt.UserFunctions.GetUserActivityArray>, response: Response<ResponseModelKt.UserFunctions.GetUserActivityArray>) {
+                LogUtils.debug("response from gua", response.toString())
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    val jams = ArrayList<JamViewModel>()
+                    if (result != null) {
+                        LogUtils.debug("Result of GUA", result.toString())
+
+                        val jamsArray = result.jams
+                        LogUtils.debug("Jams Array", jamsArray.toString())
+                        for (element in jamsArray) {
+                            val id = element.id
+                            val name = element.name
+                            val location = element.location
+                            val link = element.link
+                            val jamViewModel = JamViewModel(id, name, location, link)
+                            jams.add(jamViewModel)
+                        }
+                        LogUtils.debug("Jams", jams.toString())
+                        LogUtils.debug("Result", result.toString())
+                        //PrefUtilsKt.Functions().storeJams(context, arrayList)
+                        RealmUtils().storeJams(jams)
+                    } else {
+                        // TODO: no jams, account for something here
+                        LogUtils.debug("Result", "Result is null")
+                    }
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                    LogUtils.debug("Code", "" + response.code())
+                    LogUtils.debug("Message", response.message())
+                }
+            }
+            override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivityArray>, t: Throwable) {
+                logOnFailure(t)
+                LogUtils.debug("onFailure Call", call.toString())
+                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
+                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())            }
         })
     }
 
@@ -170,8 +266,8 @@ class APIutilsKt {
     }
 
     private fun logOnFailure(t: Throwable) {
-        LogUtils.debug("onFailure Failed", t.message.toString())
-        LogUtils.debug("onFailure Failed", t.cause.toString())
-        LogUtils.debug("onFailure Failed", t.printStackTrace().toString())
+        LogUtils.debug("onFailure Failed Message", t.message.toString())
+        LogUtils.debug("onFailure Failed Cause", t.cause.toString())
+        LogUtils.debug("onFailure Failed StackTrace", t.printStackTrace().toString())
     }
 }

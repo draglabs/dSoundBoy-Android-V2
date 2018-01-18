@@ -4,7 +4,10 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Models
 
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
+import org.json.JSONArray
 
 /**
  * Created by davrukin on 12/30/2017.
@@ -12,7 +15,6 @@ import com.google.gson.annotations.SerializedName
  */
 
 class ResponseModelKt {
-
     /*object values {
         private val id = StringsModelKt.JsonParsingKeys.ID
         private val pin = StringsModelKt.JsonParsingKeys.PIN
@@ -42,7 +44,8 @@ class ResponseModelKt {
             @SerializedName("location") var location: String,
             @SerializedName("start_time") var start_time: String,
             @SerializedName("end_time") var end_time: String,
-            @SerializedName("notes") var notes: String
+            @SerializedName("notes") var notes: String,
+            @SerializedName("link") var link: String
         )
 
         data class UpdateJam(
@@ -51,12 +54,14 @@ class ResponseModelKt {
 
         data class JoinJam(
             @SerializedName("id") var id: String,
+            @SerializedName("pin") var pin: String, // just added to api
             @SerializedName("name") var name: String,
             @SerializedName("start_time") var start_time: String,
             @SerializedName("end_time") var end_time: String,
             @SerializedName("location") var location: String,
             @SerializedName("notes") var notes: String,
-            @SerializedName("collaborators") var collaborators: Any
+            @SerializedName("collaborators") var collaborators: Any,
+            @SerializedName("link") var link: String
         )
 
         data class UploadJam(
@@ -95,8 +100,19 @@ class ResponseModelKt {
             var active_jam: Models.Jam
         )
 
+        data class GetUserActivityArray(
+            var jams: List<GetUserActivity> // how is this different from "var jams: Array<Models.JamMini>"
+        )
+
         data class GetUserActivity(
-            var jams: Array<Models.Jam>
+            @SerializedName("id") var id: String,
+            @SerializedName("name") var name: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("location") var location: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>,
+            @SerializedName("link") var link: String
         )
     }
 
@@ -146,9 +162,11 @@ class ResponseModelKt {
             @SerializedName("end_time") var end_time: String,
             @SerializedName("location") var location: String,
             @SerializedName("notes") var notes: String,
-            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>
+            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>,
+            @SerializedName("link") var link: String
         )
     }
+
 
     /*fun getJSON(function: String): JSONObject {
         if (function == "NewJam") {
@@ -160,3 +178,4 @@ class ResponseModelKt {
         }
     }*/
 }
+

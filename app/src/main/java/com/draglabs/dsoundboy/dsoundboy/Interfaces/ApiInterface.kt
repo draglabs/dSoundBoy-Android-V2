@@ -105,6 +105,10 @@ interface ApiInterface {
         @Header("user_id") user_id: String
     ): Call<ResponseModelKt.UserFunctions.GetUserActivity>
 
+    @GET("user/activity")
+    fun getUserActivityArray(
+        @Header("user_id") user_id: String
+    ): Call<ResponseModelKt.UserFunctions.GetUserActivityArray>
 
     /*
     COMPRESSOR FUNCTIONS

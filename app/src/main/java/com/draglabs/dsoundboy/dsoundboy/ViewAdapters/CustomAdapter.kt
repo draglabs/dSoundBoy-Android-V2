@@ -14,6 +14,7 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.Extensions.inflate
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
+import com.draglabs.dsoundboy.dsoundboy.Routines.CustomAdapterRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import kotlinx.android.synthetic.main.recyclerview_item_row.view.*
 import java.util.*
@@ -26,7 +27,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
 // I guess this represents a single card
     class JamHolder(itemView: View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
-        override fun onClick(p0: View?) {
+        override fun onClick(view: View) {
             LogUtils.debug("RecyclerView", "Clicked!")
             val context = itemView.context
             val showCardIntent = Intent(context, ListOfJamsActivity::class.java)
@@ -75,18 +76,19 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
     }
 
     override fun onBindViewHolder(holder: CustomAdapter.JamHolder, position: Int) {
-        val jam: JamViewModel = list[position]
-        holder.textJamInfo.text = jam.name
+        val jam: JamViewModel? = list[position]
+        if (jam != null) {
+            holder.textJamInfo.text = jam.name
+            holder.editButton.setOnClickListener { CustomAdapterRoutine().clickEdit(context, jam.jamID) }
+            holder.exportButton.setOnClickListener { CustomAdapterRoutine().clickExport(context, jam.jamID, jam.link) }
+            holder.shareButton.setOnClickListener { CustomAdapterRoutine().clickShare(context, jam.jamID, jam.link) }
+        }
         // TODO: call compressor api here with the user id and the jam id, retrieve the link, store it, and retrieve it when utilizing the share menu
         // TODO: edit opens up a dialog or a new activity where the fields can be edited and they then send an UpdateJam request
         // TODO: the export button sends an email?
         // TODO: need to write docs for the Compressor API
 
-        holder.editButton.setOnClickListener { Toast.makeText(context, "Edit Button Clicked", Toast.LENGTH_LONG).show() }
-        holder.exportButton.setOnClickListener { Toast.makeText(context, "Export Button Clicked", Toast.LENGTH_LONG).show() }
-        holder.shareButton.setOnClickListener { Toast.makeText(context, "Share Button Clicked", Toast.LENGTH_LONG).show() }
-
-        holder.bindJam(jam)
+        holder.bindJam(jam!!)
     }
 
     private fun showPopupMenu(view: View) {
