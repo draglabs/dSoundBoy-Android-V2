@@ -69,7 +69,19 @@ class ResponseModelKt {
         )
 
         data class GetJamDetails(
-            var jam: Models.Jam
+            @SerializedName("id") var id: String,
+            @SerializedName("pin") var pin: String,
+            @SerializedName("is_current") var is_current: Boolean,
+            @SerializedName("name") var name: String,
+            @SerializedName("user_id") var user_id: String,
+            @SerializedName("coordinates") var coordinates: LongArray,
+            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>,
+            @SerializedName("recordings") var recordings: Array<Models.Recording>,
+            @SerializedName("location") var location: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("link") var link: String
         )
 
         data class GetRecordings(

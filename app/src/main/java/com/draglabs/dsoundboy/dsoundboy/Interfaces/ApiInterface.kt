@@ -56,15 +56,21 @@ interface ApiInterface {
     @POST("jam/upload") // multi-part upload
     fun uploadJam(
         //@Header("id") id: String,
-        @Part params: MultipartBody.Part,
-        @Part filePart: MultipartBody.Part
+        //@Part params: MultipartBody.Part,
+        @Part filePart: MultipartBody.Part,
+        @Part user_id: MultipartBody.Part,
+        @Part file_name: MultipartBody.Part,
+        @Part location: MultipartBody.Part,
+        @Part jam_id: MultipartBody.Part,
+        @Part start_time: MultipartBody.Part,
+        @Part end_time: MultipartBody.Part
         /*@Query("user_id") user_id: String,
         @Query("file_name") file_name: String,
         @Query("location") location: String,
         @Query("jam_id") jam_id: String,
         @Query("start_time") start_time: String,
         @Query("end_time") end_time: String*/
-    ): Call<ResponseModelKt.JamFunctions.UploadJam>
+        ): Call<ResponseModelKt.JamFunctions.UploadJam>
 
     @GET("jam/details/{id}")
     fun getJamDetails(

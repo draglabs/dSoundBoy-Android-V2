@@ -11,7 +11,7 @@
     <color name="colorDLRed3">#570202</color>
     <color name="colorDLRed4">#6D0000</color>
     <color name="colorDLBlack">#000000</color>
-    <color name="colorDLTextWhite">#D8D8D8</color>
+    <color name="colorDLTextWhite">#d8d8d8</color>
     <color name="colorDLDateYellow">#F59120</color>
     <color name="colorDLBackground">#212F3E</color>
     <color name="colorDLFillGrey">#D9031425</color> <!-- 87% opacity -->

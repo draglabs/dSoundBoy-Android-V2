@@ -53,11 +53,11 @@ class APIparamsKt {
 
     fun callNewJam(UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String): Call<ResponseModelKt.JamFunctions.NewJam> {
         val params = ArrayMap<String, Any>()
-        params.put(this.name, name)
-        params.put(this.location, location)
-        params.put(this.lat, lat)
-        params.put(this.lng, lng)
-        params.put(this.notes, notes)
+        params[this.name] = name
+        params[this.location] = location
+        params[this.lat] = lat
+        params[this.lng] = lng
+        params[this.notes] = notes
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.newJam(UUID, requestBody)
@@ -65,8 +65,8 @@ class APIparamsKt {
 
     fun callJoinJam(pin: String, UUID: String): Call<ResponseModelKt.JamFunctions.JoinJam> {
         val params = ArrayMap<String, Any>()
-        params.put(this.pin, pin)
-        params.put(this.user_id, UUID)
+        params[this.pin] = pin
+        params[this.user_id] = UUID
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.joinJam(requestBody)
@@ -79,21 +79,28 @@ class APIparamsKt {
     }
 
     fun callUploadJam(filePath: String, userID: String, fileName: String, location: String, jamID: String,  startTime: String, endTime: String): Call<ResponseModelKt.JamFunctions.UploadJam> {
-        val params = ArrayMap<String, Any>()
-        params.put(this.user_id, userID)
-        params.put(this.file_name, fileName)
-        params.put(this.location, location)
-        params.put(this.jam_id, jamID)
-        params.put(this.start_time, startTime)
-        params.put(this.end_time, endTime)
-        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
+        /*val params = ArrayMap<String, Any>()
+        params[this.user_id] = userID
+        params[this.file_name] = fileName
+        params[this.location] = location
+        params[this.jam_id] = jamID
+        params[this.start_time] = startTime
+        params[this.end_time] = endTime
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)*/
 
         val file = File(filePath)
 
-        val multiPartBodyParams = createMultipartBody("", "", requestBody)
-        val multiPartBodyFile = createMultipartBody("file", file.name, RequestBody.create(MediaType.parse("audio/*"), file))
+        //val multiPartBodyParams = createMultipartBody("", "", requestBody)
+        val multiPartBodyFile = createMultipartBody("file", file.name, RequestBody.create(MediaType.parse("*/*"), file))
+        val multiPartBodyUserID = MultipartBody.Part.createFormData(this.user_id, userID)
+        val multiPartBodyFileName = MultipartBody.Part.createFormData(this.file_name, fileName)
+        val multiPartBodyLocation = MultipartBody.Part.createFormData(this.location, location)
+        val multiPartBodyJamID = MultipartBody.Part.createFormData(this.jam_id, jamID)
+        val multiPartBodyStartTime = MultipartBody.Part.createFormData(this.start_time, startTime)
+        val multiPartBodyEndTime = MultipartBody.Part.createFormData(this.end_time, endTime)
 
-        return userService.uploadJam(multiPartBodyParams, multiPartBodyFile)
+        //return userService.uploadJam(multiPartBodyParams, multiPartBodyFile)
+        return userService.uploadJam(multiPartBodyFile, multiPartBodyUserID, multiPartBodyFileName, multiPartBodyLocation, multiPartBodyJamID, multiPartBodyStartTime, multiPartBodyEndTime)
         //return userService.uploadJam(requestBody, fileBody)
     }
 

@@ -31,7 +31,7 @@ class ListOfJamsActivity : AppCompatActivity() {
 
     private var realm = RealmUtils().startRealm()
 
-    private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
+    //private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +44,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
-        customAdapter = CustomAdapter(this, recyclerView, listOfJams)
+        customAdapter = CustomAdapter(this, listOfJams)
         recyclerView.adapter = customAdapter
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research

@@ -4,13 +4,18 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
@@ -20,6 +25,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
@@ -40,6 +46,7 @@ import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import omrecorder.Recorder
 import org.w3c.dom.Text
 import java.util.*
 
@@ -49,7 +56,7 @@ import java.util.*
 class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener {
 
     //var recorderUtils = RecorderUtils(this, null, this)
-    lateinit var homeRoutineKt: HomeRoutineKt
+    //lateinit var homeRoutineKt: HomeRoutineKt
     lateinit var startTime: Date
     lateinit var endTime: Date
     var buttons = HashMap<String, Any>()
@@ -72,13 +79,15 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     var locationUtils: LocationUtils? = null
 
     private var jams: RealmResults<JamViewModel>? = null
-    private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var customAdapter: CustomAdapter
-    private lateinit var recyclerView: RecyclerView
 
     private var realm = RealmUtils().startRealm()
 
     lateinit var jamPinView: TextView
+    lateinit var rec: Button
+    lateinit var stop: Button
+
+    lateinit var recorder: Recorder
+    lateinit var recorderUtils: RecorderUtils
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -107,55 +116,75 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //println(PrefUtilsKt().retrieveUUID(this))
         //PrefUtilsKt.Functions().deleteUUID(this)
         //PrefUtilsKt.Functions().deletePIN(this)
+        val filename = FileUtils().generateAndSaveFilename(this)
+        recorderUtils = RecorderUtils(this, this)
+        recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
+
         initialize()
 
         buttons.put("new_jam", button_new_jam_new as Any)
         buttons.put("new_recording", button_rec_new as Any)
         buttons.put("join_jam", button_join_jam_new as Any)
 
-        val filename = FileUtils().generateAndSaveFilename(this)
+        //homeRoutineKt = HomeRoutineKt(buttons, this, this,   filename, button_rec_new)
 
-        homeRoutineKt = HomeRoutineKt(buttons, this, this, filename, button_rec_new)
-
+        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val read = isReadStoragePermissionGranted
+        val write = isWriteStoragePermissionGranted
+        LogUtils.debug("Permission Codes: ", "read: $read; write: $write")
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
     }
 
-
     private fun initialize() {
         jamPinView = findViewById<TextView>(R.id.jam_pin_view)
+        jamPinView.bringToFront()
         clickTestAuth()
         setListeners()
         async {setUserView()}
         initializeLocationClient()
         updatePinView()
+
+        rec = findViewById<Button>(R.id.button_rec_new)
+        stop = findViewById<Button>(R.id.button_stop_new)
+
+        //stop.isEnabled = false
+        stop.visibility = View.GONE
     }
 
     private fun setListeners() {
-        fab.setOnClickListener { view ->
+        /*fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
-        }
+        }*/
 
         button_new_jam_new.setOnClickListener {
             clickNew()
         }
 
         button_rec_new.setOnClickListener { view ->
-            clickRec(this, view)
+            clickRec(this, view, recorder)
+            rec.visibility = View.GONE
+            stop.visibility = View.VISIBLE
+        }
+
+        button_stop_new.setOnClickListener { view ->
+            clickStop(this, view, recorder)
+            rec.visibility = View.VISIBLE
+            stop.visibility = View.GONE
         }
 
         button_join_jam_new.setOnClickListener {
             clickJoin()
         }
 
-        button_test_auth.setOnClickListener {
+        /*button_test_auth.setOnClickListener {
             clickTestAuth()
         }
 
         button_log_location.setOnClickListener {
             LogUtils.debug("Latitude", PrefUtilsKt.Functions().retrieveLatitude(this))
             LogUtils.debug("Longitude", PrefUtilsKt.Functions().retrieveLongitude(this))
-        }
+        }*/
     }
 
     suspend private fun setUserView() {
@@ -182,31 +211,40 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         LogUtils.debug("New UUID", PrefUtilsKt.Functions().retrieveUUID(this))
     }
 
-    private fun clickRec(context: Context, view: View) {
+    private fun clickRec(context: Context, view: View, recorder: Recorder) {
         updatePinView()
-        if (button_rec_new.text == "Rec") {
+        //if (button_rec_new.text == "Rec") {
             startTime = Date()
             // not confident about the order of events here
-            homeRoutineKt.clickRec(chronometer_new) // no current jam, recorder button creates a new one
-            button_rec_new.text = getString(R.string.stop_recording_text) // "Stop"
+            HomeRoutineKt().clickRec(this, recorder, recorderUtils, chronometer_new) // no current jam, recorder button creates a new one
+            ////button_rec_new.text = getString(R.string.stop_recording_text) // "Stop"
             // if is currently recording, new jam button stops recording, uploads it, and creates a new jam
             // use get active jam to tell if there is one currently
-        } else {
+        /*} else {
             endTime = Date()
-            homeRoutineKt.clickStop(context, view, chronometer_new, startTime, endTime)
+            HomeRoutineKt().clickStop(recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
             button_rec_new.text = getString(R.string.start_recording_text) // "Rec"
             //homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
-        }
+        }*/
+        updatePinView()
+    }
+
+    private fun clickStop(context: Context, view: View, recorder: Recorder) {
+        updatePinView()
+
+        endTime = Date()
+        HomeRoutineKt().clickStop(recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
+
         updatePinView()
     }
 
     private fun clickJoin() {
-        homeRoutineKt.joinJam(jam_pin_view)
+        HomeRoutineKt().joinJam(this, this, jam_pin_view)
         updatePinView()
     }
 
     private fun clickNew() {
-        homeRoutineKt.createJam(this, jam_pin_view)
+        HomeRoutineKt().createJam(this, jam_pin_view)
         updatePinView()
 
         /*APIutilsKt().performNewJam(this, PrefUtilsKt.Functions().retrieveUUID(this), "test_jam", "ActionSpot", 37, -22, "hi")
@@ -234,10 +272,6 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         } else {
             jamPinView.text = pin
         }
-    }
-
-    private fun getJams() {
-        jams = ListOfJamsRoutine().getJams(realm, this)
     }
 
     override fun onBackPressed() {
@@ -278,8 +312,13 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 // go to the previous recordings
                 // allow export of jams
             }
-            R.id.nav_slideshow -> {
+            R.id.nav_authorize -> {
+                clickTestAuth()
                 // optional or modify
+            }
+            R.id.nav_log_location -> {
+                LogUtils.debug("Latitude", PrefUtilsKt.Functions().retrieveLatitude(this))
+                LogUtils.debug("Longitude", PrefUtilsKt.Functions().retrieveLongitude(this))
             }
             R.id.nav_band_info -> {
                 // optional or modify
@@ -330,5 +369,69 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private fun initializeLocationClient() {
         locationUtils?.initializeLocationClient(this, this, this, locationVars)
+    }
+
+    //permission is automatically granted on sdk<23 upon installation
+    private val isReadStoragePermissionGranted: Boolean
+        get() {
+            if (Build.VERSION.SDK_INT >= 23) {
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    LogUtils.debug("Permissions", "Permission is granted1")
+                    return true
+                } else {
+
+                    LogUtils.debug("Permissions", "Permission is revoked1")
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)
+                    return false
+                }
+            } else {
+                LogUtils.debug("Permissions", "Permission is granted1")
+                return true
+            }
+        }
+
+    //permission is automatically granted on sdk<23 upon installation
+    private val isWriteStoragePermissionGranted: Boolean
+        get() {
+            return if (Build.VERSION.SDK_INT >= 23) {
+                if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    LogUtils.debug("Permissions", "Permission is granted2")
+                    true
+                } else {
+
+                    LogUtils.debug("Permissions", "Permission is revoked2")
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), 2)
+                    false
+                }
+            } else {
+                LogUtils.debug("Permissions", "Permission is granted2")
+                true
+            }
+        }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            2 -> {
+                LogUtils.debug("Permissions", "External storage2")
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LogUtils.debug("Permissions", "Permission: " + permissions[0] + "was " + grantResults[0])
+                    //resume tasks needing this permission
+                    //downloadPdfFile()
+                } else {
+                    //progress.dismiss()
+                }
+            }
+            3 -> {
+                LogUtils.debug("Permissions", "External storage1")
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    LogUtils.debug("Permissions", "Permission: " + permissions[0] + "was " + grantResults[0])
+                    //resume tasks needing this permission
+                    //SharePdfFile()
+                } else {
+                    //progress.dismiss()
+                }
+            }
+        }
     }
 }

@@ -76,11 +76,18 @@ class RealmUtils {
         realm.beginTransaction()
 
         for (jam in jams) {
-            val realmJam = realm.createObject(JamViewModel::class.java)
-            realmJam.jamID = jam.jamID
-            realmJam.name = jam.name
-            realmJam.location = jam.location
-            realmJam.link = jam.link
+            val testObject = realm.where(JamViewModel::class.java).equalTo("jamID", jam.jamID).findFirst()
+            if (testObject == null) {
+                val realmJam = realm.createObject(JamViewModel::class.java, jam.jamID)
+                //realmJam.jamID = jam.jamID
+                realmJam.name = jam.name
+                realmJam.location = jam.location
+                realmJam.link = jam.link
+            } else {
+                testObject.name = jam.name
+                testObject.location = jam.location
+                testObject.link = jam.link
+            }
         }
 
         realm.commitTransaction()

@@ -15,11 +15,12 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
-import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
-import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
-import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
-import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.*
+import kotlinx.coroutines.experimental.async
 import omrecorder.Recorder
+import org.joda.time.DateTime
+import java.text.DateFormat
+import java.time.Year
 import java.util.*
 
 /**
@@ -27,24 +28,24 @@ import java.util.*
  * Created by davrukin on 11/3/17.
  * @author Daniel Avrukin
  */
-class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context, path: String, recordButton: Button) {
+class HomeRoutineKt {
 
-    var recorderUtils: RecorderUtils? = null
-    var recorder: Recorder
+    //var recorderUtils: RecorderUtils? = null
+    //var recorder: Recorder
     var path: String? = null
     var recordButton: Button? = null
 
     init {
         this.path = path
-        this.recorderUtils = RecorderUtils(context, activity)
-        this.recorder = recorderUtils!!.setupRecorder(path, recordButton)
+        //this.recorderUtils = RecorderUtils(context, activity)
+        //this.recorder = recorderUtils!!.setupRecorder(path, recordButton)
         this.recordButton = recordButton
     }
 
     /**
      * Opens the About Activity
      */
-    fun clickAbout() {
+    fun clickAbout(context: Context, activity: Activity) {
         val intent = Intent(context, AboutActivity::class.java)
         activity.startActivity(intent)
     }
@@ -52,7 +53,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     /**
      * Opens the Contact Activity
      */
-    fun clickContact() {
+    fun clickContact(context: Context, activity: Activity) {
         val intent = Intent(context, ContactActivity::class.java)
         activity.startActivity(intent)
     }
@@ -60,7 +61,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     /**
      * Opens the Enter Info Activity
      */
-    fun clickEnterInfo() {
+    fun clickEnterInfo(context: Context, activity: Activity) {
         val intent = Intent(context, EnterInfoActivity::class.java)
         activity.startActivity(intent)
     }
@@ -68,7 +69,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     /**
      * Opens the View Recordings Activity
      */
-    fun clickViewRecordings() {
+    fun clickViewRecordings(activity: Activity) {
         // APIutils.getUserActivity(this, uniqueUserID, this);
         val intent = Intent(activity, ListOfJamsActivity::class.java)
         activity.startActivity(intent)
@@ -77,7 +78,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     /**
      * Goes to the company website when the logo is clicked
      */
-    fun clickLogoLink() {
+    fun clickLogoLink(activity: Activity) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"))
         activity.startActivity(browserIntent)
     }
@@ -86,7 +87,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * Starts recording audio
      * @param chronometer the chronometer
      */
-    fun clickRec(chronometer: Chronometer) {
+    fun clickRec(context: Context, recorder: Recorder, recorderUtils: RecorderUtils, chronometer: Chronometer) {
         //createJam()
 
         chronometer.base = SystemClock.elapsedRealtime()
@@ -97,8 +98,8 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         //val path = PrefUtilsKt.Functions().retrieveJamName(context) + " " + time
         val path = PrefUtilsKt.Functions().retrieveLocalPath(context)
         LogUtils.debug("ClickRec Path", path)
-        recorder = recorderUtils!!.setupRecorder(path, this.recordButton!!)
-        recorderUtils!!.startRecording(recorder)
+        //recorder = recorderUtils!!.setupRecorder(path, this.recordButton!!)
+        recorderUtils.startRecording(recorder)
 
         Toast.makeText(context, "Started recording.", Toast.LENGTH_LONG).show()
     }
@@ -110,9 +111,9 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * @param startTime submits the recording's start time to the server
      * @param endTime submits the recording's end time to the server
      */
-    fun clickStop(context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
+    fun clickStop(recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
         //recorderUtils.stopRecording();
-        recorderUtils!!.stopRecording(recorder)
+        recorderUtils.stopRecording(recorder)
         chronometer.stop()
 
         Toast.makeText(context, "Stopped recording.", Toast.LENGTH_LONG).show()
@@ -155,14 +156,14 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
                 recordingStartTime, recordingEndTime,
                 view)*/
 
-        val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+        //val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
         val jamName = PrefUtilsKt.Functions().retrieveJamName(context)
-        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
         val recordingPath = PrefUtilsKt.Functions().retrieveLocalPath(context)
 
-        APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
-
+        //APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
+        APIutilsKt().jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(context);
@@ -196,7 +197,11 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * Creates a jam, shows a new jam PIN if there isn't one already, gets the device's location
      */
     fun createJam(context: Context, jam_pin_view: TextView) {
-        APIutilsKt().performNewJam(context, PrefUtilsKt.Functions().retrieveUUID(context), "test_jam", "ActionSpot", 37, -22, "hi")
+        val location = getLocation(context)
+        val locationName = location[0] as String
+        val lat = location[1] as Long
+        val lng = location[2] as Long
+        APIutilsKt().performNewJam(context, PrefUtilsKt.Functions().retrieveUUID(context), generateJamName(context), locationName, lat, lng, "hi")
         LogUtils.debug("new pin", PrefUtilsKt.Functions().retrievePIN(context))
         jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(context)
 
@@ -218,8 +223,8 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
     /**
      * Joins a jam, shows dialog to enter a jam PIN
      */
-    fun joinJam(jam_pin_view: TextView) {
-        showEnterJamPinDialog(context) // doesn't show keyboard automatically right away, it should
+    fun joinJam(context: Context, activity: Activity, jam_pin_view: TextView) {
+        showEnterJamPinDialog(context, activity) // doesn't show keyboard automatically right away, it should
         LogUtils.debug("entered pin", PrefUtilsKt.Functions().retrievePIN(context))
         jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(context)
     }
@@ -242,7 +247,7 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
      * Creates the dialog to enter the new jam PIN
      * @param context the app context
      */
-    private fun showEnterJamPinDialog(context: Context) {
+    private fun showEnterJamPinDialog(context: Context, activity: Activity) {
         val inflater = activity.layoutInflater
         val alertLayout = inflater.inflate(R.layout.layout_join_jam_dialog, null)
         val joinJamPin = alertLayout.findViewById<EditText>(R.id.join_jam_enter_pin_text)
@@ -270,6 +275,27 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
         // TODO: enter jam pin here and return it
     }
 
+    private fun generateJamName(context: Context): String {
+        val name = PrefUtilsKt.Functions().retrieveFbName(context)
+        val dateTimeString = FileUtils().getTime()
+
+        val generatedName = "$name $dateTimeString"
+        LogUtils.debug("Generated Jam Name", generatedName)
+        return generatedName
+    }
+
+    private fun getLocation(context: Context): Array<Any> {
+        // e0 = location name: String
+        // e1 = lat: Long
+        // e2 = lng: Long
+        val e0 = "ActionSpot"
+        //val e1 = PrefUtilsKt.Functions().retrieveLatitude(context)
+        //val e2 = PrefUtilsKt.Functions().retrieveLongitude(context)
+        val e1 = 37L
+        val e2 = -22L // change these to the real location later
+        return arrayOf(e0, e1, e2)
+    }
+
     private fun checkUUID(context: Context): String {
         var UUID = PrefUtilsKt.Functions().retrieveUUID(context)
         return if (UUID != "not working") {
@@ -282,7 +308,5 @@ class HomeRoutineKt(val buttons: HashMap<String, Any>, private val activity: Act
             UUID
         }
     }
-
-
 
 }

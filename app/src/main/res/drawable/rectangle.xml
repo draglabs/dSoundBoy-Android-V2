@@ -1,0 +1,22 @@
+<!--
+  ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+  -->
+
+
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#ffffffff" />
+    <padding android:left="6dp"
+        android:top="6dp"
+        android:right="6dp"
+        android:bottom="6dp" />
+    <gradient
+        android:type="linear"
+        android:startColor="#ffffffff"
+        android:centerColor="#ffffffff"
+        android:endColor="#ffffffff"
+        android:angle="90"/>
+    <corners android:radius="12dp" />
+    <stroke android:width="6dp" android:color="#ffffffff" />
+</shape>

@@ -14,6 +14,7 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.Toast
 import omrecorder.*
 import java.io.File
@@ -29,50 +30,26 @@ import java.util.*
  * @author Daniel Avrukin
  */
 
-class RecorderUtils
-/**
- * Constructor for the RecorderUtils
- * @param context the app's context
- * @param bandData the band's data
- * @param activity the activity calling this constructor
- */
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-constructor(private val context: Context, private val activity: Activity) {
-    //private val recorderModelKt: RecorderModelKt
-    //private var recordingThread: Thread? = null
-
-    /**
-     * Gets the local path where the audio is saved
-     * @return the local path where the audio is saved
-     */
-    //val audioSavePathInDevice: String = recorderModel.audioSavePathInDevice
-
-    //init {
-        //this.recorderModel = RecorderModel()
-        //this.recordingThread = Thread()
-
-        //recorderModel.bandData = bandData
-        //recorderModel.audioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/dSoundBoyRecordings" + recorderModel.pathname
-        //recorderModel.pathname = createAudioPathname(recorderModel.extension)
-        /*recorderModel.setAudioRecord(new AudioRecord(recorderModel.getRecorderAudioSource(),
-                                                        recorderModel.getRecordingSampleRate(),
-                                                        recorderModel.getRecordingChannels(),
-                                                        recorderModel.getRecordingAudioEncoding(),
-        recorderModel.getBufferElementsToRec() * recorderModel.getBytesPerElement()));*/
-    //}
+class RecorderUtils(private val context: Context, private val activity: Activity) {
 
     fun startRecording(recorder: Recorder) {
-        recorder.startRecording()
-        LogUtils.debug("Recorder", "Started")
+        val permissions = checkPermissions()
+        val audioPermissions = checkAudioPermissions()
+        LogUtils.debug("Permissions on Start: ", "" + permissions)
+        LogUtils.debug("Audio Permissions on Start: ", "" + audioPermissions)
+        if (permissions) {
+            recorder.startRecording()
+            LogUtils.debug("Recorder", "Started")
+        } else {
+            requestPermission()
+            //startRecording(recorder)
+        }
     }
 
     fun stopRecording(recorder: Recorder) {
-        try {
-            recorder.stopRecording()
-            LogUtils.debug("Recorder", "Stopped")
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
+        recorder.stopRecording()
+        LogUtils.debug("Recorder", "Stopped")
     }
 
     fun pauseRecording(recorder: Recorder) {
@@ -80,12 +57,12 @@ constructor(private val context: Context, private val activity: Activity) {
         LogUtils.debug("Recorder", "Paused")
     }
 
-    fun setupRecorder(name: String, recordButton: Button): Recorder {
-        return OmRecorder.wav(PullTransport.Default(mic(), PullTransport.OnAudioChunkPulledListener { audioChunk -> animateVoice((audioChunk.maxAmplitude() / 200.0).toFloat(), recordButton) }), File(name))
+    fun setupRecorder(name: String, mic: ImageView): Recorder {
+        return OmRecorder.wav(PullTransport.Default(mic(), PullTransport.OnAudioChunkPulledListener { audioChunk -> animateVoice((audioChunk.maxAmplitude() / 200.0).toFloat(), mic) }), File(name))
     }
 
-    private fun animateVoice(maxPeak: Float, recordButton: Button) {
-        recordButton.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start()
+    private fun animateVoice(maxPeak: Float, mic: ImageView) {
+        mic.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start()
     }
 
     private fun mic(): PullableSource { // TODO: Create function in settings to allow changing of these parameters
@@ -108,124 +85,6 @@ constructor(private val context: Context, private val activity: Activity) {
         return rootPath + name
     }
 
-
-    /*fun startRecorderNew(activity: Activity) {
-        if (checkPermissions()) {
-            val recordingPath = Environment.getExternalStorageDirectory().toString() + "/dSoundBoyRecordings/recorded audio " + Date().time + ".wav"
-            try {
-                val recording = File(recordingPath)
-                if (!recording.parentFile.exists()) {
-                    recording.parentFile.mkdirs() // result ignored
-                }
-                if (!recording.exists()) {
-                    recording.createNewFile() // result ignored
-                }
-                val color = R.color.colorPrimaryDark
-                val requestCode = 0
-                AndroidAudioRecorder.with(activity)
-                        .setFilePath(recordingPath)
-                        .setColor(color)
-                        .setRequestCode(requestCode)
-                        .setSource(AudioSource.MIC)
-                        .setChannel(AudioChannel.STEREO)
-                        .setSampleRate(AudioSampleRate.HZ_48000)
-                        .setAutoStart(true)
-                        .setKeepDisplayOn(true)
-                        .record()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-        } else {
-            requestPermission()
-        }
-    }*/
-
-    /**
-     * Starts recording
-     * @param activity the activity calling this method
-     */
-    /*@Deprecated("Using OM Recorder Now")
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    fun startRecording(activity: Activity) {
-        if (checkPermissions()) {
-            if (recorderModel.mediaRecorder != null) {
-                recorderModel.pathname = createAudioPathname(
-                        PrefUtils.getArtistName(activity)!!,
-                        PrefUtils.getRecordingDescription(activity)!!,
-                        PrefUtils.getRecordingVenue(activity)!!,
-                        PrefUtils.getArtistEmail(activity)!!,
-                        Date()) + recorderModel.extension
-
-                recorderModel.audioSavePathInDevice = Environment.getExternalStorageDirectory().absolutePath + "/dSoundBoyRecordings/" + recorderModel.pathname
-
-                recorderModel.startTime = Date() // TODO: FILE NAMES NOT BEING SET PROPERLY
-                val testString = "startTime.toString(): " + recorderModel.startTime.toString() +
-                        ", startTime.getTime(): " + recorderModel.startTime.time
-                Toast.makeText(context, testString, Toast.LENGTH_LONG).show()
-                println(testString)
-
-                try {
-                    val recording = File(recorderModel.audioSavePathInDevice)
-                    if (!recording.parentFile.exists()) {
-                        recording.parentFile.mkdirs() // result ignored
-                    }
-                    if (!recording.exists()) {
-                        recording.createNewFile() // result ignored
-                    }
-
-                    recorderModel.isRecording = true
-                    recordingThread = Thread({ writeAudioDataToFile(recorderModel.audioSavePathInDevice) }, "AudioRecorder Thread")
-                    recordingThread!!.start()
-
-                    Toast.makeText(context, "Recording Started.", Toast.LENGTH_LONG).show()
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                    Toast.makeText(context, "Recording Error. IllegalArgumentException.", Toast.LENGTH_LONG).show()
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                    Toast.makeText(context, "Recording Error. IOException.", Toast.LENGTH_LONG).show()
-                }
-
-            } else {
-                recorderModel.mediaRecorder = recorderModel.mediaRecorderReady()
-                startRecording(activity)
-            }
-        } else {
-            requestPermission()
-        }
-    }*/
-
-    /**
-     * Stops recording
-     */
-    @Deprecated("Using OM Recorder Now")
-    fun stopRecording() {
-        // TODO: when "Submit" is clicked, finalize recording with this method
-        /*recorderModel.endTime = Date()
-
-        try {
-            if (recorderModel.audioRecord != null) {
-                recorderModel.isRecording = false
-                recorderModel.audioRecord.stop()
-                recorderModel.audioRecord.release()
-                recorderModel.audioRecord = null
-                recordingThread = null
-            }
-        } catch (e: RuntimeException) {
-            e.printStackTrace()
-        }
-
-        Toast.makeText(context, "Recording Completed.", Toast.LENGTH_LONG).show()*/
-    }
-
-    /**
-     * Resets the recording
-     */
-    /*fun resetRecording() {
-        recorderModel.mediaRecorder.reset()
-    }*/
-
     /**
      * Converts an array of the short data type to an array of bytes, used for the recorder
      * @param shorts an array of the short data type
@@ -241,41 +100,6 @@ constructor(private val context: Context, private val activity: Activity) {
         }
         return bytes
     }
-
-    /**
-     * Write the audio data to the file
-     * @param pathname the local path to the file
-     */
-    /*@Deprecated("Using OM Recorder Now")
-    private fun writeAudioDataToFile(pathname: String) {
-        val shorts = ShortArray(recorderModel.bufferElementsToRec)
-
-        var fileOutputStream: FileOutputStream? = null
-        try {
-            fileOutputStream = FileOutputStream(pathname)
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        }
-
-        while (recorderModel.isRecording) {
-            recorderModel.audioRecord.read(shorts, 0, recorderModel.bufferElementsToRec)
-            try {
-                val data = shortToByte(shorts)
-                assert(fileOutputStream != null)
-                fileOutputStream!!.write(data, 0, recorderModel.bufferElementsToRec * recorderModel.bytesPerElement)
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-
-        }
-
-        try {
-            assert(fileOutputStream != null)
-            fileOutputStream!!.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }*/
 
     /**
      * Creates a random audio pathname

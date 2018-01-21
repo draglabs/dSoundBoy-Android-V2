@@ -8,9 +8,11 @@ import android.content.Context
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.draglabs.dsoundboy.dsoundboy.R.id.export_progress_bar
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import kotlinx.coroutines.experimental.async
 
 /**
  * Created by davrukin on 1/18/18.
@@ -24,14 +26,16 @@ class CustomAdapterRoutine {
         // TODO: run edit jam api function
     }
 
-    fun clickExport(context: Context, progressBar: ProgressBar, jamID: String, link: String) {
+    fun clickExport(context: Context, jamID: String, link: String) {
         Toast.makeText(context, "Export Button Clicked", Toast.LENGTH_LONG).show()
         // TODO: calls the Compressor API to generate a link if this one is "not working", otherwise send that link, maybe append extra info text to is
-        progressBar.animate().start()
+        //val progressBar = export_progress_bar
+        //progressBar.animate().start()
 
         val newLink = checkLink(context, jamID, link)
+        LogUtils.debug("NewLink upon first click", newLink)
 
-        progressBar.animate().cancel()
+        //progressBar.animate().cancel()
         Toast.makeText(context, "Email sent!", Toast.LENGTH_LONG).show()
     }
 
