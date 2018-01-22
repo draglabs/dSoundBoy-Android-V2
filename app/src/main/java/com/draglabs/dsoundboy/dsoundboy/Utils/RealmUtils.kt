@@ -38,13 +38,40 @@ class RealmUtils {
         return Realm.getDefaultInstance()
     }
 
+    fun initializeUserModel(context: Context) {
+        val realm = startRealm()
+        realm.beginTransaction()
+
+        val person = realm.createObject(UserModel::class.java)
+        val prefUtils = PrefUtilsKt.Functions()
+        person.UUID = prefUtils.retrieveUUID(context) // also sets the user's primary key
+        // add other attributes here
+
+        realm.commitTransaction()
+        closeRealm(realm)
+    }
+
     fun initializeUserModel(realm: Realm, context: Context) {
         realm.beginTransaction()
-        val person = realm.createObject(UserModel::class.java, 1)
+        val person = realm.createObject(UserModel::class.java)
         val prefUtils = PrefUtilsKt.Functions()
-        person.UUID = prefUtils.retrieveUUID(context)
+        person.UUID = prefUtils.retrieveUUID(context) // also sets the user's primary key
         // add other attributes here
         realm.commitTransaction()
+    }
+
+    fun initializeJamViewModel(jamID: String, link: String, location: String, name: String, key: Int) {
+        val realm = startRealm()
+
+        realm.beginTransaction()
+        val jam = realm.createObject(JamViewModel::class.java, key)
+        jam.jamID = jamID
+        jam.link = link
+        jam.location = location
+        jam.name = name
+        realm.commitTransaction()
+
+        closeRealm(realm)
     }
 
     fun initializeJamViewModel(realm: Realm, jamID: String, link: String, location: String, name: String, key: Int) {
@@ -54,20 +81,6 @@ class RealmUtils {
         jam.link = link
         jam.location = location
         jam.name = name
-        realm.commitTransaction()
-    }
-
-    fun storeJams(realm: Realm, jams: ArrayList<JamViewModel>) {
-        realm.beginTransaction()
-
-        for (jam in jams) {
-            val realmJam = realm.createObject(JamViewModel::class.java)
-            realmJam.jamID = jam.jamID
-            realmJam.name = jam.name
-            realmJam.location = jam.location
-            realmJam.link = jam.link
-        }
-
         realm.commitTransaction()
     }
 
@@ -94,35 +107,58 @@ class RealmUtils {
         closeRealm(realm)
     }
 
-    fun retrieveJam(realm: Realm, key: Int): JamViewModel {
-        val jams = realm.where(JamViewModel::class.java).findAll()
-        return jams[key]!!
+    fun storeJams(realm: Realm, jams: ArrayList<JamViewModel>) {
+        realm.beginTransaction()
+
+        for (jam in jams) {
+            val realmJam = realm.createObject(JamViewModel::class.java)
+            realmJam.jamID = jam.jamID
+            realmJam.name = jam.name
+            realmJam.location = jam.location
+            realmJam.link = jam.link
+        }
+
+        realm.commitTransaction()
+    }
+
+    fun retrieveJam(realm: Realm, jamID: String): JamViewModel {
+        return realm.where(JamViewModel::class.java).equalTo("jamID", jamID).findFirst()!!
+    }
+
+    fun retrieveJam(jamID: String): JamViewModel {
+        val realm = startRealm()
+        val jam = realm.where(JamViewModel::class.java).equalTo("jamID", jamID).findFirst()!!
+        closeRealm(realm)
+        return jam
     }
 
     fun retrieveJams(realm: Realm): RealmResults<JamViewModel>? {
+        return realm.where(JamViewModel::class.java).findAll()
+    }
 
+    fun retrieveJams(): RealmResults<JamViewModel>? {
+        val realm = startRealm()
         val jams = realm.where(JamViewModel::class.java).findAll()
+        closeRealm(realm)
         return jams
     }
     /**
      * Attributes able to edit: "name", "link", "location"
      */
-    fun editJam(realm: Realm, key: Int, attribute: String, newValue: String) {
-        val jams = realm.where(JamViewModel::class.java).findAll()
-        val jam = jams[key]!! // makes sure that there exists the jam I want to access, currently non-null asserted call
+    fun editJam(realm: Realm, jamID: String, attribute: String, newValue: String) {
+        val jam = retrieveJamWithID(realm, jamID)
+        //val jam = jams // makes sure that there exists the jam I want to access, currently non-null asserted call
         realm.beginTransaction()
         when (attribute) {
-            "name" -> jam.name = newValue
-            "link" -> jam.link = newValue
-            "location" -> jam.location = newValue
+            jamVars.NAME -> jam.name = newValue
+            jamVars.LINK -> jam.link = newValue
+            jamVars.LOCATION -> jam.location = newValue
         }
         realm.commitTransaction()
     }
 
     fun retrieveJamWithID(realm: Realm, jamID: String): JamViewModel {
-        val jams = realm.where(JamViewModel::class.java).equalTo("jamID", jamID).findAll()
-        val jam = jams[0]
-        return jam!!
+        return realm.where(JamViewModel::class.java).equalTo("jamID", jamID).findFirst()!!
     }
 
     fun closeRealm(realm: Realm) {

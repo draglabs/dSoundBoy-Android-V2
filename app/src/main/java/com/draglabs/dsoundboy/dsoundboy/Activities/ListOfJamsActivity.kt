@@ -68,12 +68,18 @@ class ListOfJamsActivity : AppCompatActivity() {
         // TODO: go into custom view adapter or inflater to set the buttons and views to the pertinent functions with the pertinent variables
         //list.add((JamViewModel("This is a test jam", "name", "location", "link")))
         //list.add((JamViewModel("The buttons do nothing", "name", "location", "link")))
-        val list = ArrayList<JamViewModel>()
-        list.add(JamViewModel("jamID", "name", "location", "link"))
-        val dummyArray = getDummyData()
-        list.add(JamViewModel(dummyArray[0], dummyArray[1], dummyArray[2], dummyArray[3]))
+        val list = ArrayList<JamViewModel>() // TODO: for this method, maybe make it suspend -> async so that it populates after it has loaded for a better ux?
+        //list.add(JamViewModel("jamID", "name", "location", "link"))
+        //val dummyArray = getDummyData()
+        //list.add(JamViewModel(dummyArray[0], dummyArray[1], dummyArray[2], dummyArray[3]))
 
-        jams?.forEach { name -> list.add(name) }
+        if (jams != null) {
+            val reversedJams = jams.reversed()
+            // does this operation take a lot of time? maybe add the results in the other order instead?
+            for (name in reversedJams) {
+                list.add(name)
+            }
+        }
 
         return list
     }

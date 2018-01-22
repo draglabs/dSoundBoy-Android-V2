@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
@@ -46,5 +47,23 @@ class MainActivity : AppCompatActivity() {
             val homeIntent = Intent(this, TestNavActivity::class.java)
             startActivity(homeIntent)
         }
+    }
+
+    /**
+     * Goes to the same activity for a redirect when the logo is clicked on the splash screen
+     */
+    fun clickLogo(view: View) {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+    }
+
+    /**
+     * Overrides system onBackPressed to go back to the home screen when on the splash screen
+     */
+    override fun onBackPressed() {
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
     }
 }

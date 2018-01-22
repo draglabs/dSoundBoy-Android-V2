@@ -121,22 +121,25 @@ class APIutilsKt {
         })
     }
 
-    fun getJamDetails(activity: Activity, context: Context) {
+    fun getJamDetails(context: Context, jamID: String) {
         val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
-        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
-        val newGET = "api.draglabs.com/api/v2.0/jam/details/$jamID"
+        val url = "http://api.draglabs.com/api/v2.0/jam/details/$jamID"
 
         val requestParams = RequestParams()
         val headers = userIDHeaders(UUID)
 
-        get(context, newGET, headers, requestParams, object : JsonHttpResponseHandler() {
+        get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
                 logSuccessResponse(statusCode, headers!!, response!!)
                 try {
-                    //val jamDetails = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_JAM_DETAILS, response, StringsModel.jsonTypes.DATA.type())
-
-                    Log.v("Jam Details: ", response.toString())
+                    val link = response.getString("link")
+                    val realm = RealmUtils().startRealm()
+                    RealmUtils().editJam(realm, jamID, "link", link)
+                    LogUtils.debug("Jam Details: ", response.toString())
+                    LogUtils.debug("Realm'd Link", RealmUtils().retrieveJam(realm, jamID).toString())
+                    RealmUtils().closeRealm(realm)
                     //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
                 } catch (e: JSONException) {
                     e.printStackTrace()

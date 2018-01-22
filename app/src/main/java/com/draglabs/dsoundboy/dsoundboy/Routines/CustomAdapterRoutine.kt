@@ -4,6 +4,7 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
+import android.app.Activity
 import android.content.Context
 import android.view.View
 import android.widget.ProgressBar
@@ -31,6 +32,11 @@ class CustomAdapterRoutine {
         // TODO: calls the Compressor API to generate a link if this one is "not working", otherwise send that link, maybe append extra info text to is
         //val progressBar = export_progress_bar
         //progressBar.animate().start()
+
+        LogUtils.debug("Export JamID", jamID)
+        LogUtils.debug("Export Link", link)
+
+        APIutilsKt().getJamDetails(context, jamID)
 
         val newLink = checkLink(context, jamID, link)
         LogUtils.debug("NewLink upon first click", newLink)
@@ -61,7 +67,7 @@ class CustomAdapterRoutine {
     }
 
     private fun performApiCalls(context: Context, jamID: String, instance: Int): String {
-        APIutilsKt().performGetJamDetails(context, jamID)
+        APIutilsKt().getJamDetails(context, jamID)
         val newLink = PrefUtilsKt.Functions().retrieveLink(context) // add suspend & async
         LogUtils.debug("Retrieved Link $instance", newLink)
         return newLink
