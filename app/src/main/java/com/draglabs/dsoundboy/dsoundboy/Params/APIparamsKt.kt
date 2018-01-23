@@ -48,6 +48,7 @@ class APIparamsKt {
     private val end_time        = StringsModelKt.JsonParsingKeys.END_TIME
     private val facebook_id     = StringsModelKt.JsonParsingKeys.FACEBOOK_ID
     private val access_token    = StringsModelKt.JsonParsingKeys.ACCESS_TOKEN
+    private val id              = StringsModelKt.JsonParsingKeys.ID
 
     private val jsonTypeStringForRequest = "application/json; charset=utf-8"
 
@@ -61,6 +62,17 @@ class APIparamsKt {
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.newJam(UUID, requestBody)
+    }
+
+    fun callUpdateJam(jamID: String, jamName: String, jamLocation: String, jamNotes: String): Call<ResponseModelKt.JamFunctions.UpdateJam> {
+        val params = ArrayMap<String, Any>()
+        params[this.id] = jamID
+        params[this.name] = jamName
+        params[this.location] = jamLocation
+        params[this.notes] = jamNotes
+        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
+
+        return userService.updateJam(requestBody)
     }
 
     fun callJoinJam(pin: String, UUID: String): Call<ResponseModelKt.JamFunctions.JoinJam> {

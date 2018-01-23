@@ -6,9 +6,12 @@ package com.draglabs.dsoundboy.dsoundboy.Routines
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.view.View
 import android.widget.ProgressBar
 import android.widget.Toast
+import com.draglabs.dsoundboy.dsoundboy.Activities.EditJamActivity
+import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R.id.export_progress_bar
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
@@ -21,8 +24,15 @@ import kotlinx.coroutines.experimental.async
  */
 class CustomAdapterRoutine {
 
-    fun clickEdit(context: Context, jamID: String) {
+    fun clickEdit(context: Context, jam: JamViewModel) {
         Toast.makeText(context, "Edit Button Clicked", Toast.LENGTH_LONG).show()
+        val intent = Intent(context, EditJamActivity::class.java)
+
+        intent.putExtra("jamID", jam.jamID)
+        intent.putExtra("jamName", jam.name)
+        intent.putExtra("jamLocation", jam.location) // add notes field too
+
+        context.startActivity(intent)
         // TODO: open up a new activity that shows the edit fields, and saves them by calling the UpdateJam API
         // TODO: run edit jam api function
     }

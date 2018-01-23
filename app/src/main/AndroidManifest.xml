@@ -150,10 +150,10 @@
             android:name=".Activities.ListOfJamsActivity"
             android:label="@string/title_activity_list_of_jams"
             android:parentActivityName=".Activities.TestNavActivity"
-            android:theme="@style/DragLabsNew" >
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.TestNavActivity"/>
+                android:value=".Activities.TestNavActivity" />
         </activity>
         <activity
             android:name=".Activities.SettingsActivity"
@@ -162,6 +162,14 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.EditJamActivity"
+            android:label="@string/activity_name_edit_jam"
+            android:parentActivityName=".Activities.ListOfJamsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".Activities.ListOfJamsActivity"/>
         </activity>
     </application>
 

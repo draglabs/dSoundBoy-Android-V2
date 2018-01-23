@@ -37,6 +37,9 @@ import org.json.JSONArray
  */
 class APIutilsKt {
 
+    object jamFunctions {}
+    object userFunctions {}
+
     fun performNewJam(context: Context, UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String) {
         val call = APIparamsKt().callNewJam(UUID, name, location, lat, lng, notes)
 
@@ -65,6 +68,39 @@ class APIutilsKt {
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.NewJam>, t: Throwable) {
                 logOnFailure(t)
+            }
+        })
+    }
+
+    fun performUpdateJam(jamID: String, jamName: String, jamLocation: String, jamNotes: String) {
+        val call = APIparamsKt().callUpdateJam(jamID, jamName, jamLocation, jamNotes)
+
+        call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UpdateJam> {
+            override fun onResponse(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, response: Response<ResponseModelKt.JamFunctions.UpdateJam>) {
+                if (response.isSuccessful) {
+                    val result = response.body()
+                    val jamNameResponse = result!!.name
+                    val jamLocationResponse = result.location
+                    //val jamNotes = result.notes TODO: maybe add this into the JamViewModel later?
+                    val jamLinkResponse = result.link
+
+                    RealmUtils().editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse)
+
+                    LogUtils.debug("UpdateJam Response", response.toString())
+                    LogUtils.debug("UpdateJam Body", response.body().toString())
+                } else {
+                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                    LogUtils.debug("Code", "" + response.code())
+                    LogUtils.debug("Message", response.message())
+                    LogUtils.debug("Headers", response.headers().toString())
+                }
+            }
+
+            override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, t: Throwable) {
+                logOnFailure(t)
+                LogUtils.debug("onFailure Call", call.toString())
+                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
+                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
             }
         })
     }
@@ -110,7 +146,8 @@ class APIutilsKt {
                     LogUtils.debug("Failed Response", response.errorBody()!!.toString())
                     LogUtils.debug("Code", "" + response.code())
                     LogUtils.debug("Message", response.message())
-                    LogUtils.debug("Headers", response.headers().toString())                }
+                    LogUtils.debug("Headers", response.headers().toString())
+                }
             }
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.GetJamDetails>, t: Throwable) {
@@ -211,7 +248,7 @@ class APIutilsKt {
                 return "Content-Type"
             }
             override fun getValue(): String {
-                return "application/json"
+                return "multipart/form-data"
             }
 
             @Throws(ParseException::class)

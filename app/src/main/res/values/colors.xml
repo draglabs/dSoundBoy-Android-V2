@@ -19,4 +19,9 @@
     <color name="colorDLBlue1">#3c5490</color>
     <color name="colorDLBlue2">#ed3e5798</color> <!-- with 93% opacity ED-->
     <color name="colorDLGreyBG">#666666</color>
+    <color name="colorDLBlueFilter">#D93c5490</color> <!-- DLBlue1 with 87% opacity -->
+    <color name="white">#FFFFFF</color>
+    <color name="colorDLButtonBG">#d2d5db</color>
+    <color name="colorDLButtonText">#494A4C</color>
+    <color name="colorDLEditJamBG">#1F2021</color>
 </resources>

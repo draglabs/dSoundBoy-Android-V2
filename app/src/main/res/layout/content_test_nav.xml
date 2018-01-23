@@ -97,6 +97,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="248dp"
+        android:textColor="@color/colorDLTextWhite"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -111,7 +112,7 @@
         tools:layout_editor_absoluteX="48dp"
         tools:layout_editor_absoluteY="263dp" />
 
-    <TextView
+    <Button
         android:id="@+id/jam_pin_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,6 +120,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:background="@android:color/transparent"
         android:text="@string/jam_pin"
         android:textAlignment="center"
         android:textSize="24sp"
@@ -164,9 +166,28 @@
         app:srcCompat="@color/cardview_light_background" />
 
     <ImageView
+        android:id="@+id/mic_background_image"
+        android:layout_width="131dp"
+        android:layout_height="141dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.172"
+        app:srcCompat="@drawable/circle" />
+
+    <ImageView
         android:id="@+id/image_mic"
-        android:layout_width="154dp"
-        android:layout_height="189dp"
+        android:layout_width="70dp"
+        android:layout_height="130dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -175,7 +196,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.055"
+        app:layout_constraintVertical_bias="0.197"
         app:srcCompat="@drawable/mic" />
 
 </android.support.constraint.ConstraintLayout>

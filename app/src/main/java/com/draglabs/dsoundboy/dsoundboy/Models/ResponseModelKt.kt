@@ -49,8 +49,14 @@ class ResponseModelKt {
         )
 
         data class UpdateJam(
-            var update_jam: Models.JamMini
-        )
+            @SerializedName("id") var id: String,
+            @SerializedName("name") var name: String,
+            @SerializedName("start_time") var start_time: String,
+            @SerializedName("end_time") var end_time: String,
+            @SerializedName("location") var location: String,
+            @SerializedName("notes") var notes: String,
+            @SerializedName("collaborators") var collaborators: Any,
+            @SerializedName("link") var link: String        )
 
         data class JoinJam(
             @SerializedName("id") var id: String,

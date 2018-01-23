@@ -8,8 +8,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/card_view_item"
     android:layout_width="match_parent"
-    android:layout_height="150dp"
-    android:orientation="vertical">
+    android:layout_height="175dp"
+    android:orientation="vertical"
+    android:background="@color/white">
 
     <!-- the map view, for now an image -->
 
@@ -17,7 +18,9 @@
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="@dimen/card_map_height"
-        app:srcCompat="@color/colorDLBlue2" />
+        android:scaleType="centerCrop"
+        android:tint="@color/colorDLBlueFilter"
+        app:srcCompat="@drawable/luke_chesser_50_cropped" />
 
     <!-- the jam info-->
 
@@ -38,6 +41,7 @@
             android:layout_marginTop="8dp"
             android:text="JamXYZ davrukin 1/3/2018"
             android:textAlignment="center"
+            android:textColor="@color/colorDLBlack"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.095"
@@ -54,9 +58,11 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="20dp"
             android:layout_toStartOf="@+id/jam_view_edit_button"
+            android:background="@color/colorDLButtonBG"
             android:text="@string/export_jam_in_view"
             android:textAlignment="center"
-            android:textSize="12sp"
+            android:textColor="@color/colorDLButtonText"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/jam_view_edit_button"
             app:layout_constraintHorizontal_bias="0.0"
@@ -73,8 +79,10 @@
             android:layout_marginBottom="8dp"
             android:layout_marginEnd="108dp"
             android:layout_marginTop="8dp"
+            android:background="@color/colorDLButtonBG"
             android:text="@string/edit_jam_in_view"
-            android:textSize="12sp"
+            android:textColor="@color/colorDLButtonText"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -90,6 +98,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_toStartOf="@+id/jam_view_export_button"
+            android:background="@color/colorDLButtonBG"
             android:contentDescription="Share Button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -107,6 +116,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:indeterminate="true"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/jam_view_edit_button"
             app:layout_constraintHorizontal_bias="0.411"

@@ -26,6 +26,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
@@ -82,7 +83,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private var realm = RealmUtils().startRealm()
 
-    lateinit var jamPinView: TextView
+    lateinit var jamPinView: Button
     lateinit var rec: Button
     lateinit var stop: Button
 
@@ -122,9 +123,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         initialize()
 
-        buttons.put("new_jam", button_new_jam_new as Any)
-        buttons.put("new_recording", button_rec_new as Any)
-        buttons.put("join_jam", button_join_jam_new as Any)
+        buttons["new_jam"] = button_new_jam_new as Any
+        buttons["new_recording"] = button_rec_new as Any
+        buttons["join_jam"] = button_join_jam_new as Any
 
         //homeRoutineKt = HomeRoutineKt(buttons, this, this,   filename, button_rec_new)
 
@@ -136,8 +137,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun initialize() {
-        jamPinView = findViewById<TextView>(R.id.jam_pin_view)
+        jamPinView = findViewById<Button>(R.id.jam_pin_view)
         jamPinView.bringToFront()
+
         clickTestAuth()
         setListeners()
         async {setUserView()}
@@ -177,6 +179,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             clickJoin()
         }
 
+        jam_pin_view.setOnClickListener {
+            updatePinView()
+        }
+
         /*button_test_auth.setOnClickListener {
             clickTestAuth()
         }
@@ -187,7 +193,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
     }
 
-    suspend private fun setUserView() {
+    private suspend fun setUserView() {
         delay(1500) // this is here because it would cause the app to crash since it didn't retrieve the data from the server right away
         val loginRoutineKt = LoginRoutineKt(buttons, this, this)
 

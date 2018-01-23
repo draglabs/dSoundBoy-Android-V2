@@ -82,7 +82,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
         val jam: JamViewModel? = list[position]
         if (jam != null) {
             holder.textJamInfo.text = jam.name
-            holder.editButton.setOnClickListener { CustomAdapterRoutine().clickEdit(context, jam.jamID) }
+            holder.editButton.setOnClickListener { CustomAdapterRoutine().clickEdit(context, jam) }
             holder.exportButton.setOnClickListener { CustomAdapterRoutine().clickExport(context, jam.jamID, jam.link) }
             holder.shareButton.setOnClickListener { CustomAdapterRoutine().clickShare(context, jam.jamID, jam.link) }
         }

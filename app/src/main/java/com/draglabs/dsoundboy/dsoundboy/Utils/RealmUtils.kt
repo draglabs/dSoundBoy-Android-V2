@@ -157,6 +157,19 @@ class RealmUtils {
         realm.commitTransaction()
     }
 
+    fun editJam(jamID: String, jamName: String, jamLocation: String, jamLink: String) {
+        val realm = startRealm()
+        realm.beginTransaction()
+
+        val jam = realm.where(JamViewModel::class.java).equalTo("jamID", jamID).findFirst()
+        jam!!.name = jamName
+        jam.location = jamLocation
+        jam.link = jamLink
+
+        realm.commitTransaction()
+        closeRealm(realm)
+    }
+
     fun retrieveJamWithID(realm: Realm, jamID: String): JamViewModel {
         return realm.where(JamViewModel::class.java).equalTo("jamID", jamID).findFirst()!!
     }
