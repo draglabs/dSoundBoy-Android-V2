@@ -27,7 +27,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
 import android.app.Activity
-import com.loopj.android.http.RequestHandle
 import org.json.JSONArray
 
 
@@ -37,100 +36,366 @@ import org.json.JSONArray
  */
 class APIutilsKt {
 
-    object jamFunctions {}
-    object userFunctions {}
+    object JamFunctions {
+        fun performNewJam(context: Context, UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String) {
+            val call = APIparamsKt().callNewJam(UUID, name, location, lat, lng, notes)
 
-    fun performNewJam(context: Context, UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String) {
-        val call = APIparamsKt().callNewJam(UUID, name, location, lat, lng, notes)
+            call.enqueue(object: Callback<ResponseModelKt.JamFunctions.NewJam> {
+                override fun onResponse(call: Call<ResponseModelKt.JamFunctions.NewJam>, response: Response<ResponseModelKt.JamFunctions.NewJam>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        val pin = result!!.pin // TODO: save picture from facebook in prefutils
+                        val jamID = result.id
+                        val jamName = result.name
+                        LogUtils.debug("pin", pin)
+                        PrefUtilsKt.Functions().storePIN(context, pin)
+                        PrefUtilsKt.Functions().storeJamID(context, jamID)
+                        PrefUtilsKt.Functions().storeJamName(context, jamName)
 
-        call.enqueue(object: Callback<ResponseModelKt.JamFunctions.NewJam> {
-            override fun onResponse(call: Call<ResponseModelKt.JamFunctions.NewJam>, response: Response<ResponseModelKt.JamFunctions.NewJam>) {
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    val pin = result!!.pin // TODO: save picture from facebook in prefutils
-                    val jamID = result.id
-                    val jamName = result.name
-                    LogUtils.debug("pin", pin)
-                    PrefUtilsKt.Functions().storePIN(context, pin)
-                    PrefUtilsKt.Functions().storeJamID(context, jamID)
-                    PrefUtilsKt.Functions().storeJamName(context, jamName)
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("NewJam Response Body", result.toString())
+                        LogUtils.debug("NewJam Response Message", "Code: $code; Message: $message")
+                    } else {
+                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("Code", "" + response.code())
+                        LogUtils.debug("Message", response.message())
+                    }
+                }
 
-                    val code = response.code()
-                    val message = response.message()
-                    LogUtils.debug("NewJam Response Body", result.toString())
-                    LogUtils.debug("NewJam Response Message", "Code: $code; Message: $message")
+                override fun onFailure(call: Call<ResponseModelKt.JamFunctions.NewJam>, t: Throwable) {
+                    LogUtils.logOnFailure(t)
+                }
+            })
+        }
+
+        fun performUpdateJam(jamID: String, jamName: String, jamLocation: String, jamNotes: String) {
+            val call = APIparamsKt().callUpdateJam(jamID, jamName, jamLocation, jamNotes)
+
+            call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UpdateJam> {
+                override fun onResponse(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, response: Response<ResponseModelKt.JamFunctions.UpdateJam>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        val jamNameResponse = result!!.name
+                        val jamLocationResponse = result.location
+                        //val jamNotes = result.notes TODO: maybe add this into the JamViewModel later?
+                        val jamLinkResponse = result.link
+                        val jamNotesResponse = result.notes
+
+                        RealmUtils().editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse)
+
+                        LogUtils.debug("UpdateJam Response", response.toString())
+                        LogUtils.debug("UpdateJam Body", response.body().toString())
+                    } else {
+                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("Code", "" + response.code())
+                        LogUtils.debug("Message", response.message())
+                        LogUtils.debug("Headers", response.headers().toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, t: Throwable) {
+                    LogUtils.logOnFailure(t)
+                    LogUtils.debug("onFailure Call", call.toString())
+                    LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
+                    LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
+                }
+            })
+        }
+
+        fun performJoinJam(context: Context, pin: String, UUID: String) {
+            val call = APIparamsKt().callJoinJam(pin, UUID)
+
+            call.enqueue(object: Callback<ResponseModelKt.JamFunctions.JoinJam> {
+                override fun onResponse(call: Call<ResponseModelKt.JamFunctions.JoinJam>, response: Response<ResponseModelKt.JamFunctions.JoinJam>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        val jamID = result!!.id
+                        val jamName = result.name
+                        LogUtils.debug("jamID", jamID)
+                        LogUtils.debug("jamName", jamName)
+                        PrefUtilsKt.Functions().storeJamID(context, jamID)
+                        PrefUtilsKt.Functions().storeJamName(context, jamName)
+                    } else {
+                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("Code", "" + response.code())
+                        LogUtils.debug("Message", response.message())
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseModelKt.JamFunctions.JoinJam>, t: Throwable) {
+                    LogUtils.logOnFailure(t)
+                }
+            })
+        }
+
+        fun jamRecordingUpload(context: Context, path: String, notes: String, startTime: String, endTime: String, view: View) { // convert through binary data and multi-part upload
+
+            val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+            val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+
+            val headers = HttpFunctions.Headers.standardHeader(UUID)
+            val requestParams = HttpFunctions.Params.jamRecordingUploadParams(UUID, jamID, path, notes, startTime, endTime)
+            val url = "http://api.draglabs.com/api/v2.0/jam/upload"
+
+            LogUtils.debug("Headers being sent", "${headers[0]}, ${headers[1]}")
+            LogUtils.debug("RequestParams for Upload", requestParams.toString())
+
+            HttpFunctions.Requests.upload(context, headers, requestParams, "audioFile", path, url, object: JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                    LogUtils.logSuccessResponse(statusCode, headers!!, response!!)
+                    try {
+                        //val message = JsonUtils.INSTANCE.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type())
+
+                        LogUtils.debug("Response Message: ", response.toString())
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                    Snackbar.make(view, "Recording uploaded.", Snackbar.LENGTH_LONG).show()
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
+                    LogUtils.logFailureResponse(statusCode, headers!!, throwable, response!!)
+                }
+            })
+        }
+
+        fun getJamDetails(context: Context, jamID: String) {
+            val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+            //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+
+            val url = "http://api.draglabs.com/api/v2.0/jam/details/$jamID"
+
+            val requestParams = RequestParams()
+            val headers = HttpFunctions.Headers.userIDHeaders(UUID)
+
+            HttpFunctions.Requests.get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                    LogUtils.logSuccessResponse(statusCode, headers!!, response!!)
+                    try {
+                        val link = response.getString("link")
+                        val realm = RealmUtils().startRealm()
+                        RealmUtils().editJam(realm, jamID, "link", link)
+                        LogUtils.debug("Jam Details: ", response.toString())
+                        LogUtils.debug("Realm'd Link", RealmUtils().retrieveJam(realm, jamID).toString())
+                        RealmUtils().closeRealm(realm)
+                        //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
+                    LogUtils.logFailureResponse(statusCode, headers!!, throwable, response!!)
+                }
+            })
+        }
+
+        fun performCompressor(context: Context, jamID: String) {
+            val call = APIparamsKt().callCompressor(context, jamID)
+
+            call.enqueue(object: Callback<ResponseModelKt.CompressorFunctions.Compressor> {
+                override fun onResponse(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, response: Response<ResponseModelKt.CompressorFunctions.Compressor>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+
+                        LogUtils.debug("Upload Response Body", result.toString())
+                        LogUtils.debug("Upload Response Message", "Code: ${response.code()}; Message: ${response.message()}")
+                    } else {
+                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("Code", "" + response.code())
+                        LogUtils.debug("Message", response.message())
+                        LogUtils.debug("Headers", response.headers().toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, t: Throwable) {
+                    LogUtils.logOnFailure(t)
+                }
+            })
+        }
+    }
+
+    object UserFunctions {
+        fun performRegisterUser(activity: Activity, context: Context) {
+            val call = APIparamsKt().callRegisterUser(activity)
+
+            call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
+                override fun onResponse(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, response: Response<ResponseModelKt.UserFunctions.RegisterUser>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        val id = result!!.id
+                        LogUtils.debug("id", id)
+                        PrefUtilsKt.Functions().storeUUID(context, id)
+
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("RegisterUser Response Body", result.toString())
+                        LogUtils.debug("RegisterUser Response Message", "Code: $code; Message: $message")
+                    } else {
+                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("Code", "" + response.code())
+                        LogUtils.debug("Message", response.message())
+                    }
+                }
+                override fun onFailure(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, t: Throwable) {
+                    LogUtils.logOnFailure(t)
+                    LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
+                    LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())
+                }
+            })
+        }
+
+        fun getUserActivity(context: Context) {
+            val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+
+            val headers = HttpFunctions.Headers.userIDHeaders(UUID)
+            val requestParams = RequestParams()
+
+            val url = "http://api.draglabs.com/api/v2.0/user/activity"
+
+            HttpFunctions.Requests.get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<Header>, response: JSONArray) {
+                    LogUtils.debug("Get User Activity", "Success")
+                    LogUtils.logSuccessResponse(statusCode, headers, response)
+                    try {
+                        val quantityOfJams = response.length()
+                        var i = 0
+                        val jams = ArrayList<JamViewModel>()
+                        while (i < quantityOfJams) {
+                            val jam = response[i] as JSONObject
+
+                            val jamViewModel = JamViewModel()
+
+                            jamViewModel.jamID = jam.getString("id")
+                            jamViewModel.name = jam.getString("name")
+                            jamViewModel.location = jam.getString("location")
+                            jamViewModel.link = jam.getString("link")
+
+                            jams.add(jamViewModel)
+
+                            i++
+                        }
+                        //val jams = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, StringsModel.jsonTypes.JAMS.type())
+                        LogUtils.debug("Jams: ", jams.toString())
+                        RealmUtils().storeJams(jams)
+                        //PrefUtils(activity).saveUserActivity(jams)
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<Header>, throwable: Throwable, response: JSONObject) {
+                    LogUtils.debug("Get User Activity", "Failure")
+                    LogUtils.logFailureResponse(statusCode, headers, throwable, response)
+                }
+            })
+        }
+    }
+
+    private object HttpFunctions {
+        object Headers {
+            fun userIDHeaders(UUID: String): Array<Header> {
+                return arrayOf(object : Header {
+                    override fun getName(): String {
+                        return "user_id"
+                    }
+
+                    override fun getValue(): String {
+                        return UUID
+                    }
+
+                    @Throws(ParseException::class)
+                    override fun getElements(): Array<HeaderElement?> {
+                        return arrayOfNulls(0)
+                    }
+                })
+            }
+
+            fun standardHeader(UUID: String): Array<Header> {
+                return arrayOf(object : Header {
+                    override fun getName(): String {
+                        return "Content-Type"
+                    }
+                    override fun getValue(): String {
+                        return "multipart/form-data; boundary=123456789"
+                    }
+
+                    @Throws(ParseException::class)
+                    override fun getElements(): Array<HeaderElement?> {
+                        return arrayOfNulls<HeaderElement>(0)
+                    }
+
+                    override fun toString(): String {
+                        return "Name: $name; Value: $value; Elements: $elements"
+                    }
+                }, object : Header {
+                    override fun getName(): String {
+                        return "user_id"
+                    }
+
+                    override fun getValue(): String {
+                        return UUID
+                    }
+
+                    @Throws(ParseException::class)
+                    override fun getElements(): Array<HeaderElement?> {
+                        return arrayOfNulls<HeaderElement>(1)
+                    }
+
+                    override fun toString(): String {
+                        return "Name: $name; Value: $value; Elements: $elements"
+                    }
+                })
+            }
+        }
+        object Params {
+            fun jamRecordingUploadParams(UUID: String,
+                                                 jamID: String,
+                                                 path: String,
+                                                 location: String,
+                                                 startTime: String,
+                                                 endTime: String): RequestParams {
+                val requestParams = RequestParams()
+                requestParams.put("user_id", UUID)
+                requestParams.put("id", jamID)
+                //requestParams.put("location", location)
+                requestParams.put("start_time", startTime)
+                requestParams.put("end_time", endTime)
+                try {
+                    requestParams.put("file_name", File(path), "application/octet-stream")
+                } catch (e: FileNotFoundException) {
+                    e.printStackTrace()
+                }
+                return requestParams
+            }
+        }
+        object Requests {
+            fun get(context: Context, url: String, headers: Array<Header>, requestParams: RequestParams, asyncHttpResponseHandler: AsyncHttpResponseHandler): String {
+                val asyncHttpClient = AsyncHttpClient(true, 80, 433)
+                val requestHandle = asyncHttpClient.get(context, url, headers, requestParams, asyncHttpResponseHandler)
+                return if (requestHandle.isFinished) {
+                    "Done with GET. Tag: " + requestHandle.tag
                 } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
+                    "GET Failed. Tag: " + requestHandle.tag
                 }
             }
 
-            override fun onFailure(call: Call<ResponseModelKt.JamFunctions.NewJam>, t: Throwable) {
-                logOnFailure(t)
-            }
-        })
-    }
-
-    fun performUpdateJam(jamID: String, jamName: String, jamLocation: String, jamNotes: String) {
-        val call = APIparamsKt().callUpdateJam(jamID, jamName, jamLocation, jamNotes)
-
-        call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UpdateJam> {
-            override fun onResponse(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, response: Response<ResponseModelKt.JamFunctions.UpdateJam>) {
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    val jamNameResponse = result!!.name
-                    val jamLocationResponse = result.location
-                    //val jamNotes = result.notes TODO: maybe add this into the JamViewModel later?
-                    val jamLinkResponse = result.link
-
-                    RealmUtils().editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse)
-
-                    LogUtils.debug("UpdateJam Response", response.toString())
-                    LogUtils.debug("UpdateJam Body", response.body().toString())
+            fun upload(context: Context, headers: Array<Header>, requestParams: RequestParams, filename: String, path: String, url: String, asyncHttpResponseHandler: AsyncHttpResponseHandler) {
+                val asyncHttpClient = AsyncHttpClient(true, 80, 433)
+                val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, "multipart/form-data; boundary=123456789", asyncHttpResponseHandler)
+                if (requestHandle.isFinished) {
+                    LogUtils.debug("Upload Result: ", "Done with Upload. Tag: " + requestHandle.tag)
                 } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
-                    LogUtils.debug("Headers", response.headers().toString())
+                    LogUtils.debug("Upload Result: ", "Upload Failed. Tag: " + requestHandle.tag)
                 }
             }
-
-            override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, t: Throwable) {
-                logOnFailure(t)
-                LogUtils.debug("onFailure Call", call.toString())
-                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
-            }
-        })
+        }
     }
 
-    fun performJoinJam(context: Context, pin: String, UUID: String) {
-        val call = APIparamsKt().callJoinJam(pin, UUID)
-
-        call.enqueue(object: Callback<ResponseModelKt.JamFunctions.JoinJam> {
-            override fun onResponse(call: Call<ResponseModelKt.JamFunctions.JoinJam>, response: Response<ResponseModelKt.JamFunctions.JoinJam>) {
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    val jamID = result!!.id
-                    val jamName = result.name
-                    LogUtils.debug("jamID", jamID)
-                    LogUtils.debug("jamName", jamName)
-                    PrefUtilsKt.Functions().storeJamID(context, jamID)
-                    PrefUtilsKt.Functions().storeJamName(context, jamName)
-                } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseModelKt.JamFunctions.JoinJam>, t: Throwable) {
-                logOnFailure(t)
-            }
-        })
-    }
-
+    @Deprecated("Use getJamDetails() instead")
     fun performGetJamDetails(context: Context, jamID: String) {
         val call = APIparamsKt().callGetJamDetails(context, jamID)
 
@@ -151,72 +416,14 @@ class APIutilsKt {
             }
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.GetJamDetails>, t: Throwable) {
-                logOnFailure(t)
+                LogUtils.logOnFailure(t)
                 LogUtils.debug("onFailure Call", call.toString())
                 LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
                 LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())                  }
         })
     }
 
-    fun getJamDetails(context: Context, jamID: String) {
-        val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
-        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
-
-        val url = "http://api.draglabs.com/api/v2.0/jam/details/$jamID"
-
-        val requestParams = RequestParams()
-        val headers = userIDHeaders(UUID)
-
-        get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-                logSuccessResponse(statusCode, headers!!, response!!)
-                try {
-                    val link = response.getString("link")
-                    val realm = RealmUtils().startRealm()
-                    RealmUtils().editJam(realm, jamID, "link", link)
-                    LogUtils.debug("Jam Details: ", response.toString())
-                    LogUtils.debug("Realm'd Link", RealmUtils().retrieveJam(realm, jamID).toString())
-                    RealmUtils().closeRealm(realm)
-                    //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
-                logFailureResponse(statusCode, headers!!, throwable, response!!)
-            }
-        })
-    }
-
-    fun userIDHeaders(UUID: String): Array<Header> {
-        return arrayOf(object : Header {
-            override fun getName(): String {
-                return "user_id"
-            }
-
-            override fun getValue(): String {
-                return UUID
-            }
-
-            @Throws(ParseException::class)
-            override fun getElements(): Array<HeaderElement?> {
-                return arrayOfNulls(0)
-            }
-        })
-    }
-
-    private operator fun get(context: Context, url: String, headers: Array<Header>, requestParams: RequestParams, asyncHttpResponseHandler: AsyncHttpResponseHandler): String {
-        val asyncHttpClient = AsyncHttpClient(true, 80, 433)
-        val requestHandle = asyncHttpClient.get(context, url, headers, requestParams, asyncHttpResponseHandler)
-        return if (requestHandle.isFinished) {
-            "Done with GET. Tag: " + requestHandle.tag
-        } else {
-            "GET Failed. Tag: " + requestHandle.tag
-        }
-    }
-
+    @Deprecated("Use jamRecordingUpload instead")
     fun performUploadJam(context: Context, filePath: String, userID: String, fileName: String, location: String, jamID: String, startTime: String, endTime: String) {
         val call = APIparamsKt().callUploadJam(filePath, userID, fileName, location, jamID, startTime, endTime)
 
@@ -237,162 +444,12 @@ class APIutilsKt {
             }
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UploadJam>, t: Throwable) {
-                logOnFailure(t)
+                LogUtils.logOnFailure(t)
             }
         })
     }
 
-    private fun standardHeader(UUID: String): Array<Header> {
-        return arrayOf(object : Header {
-            override fun getName(): String {
-                return "Content-Type"
-            }
-            override fun getValue(): String {
-                return "multipart/form-data; boundary=123456789"
-            }
-
-            @Throws(ParseException::class)
-            override fun getElements(): Array<HeaderElement?> {
-                return arrayOfNulls<HeaderElement>(0)
-            }
-
-            override fun toString(): String {
-                return "Name: $name; Value: $value; Elements: $elements"
-            }
-        }, object : Header {
-            override fun getName(): String {
-                return "user_id"
-            }
-
-            override fun getValue(): String {
-                return UUID
-            }
-
-            @Throws(ParseException::class)
-            override fun getElements(): Array<HeaderElement?> {
-                return arrayOfNulls<HeaderElement>(1)
-            }
-
-            override fun toString(): String {
-                return "Name: $name; Value: $value; Elements: $elements"
-            }
-        })
-    }
-
-    private fun jamRecordingUploadParams(UUID: String,
-                                   jamID: String,
-                                   path: String,
-                                   location: String,
-                                   startTime: String,
-                                   endTime: String): RequestParams {
-        val requestParams = RequestParams()
-        requestParams.put("user_id", UUID)
-        requestParams.put("id", jamID)
-        //requestParams.put("location", location)
-        requestParams.put("start_time", startTime)
-        requestParams.put("end_time", endTime)
-        try {
-            requestParams.put("file_name", File(path), "application/octet-stream")
-        } catch (e: FileNotFoundException) {
-            e.printStackTrace()
-        }
-        return requestParams
-    }
-
-    fun jamRecordingUpload(context: Context, path: String, notes: String, startTime: String, endTime: String, view: View) { // convert through binary data and multi-part upload
-
-        val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
-        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
-
-        val headers = standardHeader(UUID)
-        val requestParams = jamRecordingUploadParams(UUID, jamID, path, notes, startTime, endTime)
-        val url = "http://api.draglabs.com/api/v2.0/jam/upload"
-
-        LogUtils.debug("Headers being sent", "${headers[0]}, ${headers[1]}")
-        LogUtils.debug("RequestParams for Upload", requestParams.toString())
-
-        upload(context, headers, requestParams, "audioFile", path, url, object: JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-                logSuccessResponse(statusCode, headers!!, response!!)
-                try {
-                    //val message = JsonUtils.INSTANCE.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type())
-
-                    LogUtils.debug("Response Message: ", response.toString())
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-
-                Snackbar.make(view, "Recording uploaded.", Snackbar.LENGTH_LONG).show()
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
-                logFailureResponse(statusCode, headers!!, throwable, response!!)
-            }
-        })
-    }
-
-    private fun logSuccessResponse(statusCode: Int, headers: Array<Header>, response: JSONArray) {
-        LogUtils.debug("Status Code: ", statusCode.toString() + "")
-        LogUtils.debug("Headers: ", Arrays.toString(headers))
-        LogUtils.debug("Response: ", response.toString())
-    }
-
-    private fun logSuccessResponse(statusCode: Int, headers: Array<Header>, response: JSONObject) {
-        LogUtils.debug("Status Code: ", statusCode.toString() + "")
-        LogUtils.debug("Headers: ", Arrays.toString(headers))
-        LogUtils.debug("Response: ", response.toString())
-    }
-
-    private fun logFailureResponse(statusCode: Int, headers: Array<Header>, throwable: Throwable, response: JSONObject) {
-        if (headers != null && throwable != null && response != null) {
-            Log.v("Status Code: ", "" + statusCode)
-            Log.v("Headers: ", Arrays.toString(headers) + "")
-            Log.v("Throwable: ", throwable.message)
-            Log.v("Response: ", response.toString())
-        } else {
-            Log.v("Reason: ", "Other Failure.")
-        }
-    }
-
-    private fun upload(context: Context, headers: Array<Header>, requestParams: RequestParams, filename: String, path: String, url: String, asyncHttpResponseHandler: AsyncHttpResponseHandler) {
-        val asyncHttpClient = AsyncHttpClient(true, 80, 433)
-        val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, "multipart/form-data; boundary=123456789", asyncHttpResponseHandler)
-        if (requestHandle.isFinished) {
-            LogUtils.debug("Upload Result: ", "Done with Upload. Tag: " + requestHandle.tag)
-        } else {
-            LogUtils.debug("Upload Result: ", "Upload Failed. Tag: " + requestHandle.tag)
-        }
-    }
-
-    fun performRegisterUser(activity: Activity, context: Context) {
-        val call = APIparamsKt().callRegisterUser(activity)
-
-        call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
-            override fun onResponse(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, response: Response<ResponseModelKt.UserFunctions.RegisterUser>) {
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    val id = result!!.id
-                    LogUtils.debug("id", id)
-                    PrefUtilsKt.Functions().storeUUID(context, id)
-
-                    val code = response.code()
-                    val message = response.message()
-                    LogUtils.debug("RegisterUser Response Body", result.toString())
-                    LogUtils.debug("RegisterUser Response Message", "Code: $code; Message: $message")
-                } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
-                }
-            }
-            override fun onFailure(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, t: Throwable) {
-                logOnFailure(t)
-                LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())
-            }
-        })
-    }
-
+    @Deprecated("Use getUserActivity instead")
     fun performGetUserActivity(context: Context) {
         val call = APIparamsKt().callGetUserActivity(context)
 
@@ -444,12 +501,13 @@ class APIutilsKt {
                 }
             }
             override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivity>, t: Throwable) {
-                logOnFailure(t)
+                LogUtils.logOnFailure(t)
                 LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
                 LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())            }
         })
     }
 
+    @Deprecated("Use getUserActivity instead")
     fun performGetUserActivityArray(context: Context) {
         val call = APIparamsKt().callGetUserActivityArray(context)
 
@@ -469,7 +527,8 @@ class APIutilsKt {
                             val name = element.name
                             val location = element.location
                             val link = element.link
-                            val jamViewModel = JamViewModel(id, name, location, link)
+                            val notes = element.notes
+                            val jamViewModel = JamViewModel(id, name, location, link, notes)
                             jams.add(jamViewModel)
                         }
                         LogUtils.debug("Jams", jams.toString())
@@ -488,87 +547,11 @@ class APIutilsKt {
             }
 
             override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivityArray>, t: Throwable) {
-                logOnFailure(t)
+                LogUtils.logOnFailure(t)
                 LogUtils.debug("onFailure Call", call.toString())
                 LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
                 LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
             }
         })
-    }
-
-    fun getUserActivity(context: Context) {
-        val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
-
-        val headers = userIDHeaders(UUID)
-        val requestParams = RequestParams()
-
-        val url = "http://api.draglabs.com/api/v2.0/user/activity"
-
-        get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
-            override fun onSuccess(statusCode: Int, headers: Array<Header>, response: JSONArray) {
-                LogUtils.debug("Get User Activity", "Success")
-                logSuccessResponse(statusCode, headers, response)
-                try {
-                    val quantityOfJams = response.length()
-                    var i = 0
-                    val jams = ArrayList<JamViewModel>()
-                    while (i < quantityOfJams) {
-                        val jam = response[i] as JSONObject
-
-                        val jamViewModel = JamViewModel()
-
-                        jamViewModel.jamID = jam.getString("id")
-                        jamViewModel.name = jam.getString("name")
-                        jamViewModel.location = jam.getString("location")
-                        jamViewModel.link = jam.getString("link")
-
-                        jams.add(jamViewModel)
-
-                        i++
-                    }
-                    //val jams = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, StringsModel.jsonTypes.JAMS.type())
-                    LogUtils.debug("Jams: ", jams.toString())
-                    RealmUtils().storeJams(jams)
-                    //PrefUtils(activity).saveUserActivity(jams)
-                } catch (e: JSONException) {
-                    e.printStackTrace()
-                }
-            }
-
-            override fun onFailure(statusCode: Int, headers: Array<Header>, throwable: Throwable, response: JSONObject) {
-                LogUtils.debug("Get User Activity", "Failure")
-                logFailureResponse(statusCode, headers, throwable, response)
-            }
-        })
-    }
-
-    fun performCompressor(context: Context, jamID: String) {
-        val call = APIparamsKt().callCompressor(context, jamID)
-
-        call.enqueue(object: Callback<ResponseModelKt.CompressorFunctions.Compressor> {
-            override fun onResponse(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, response: Response<ResponseModelKt.CompressorFunctions.Compressor>) {
-                if (response.isSuccessful) {
-                    val result = response.body()
-
-                    LogUtils.debug("Upload Response Body", result.toString())
-                    LogUtils.debug("Upload Response Message", "Code: ${response.code()}; Message: ${response.message()}")
-                } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
-                    LogUtils.debug("Headers", response.headers().toString())
-                }
-            }
-
-            override fun onFailure(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, t: Throwable) {
-                logOnFailure(t)
-            }
-        })
-    }
-
-    private fun logOnFailure(t: Throwable) {
-        LogUtils.debug("onFailure Failed Message", t.message.toString())
-        LogUtils.debug("onFailure Failed Cause", t.cause.toString())
-        LogUtils.debug("onFailure Failed StackTrace", t.printStackTrace().toString())
     }
 }

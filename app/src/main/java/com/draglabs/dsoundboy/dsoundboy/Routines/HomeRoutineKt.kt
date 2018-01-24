@@ -16,11 +16,7 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
-import kotlinx.coroutines.experimental.async
 import omrecorder.Recorder
-import org.joda.time.DateTime
-import java.text.DateFormat
-import java.time.Year
 import java.util.*
 
 /**
@@ -163,7 +159,7 @@ class HomeRoutineKt {
         val recordingPath = PrefUtilsKt.Functions().retrieveLocalPath(context)
 
         //APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
-        APIutilsKt().jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
+        APIutilsKt.JamFunctions.jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(context);
@@ -201,7 +197,7 @@ class HomeRoutineKt {
         val locationName = location[0] as String
         val lat = location[1] as Long
         val lng = location[2] as Long
-        APIutilsKt().performNewJam(context, PrefUtilsKt.Functions().retrieveUUID(context), generateJamName(context), locationName, lat, lng, "hi")
+        APIutilsKt.JamFunctions.performNewJam(context, PrefUtilsKt.Functions().retrieveUUID(context), generateJamName(context), locationName, lat, lng, "hi")
         LogUtils.debug("new pin", PrefUtilsKt.Functions().retrievePIN(context))
         jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(context)
 
@@ -267,7 +263,7 @@ class HomeRoutineKt {
             //val UUID = checkUUID(PrefUtils(activity), activity, context)
             //APIutils.joinJam(activity, context, jamPinEntered, UUID) // TODO: show error if incorrect
 
-            APIutilsKt().performJoinJam(context, jamPinEntered, PrefUtilsKt.Functions().retrieveUUID(context)) // TODO: setup checker inside of the retriever to see if there is one
+            APIutilsKt.JamFunctions.performJoinJam(context, jamPinEntered, PrefUtilsKt.Functions().retrieveUUID(context)) // TODO: setup checker inside of the retriever to see if there is one
         }
 
         val dialog = builder.create()
@@ -302,7 +298,7 @@ class HomeRoutineKt {
             Log.v("Checked UUID:", UUID)
             UUID
         } else {
-            APIutilsKt().performRegisterUser(activity, context)
+            APIutilsKt.UserFunctions.performRegisterUser(activity, context)
             UUID = PrefUtilsKt.Functions().retrieveUUID(context)
             Log.v("Refreshed UUID:", UUID)
             UUID

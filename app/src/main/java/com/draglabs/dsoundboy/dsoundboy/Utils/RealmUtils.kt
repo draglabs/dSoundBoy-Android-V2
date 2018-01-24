@@ -32,6 +32,7 @@ class RealmUtils {
         val LINK = "link"
         val LOCATION = "location"
         val NAME = "name"
+        val NOTES = "notes"
     }
 
     fun startRealm(): Realm {
@@ -60,27 +61,29 @@ class RealmUtils {
         realm.commitTransaction()
     }
 
-    fun initializeJamViewModel(jamID: String, link: String, location: String, name: String, key: Int) {
+    fun initializeJamViewModel(jamID: String, link: String, location: String, name: String, notes: String) {
         val realm = startRealm()
 
         realm.beginTransaction()
-        val jam = realm.createObject(JamViewModel::class.java, key)
+        val jam = realm.createObject(JamViewModel::class.java, jamID)
         jam.jamID = jamID
         jam.link = link
         jam.location = location
         jam.name = name
+        jam.notes = notes
         realm.commitTransaction()
 
         closeRealm(realm)
     }
 
-    fun initializeJamViewModel(realm: Realm, jamID: String, link: String, location: String, name: String, key: Int) {
+    fun initializeJamViewModel(realm: Realm, jamID: String, link: String, location: String, name: String, notes: String) {
         realm.beginTransaction()
-        val jam = realm.createObject(JamViewModel::class.java, key)
+        val jam = realm.createObject(JamViewModel::class.java, jamID)
         jam.jamID = jamID
         jam.link = link
         jam.location = location
         jam.name = name
+        jam.notes = notes
         realm.commitTransaction()
     }
 
@@ -96,10 +99,12 @@ class RealmUtils {
                 realmJam.name = jam.name
                 realmJam.location = jam.location
                 realmJam.link = jam.link
+                realmJam.notes = jam.notes
             } else {
                 testObject.name = jam.name
                 testObject.location = jam.location
                 testObject.link = jam.link
+                testObject.notes = jam.notes
             }
         }
 
@@ -116,6 +121,7 @@ class RealmUtils {
             realmJam.name = jam.name
             realmJam.location = jam.location
             realmJam.link = jam.link
+            realmJam.notes = jam.notes
         }
 
         realm.commitTransaction()
@@ -153,11 +159,12 @@ class RealmUtils {
             jamVars.NAME -> jam.name = newValue
             jamVars.LINK -> jam.link = newValue
             jamVars.LOCATION -> jam.location = newValue
+            jamVars.NOTES -> jam.notes = newValue
         }
         realm.commitTransaction()
     }
 
-    fun editJam(jamID: String, jamName: String, jamLocation: String, jamLink: String) {
+    fun editJam(jamID: String, jamName: String, jamLocation: String, jamLink: String, jamNotes: String) {
         val realm = startRealm()
         realm.beginTransaction()
 
@@ -165,6 +172,7 @@ class RealmUtils {
         jam!!.name = jamName
         jam.location = jamLocation
         jam.link = jamLink
+        jam.notes = jamNotes
 
         realm.commitTransaction()
         closeRealm(realm)
@@ -207,6 +215,7 @@ class RealmUtils {
                 jamVars.LINK -> jam.link = value
                 jamVars.LOCATION -> jam.location = value
                 jamVars.NAME -> jam.name = value
+                jamVars.NOTES -> jam.notes = value
             }
         }
         realm.close()

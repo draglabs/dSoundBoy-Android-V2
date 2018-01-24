@@ -13,28 +13,20 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
-import android.support.v4.view.MotionEventCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.*
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
-import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
-import com.draglabs.dsoundboy.dsoundboy.ViewAdapters.CustomAdapter
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
@@ -48,7 +40,6 @@ import kotlinx.android.synthetic.main.content_test_nav.*
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import omrecorder.Recorder
-import org.w3c.dom.Text
 import java.util.*
 
 /**
@@ -194,6 +185,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 intent.putExtra("jamID", PrefUtilsKt.Functions().retrieveJamID(this))
                 intent.putExtra("jamName", PrefUtilsKt.Functions().retrieveJamName(this))
                 intent.putExtra("jamLocation", "ActionSpot")
+                intent.putExtra("jamNotes", "hi") // edit later, maybe get from Realm
                 startActivity(intent)
                 return@setOnDragListener true
             } else {
@@ -265,7 +257,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun registerUser() {
         LogUtils.debug("Registering User", "Done")
 
-        APIutilsKt().performRegisterUser(this, this)
+        APIutilsKt.UserFunctions.performRegisterUser(this, this)
 
         LogUtils.debug("Registered User", "Done")
         LogUtils.debug("New UUID", PrefUtilsKt.Functions().retrieveUUID(this))
@@ -399,16 +391,16 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onStart() {
-        super.onStart()
         locationUtils?.onStart(locationVars)
+        super.onStart()
         /*if (jams.size == 0) {
             getJams()
         }*/
     }
 
     override fun onStop() {
-        super.onStop()
         locationUtils?.onStop(locationVars)
+        super.onStop()
     }
 
     override fun onConnectionSuspended(p0: Int) {

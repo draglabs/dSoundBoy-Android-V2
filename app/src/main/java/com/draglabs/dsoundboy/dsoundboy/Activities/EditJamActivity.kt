@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 
@@ -23,6 +22,7 @@ class EditJamActivity : AppCompatActivity() {
     private lateinit var jamID: String
     private lateinit var jamName: String
     private lateinit var jamLocation: String
+    private lateinit var jamNotes: String
 
     private lateinit var enteredJamName: EditText
     private lateinit var enteredJamLocation: EditText
@@ -47,6 +47,7 @@ class EditJamActivity : AppCompatActivity() {
         jamID = upperIntent.getStringExtra("jamID")
         jamName = upperIntent.getStringExtra("jamName")
         jamLocation = upperIntent.getStringExtra("jamLocation")
+        jamNotes = upperIntent.getStringExtra("jamNotes")
     }
 
     private fun setFields() {
@@ -60,6 +61,7 @@ class EditJamActivity : AppCompatActivity() {
     private fun setText() {
         enteredJamName.setText(jamName)
         enteredJamLocation.setText(jamLocation)
+        enteredJamNotes.setText(jamNotes)
     }
 
     private fun setListener() {
@@ -70,6 +72,6 @@ class EditJamActivity : AppCompatActivity() {
     }
 
     private fun submitChanges() {
-        APIutilsKt().performUpdateJam(jamID, enteredJamName.text.toString(), enteredJamLocation.text.toString(), enteredJamNotes.text.toString())
+        APIutilsKt.JamFunctions.performUpdateJam(jamID, enteredJamName.text.toString(), enteredJamLocation.text.toString(), enteredJamNotes.text.toString())
     }
 }

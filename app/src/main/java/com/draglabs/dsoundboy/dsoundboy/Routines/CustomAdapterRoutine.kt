@@ -4,19 +4,14 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.view.View
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Activities.EditJamActivity
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
-import com.draglabs.dsoundboy.dsoundboy.R.id.export_progress_bar
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
-import kotlinx.coroutines.experimental.async
 
 /**
  * Created by davrukin on 1/18/18.
@@ -31,6 +26,7 @@ class CustomAdapterRoutine {
         intent.putExtra("jamID", jam.jamID)
         intent.putExtra("jamName", jam.name)
         intent.putExtra("jamLocation", jam.location) // add notes field too
+        intent.putExtra("jamNotes", jam.notes)
 
         context.startActivity(intent)
         // TODO: open up a new activity that shows the edit fields, and saves them by calling the UpdateJam API
@@ -46,7 +42,7 @@ class CustomAdapterRoutine {
         LogUtils.debug("Export JamID", jamID)
         LogUtils.debug("Export Link", link)
 
-        APIutilsKt().getJamDetails(context, jamID)
+        APIutilsKt.JamFunctions.getJamDetails(context, jamID)
 
         val newLink = checkLink(context, jamID, link)
         LogUtils.debug("NewLink upon first click", newLink)
@@ -66,7 +62,7 @@ class CustomAdapterRoutine {
             // TODO: run it through the get jam details for the appropriate jam and extract that link
             val newLink = performApiCalls(context, jamID, 1)
             if (newLink == "") {
-                APIutilsKt().performCompressor(context, jamID)
+                APIutilsKt.JamFunctions.performCompressor(context, jamID)
                 return performApiCalls(context, jamID, 2)
             } else {
                 return newLink // this return is currently just temporary
@@ -77,7 +73,7 @@ class CustomAdapterRoutine {
     }
 
     private fun performApiCalls(context: Context, jamID: String, instance: Int): String {
-        APIutilsKt().getJamDetails(context, jamID)
+        APIutilsKt.JamFunctions.getJamDetails(context, jamID)
         val newLink = PrefUtilsKt.Functions().retrieveLink(context) // add suspend & async
         LogUtils.debug("Retrieved Link $instance", newLink)
         return newLink

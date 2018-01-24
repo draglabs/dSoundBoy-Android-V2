@@ -4,13 +4,11 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
-import android.app.Activity
 import android.content.Context
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import io.realm.Realm
 import io.realm.RealmResults
-import java.util.*
 
 /**
  * Created by davrukin on 1/9/2018.
@@ -20,7 +18,7 @@ class ListOfJamsRoutine {
 
     fun getJams(realm: Realm, context: Context): RealmResults<JamViewModel>? {
         //APIutilsKt().performGetUserActivityArray(context)
-        APIutilsKt().getUserActivity(context)
+        APIutilsKt.UserFunctions.getUserActivity(context)
         //val itemsList = PrefUtilsKt.Functions().retrieveJams(context)
         //val realm = RealmUtils().startRealm()
         val itemsList = RealmUtils().retrieveJams(realm)
