@@ -4,8 +4,12 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
+import android.telephony.SmsManager
+import android.widget.ShareActionProvider
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Activities.EditJamActivity
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
@@ -51,24 +55,35 @@ class CustomAdapterRoutine {
         Toast.makeText(context, "Email sent!", Toast.LENGTH_LONG).show()
     }
 
-    fun clickShare(context: Context, jamID: String, link: String) {
+    fun clickShare(context: Context, jam: JamViewModel) {
         Toast.makeText(context, "Share Button Clicked", Toast.LENGTH_LONG).show()
         // TODO: add a share menu where I can share to multiple apps
-        val newLink = checkLink(context, jamID, link)
+        var newLink = checkLink(context, jam.jamID, jam.link)
+
+        if (newLink == "") {
+            newLink = "Link not yet exported."
+        }
+
+        val sendIntent = Intent(Intent.ACTION_VIEW)
+        sendIntent.data = Uri.parse("smsto:")
+        sendIntent.type = "vnd.android-dir/mms-sms"
+        sendIntent.putExtra("address", "(555) 555-5555")
+        sendIntent.putExtra("sms_body", "Here's a link to your new jam! Text it to download anywhere. $newLink")
+        context.startActivity(sendIntent)
     }
 
     private fun checkLink(context: Context, jamID: String, link: String): String {
-        if (link == "not working") {
+        return if (link == "not working") {
             // TODO: run it through the get jam details for the appropriate jam and extract that link
             val newLink = performApiCalls(context, jamID, 1)
-            if (newLink == "") {
+            return if (newLink == "") {
                 APIutilsKt.JamFunctions.performCompressor(context, jamID)
-                return performApiCalls(context, jamID, 2)
+                performApiCalls(context, jamID, 2)
             } else {
-                return newLink // this return is currently just temporary
+                newLink // this return is currently just temporary
             }
         } else {
-            return link
+            link
         }
     }
 

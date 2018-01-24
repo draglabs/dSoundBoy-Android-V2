@@ -85,7 +85,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
     }
 
     fun addButton(string: String, `object`: Any) {
-        buttons.put(string, `object`)
+        buttons[string] = `object`
     }
 
     fun clickContinueButton(view: View) {
@@ -112,7 +112,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
         /**
          * Id to identity READ_CONTACTS permission request.
          */
-        private val REQUEST_READ_CONTACTS = 0
+        private const val REQUEST_READ_CONTACTS = 0
 
         /**
          * A dummy authentication store containing known user names and passwords.

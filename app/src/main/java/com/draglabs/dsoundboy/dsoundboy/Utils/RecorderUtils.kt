@@ -170,7 +170,7 @@ class RecorderUtils(private val context: Context, private val activity: Activity
      */
     fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         when (requestCode) {
-            1 -> if (grantResults.size > 0) {
+            1 -> if (grantResults.isNotEmpty()) {
                 val storagePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED
                 val recordPermission = grantResults[1] == PackageManager.PERMISSION_GRANTED
 

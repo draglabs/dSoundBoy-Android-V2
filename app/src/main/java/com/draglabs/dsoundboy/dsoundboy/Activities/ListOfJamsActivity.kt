@@ -30,7 +30,7 @@ class ListOfJamsActivity : AppCompatActivity() {
     private lateinit var customAdapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
 
-    private var realm = RealmUtils().startRealm()
+    private lateinit var realm: Realm
 
     //private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
 
@@ -39,6 +39,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         setContentView(R.layout.content_list_of_jams)
         setSupportActionBar(toolbar)
 
+        realm = Realm.getDefaultInstance()
         val jams = getJams(realm) // show the view, populate data as it shows
         val listOfJams = prepareList(jams)
 
@@ -77,9 +78,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         if (jams != null) {
             val reversedJams = jams.reversed()
             // does this operation take a lot of time? maybe add the results in the other order instead?
-            for (name in reversedJams) {
-                list.add(name)
-            }
+            list += reversedJams
         }
 
         return list

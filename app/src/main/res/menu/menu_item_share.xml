@@ -1,0 +1,12 @@
+<!--
+  ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+  -->
+
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_item_share"
+        android:title="Share"
+        app:showAsAction="ifRoom"
+        app:actionProviderClass="android.widget.ShareActionProvider" />
+</menu>

@@ -49,9 +49,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     //var recorderUtils = RecorderUtils(this, null, this)
     //lateinit var homeRoutineKt: HomeRoutineKt
-    lateinit var startTime: Date
-    lateinit var endTime: Date
-    var buttons = HashMap<String, Any>()
+    private lateinit var startTime: Date
+    private lateinit var endTime: Date
+    private var buttons = HashMap<String, Any>()
     /*val apiInterface by lazy {
         ApiInterface.create()
     }*/
@@ -68,11 +68,11 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                             val fastestInterval: Long = 2000)
     private var locationVars = LocationVars()
 
-    var locationUtils: LocationUtils? = null
+    private var locationUtils: LocationUtils? = null
 
-    private var jams: RealmResults<JamViewModel>? = null
+    //private var jams: RealmResults<JamViewModel>? = null
 
-    private var realm = RealmUtils().startRealm()
+    //private var realm = RealmUtils().startRealm()
 
     private lateinit var jamPinView: Button
     private lateinit var rec: Button
@@ -99,8 +99,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //customAdapter = CustomAdapter(this, jams)
         //recyclerView.adapter = customAdapter
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
@@ -344,11 +343,11 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
+        return when (item.itemId) {
             R.id.action_settings -> {
                 startActivity(Intent(this, SettingsActivity::class.java))
-                return true
-            } else -> return super.onOptionsItemSelected(item)
+                true
+            } else -> super.onOptionsItemSelected(item)
         }
     }
 
@@ -426,19 +425,19 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     //permission is automatically granted on sdk<23 upon installation
     private val isReadStoragePermissionGranted: Boolean
         get() {
-            if (Build.VERSION.SDK_INT >= 23) {
+            return if (Build.VERSION.SDK_INT >= 23) {
                 if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
                     LogUtils.debug("Permissions", "Permission is granted1")
-                    return true
+                    true
                 } else {
 
                     LogUtils.debug("Permissions", "Permission is revoked1")
                     ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 3)
-                    return false
+                    false
                 }
             } else {
                 LogUtils.debug("Permissions", "Permission is granted1")
-                return true
+                true
             }
         }
 

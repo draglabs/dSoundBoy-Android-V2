@@ -7,8 +7,10 @@ import android.util.Log
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
+import com.facebook.FacebookSdk
 import io.realm.Realm
 
 
@@ -37,13 +39,21 @@ class MainActivity : AppCompatActivity() {
         //val UUID = prefUtils.uniqueUserID
         val UUID = PrefUtilsKt.Functions().retrieveUUID(this)
         val accessToken = AccessToken.getCurrentAccessToken()
+        val token = accessToken.token
+        val id = accessToken.userId
 
         if ((UUID == "not working") && accessToken == null) {
             val loginIntent = Intent(this, NewLoginActivity::class.java)
             startActivity(loginIntent)
+        } else if (accessToken == null) {
+            MainRoutine().facebookAuthorize(this)
+
         } else {
-            Log.d("FB ID: ", AccessToken.getCurrentAccessToken().userId)
-            Log.d("FB Access Token: ", AccessToken.getCurrentAccessToken().token)
+            if (token == null || id == null) {
+                MainRoutine().facebookAuthorize(this)
+            }
+            LogUtils.debug("FB ID: ", id)
+            LogUtils.debug("FB Access Token: ", token.toString())
             val homeIntent = Intent(this, TestNavActivity::class.java)
             startActivity(homeIntent)
         }

@@ -7,8 +7,11 @@ package com.draglabs.dsoundboy.dsoundboy
 import android.content.Context
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
+import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
+import io.realm.DynamicRealm
 import io.realm.Realm
 import io.realm.RealmConfiguration
+import io.realm.RealmMigration
 
 /**
  * Created by davrukin on 1/11/2018.
@@ -16,6 +19,7 @@ import io.realm.RealmConfiguration
  */
 
 class MyApplication : MultiDexApplication() {
+
     override fun onCreate() {
         super.onCreate()
         initializeRealm()
@@ -25,10 +29,29 @@ class MyApplication : MultiDexApplication() {
         // Initialize Realm. Should only be done once when the application starts.
         Realm.init(this)
 
-        val config = RealmConfiguration.Builder().build() // TYPE: RealmConfiguration // Creates the minimal configuration
+        /*val config = RealmConfiguration.Builder()
+            .schemaVersion(1)
+            .migration(MyMigration())
+            .build()*/ // TYPE: RealmConfiguration // Creates the minimal configuration
+
+        val config = RealmConfiguration.Builder()
+            .deleteRealmIfMigrationNeeded()
+            .build()
         // Realm.getPath gets path of the Realm file
 
         Realm.setDefaultConfiguration(config)
+    }
+
+    class MyMigration: RealmMigration {
+        override fun migrate(realm: DynamicRealm?, oldVersion: Long, newVersion: Long) {
+            val schema = realm!!.schema
+
+            if (oldVersion.equals(0)) {
+                schema.create("JamViewModel")
+                    .addField("notes", String::class.java)
+                //oldVersion++
+            }
+        }
     }
 
     override fun attachBaseContext(base: Context) {

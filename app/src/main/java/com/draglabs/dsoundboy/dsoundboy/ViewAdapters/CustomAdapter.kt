@@ -61,7 +61,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
         }
 
         companion object {
-            private val VIEW_KEY = "JAM"
+            private const val VIEW_KEY = "JAM"
         }
     }
 
@@ -84,7 +84,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
             holder.textJamInfo.text = jam.name
             holder.editButton.setOnClickListener { CustomAdapterRoutine().clickEdit(context, jam) }
             holder.exportButton.setOnClickListener { CustomAdapterRoutine().clickExport(context, jam.jamID, jam.link) }
-            holder.shareButton.setOnClickListener { CustomAdapterRoutine().clickShare(context, jam.jamID, jam.link) }
+            holder.shareButton.setOnClickListener { CustomAdapterRoutine().clickShare(context, jam) }
         }
         // TODO: call compressor api here with the user id and the jam id, retrieve the link, store it, and retrieve it when utilizing the share menu
         // TODO: edit opens up a dialog or a new activity where the fields can be edited and they then send an UpdateJam request

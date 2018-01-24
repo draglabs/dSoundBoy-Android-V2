@@ -53,7 +53,7 @@ class EnterInfoActivity : AppCompatActivity() {
      * Saves band info to app storage
      * @param view the view calling this method
      */
-    fun clickSave() {
+    fun clickSave(view: View) {
         val artistEmailText = email!!.text.toString()
         val recordingDescriptionText = description!!.text.toString()
         val artistNameText = artistName!!.text.toString()

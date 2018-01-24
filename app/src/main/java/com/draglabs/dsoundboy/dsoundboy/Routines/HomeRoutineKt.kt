@@ -1,5 +1,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -29,7 +30,7 @@ class HomeRoutineKt {
     //var recorderUtils: RecorderUtils? = null
     //var recorder: Recorder
     var path: String? = null
-    var recordButton: Button? = null
+    private var recordButton: Button? = null
 
     init {
         this.path = path
@@ -120,7 +121,6 @@ class HomeRoutineKt {
     /**
      * Submits the file to the server
      * @param view the view calling the method
-     * @param recorderUtils the recorder settings
      * @param startTime the recording's start time
      * @param endTime the recording's end time
      */
@@ -243,6 +243,7 @@ class HomeRoutineKt {
      * Creates the dialog to enter the new jam PIN
      * @param context the app context
      */
+    @SuppressLint("InflateParams")
     private fun showEnterJamPinDialog(context: Context, activity: Activity) {
         val inflater = activity.layoutInflater
         val alertLayout = inflater.inflate(R.layout.layout_join_jam_dialog, null)

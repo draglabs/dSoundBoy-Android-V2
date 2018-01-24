@@ -20,7 +20,7 @@ public class MyLocationModel {
     private double latitude;
     private double longitude;
     private String address;
-    private Context context;
+    private final Context context;
 
     /**
      * Default no-arg constructor for MyLocationModel, all fields set to ""

@@ -81,8 +81,8 @@ class ResponseModelKt {
             @SerializedName("name") var name: String,
             @SerializedName("user_id") var user_id: String,
             @SerializedName("coordinates") var coordinates: LongArray,
-            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>,
-            @SerializedName("recordings") var recordings: Array<Models.Recording>,
+            @SerializedName("collaborators") var collaborators: Any,
+            @SerializedName("recordings") var recordings: Any,
             @SerializedName("location") var location: String,
             @SerializedName("start_time") var start_time: String,
             @SerializedName("end_time") var end_time: String,
@@ -129,7 +129,7 @@ class ResponseModelKt {
             @SerializedName("end_time") var end_time: String,
             @SerializedName("location") var location: String,
             @SerializedName("notes") var notes: String,
-            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>,
+            @SerializedName("collaborators") var collaborators: Any,
             @SerializedName("link") var link: String
         )
     }
@@ -164,8 +164,8 @@ class ResponseModelKt {
             @SerializedName("name") var name: String,
             @SerializedName("user_id") var user_id: String,
             @SerializedName("coordinates") var coordinates: LongArray,
-            @SerializedName("collaborators") var collaborators: Array<Collaborator>,
-            @SerializedName("recordings") var recordings: Array<Recording>,
+            @SerializedName("collaborators") var collaborators: Any,
+            @SerializedName("recordings") var recordings: Any,
             @SerializedName("location") var location: String,
             @SerializedName("start_time") var start_time: String,
             @SerializedName("end_time") var end_time: String,
@@ -180,7 +180,7 @@ class ResponseModelKt {
             @SerializedName("end_time") var end_time: String,
             @SerializedName("location") var location: String,
             @SerializedName("notes") var notes: String,
-            @SerializedName("collaborators") var collaborators: Array<Models.Collaborator>,
+            @SerializedName("collaborators") var collaborators: Any,
             @SerializedName("link") var link: String
         )
     }

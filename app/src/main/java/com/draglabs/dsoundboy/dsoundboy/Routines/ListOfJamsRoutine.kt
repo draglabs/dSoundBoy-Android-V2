@@ -25,7 +25,7 @@ class ListOfJamsRoutine {
         LogUtils.debug("ItemsList in GetJams", itemsList.toString())
         //val list = FileUtils().stringToArrayList(itemsList)
 
-        realm.close()
+        //realm.close() // error was saying that the instance was already closed making it unusable, therefore disabled this line
         return itemsList
     }
 

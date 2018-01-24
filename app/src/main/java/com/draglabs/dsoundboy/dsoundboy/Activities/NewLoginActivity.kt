@@ -33,8 +33,6 @@ class NewLoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
-
-
         @Suppress("DEPRECATION")
         FacebookSdk.sdkInitialize(this)
         callbackManager = CallbackManager.Factory.create()
@@ -116,7 +114,7 @@ class NewLoginActivity : AppCompatActivity() {
      * Performs the Facebook Login
      * @param view the view calling the login
      */
-    fun clickFacebookLogin() {
+    fun clickFacebookLogin(view: View) {
         loginRoutineKt!!.clickFacebookLogin()
     }
 
@@ -124,7 +122,7 @@ class NewLoginActivity : AppCompatActivity() {
      * Clicking this takes the user to the DragLabs home page
      * @param view the view calling this method
      */
-    fun clickLogoLink() {
+    fun clickLogoLink(view: View) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"))
         startActivity(browserIntent)
     }

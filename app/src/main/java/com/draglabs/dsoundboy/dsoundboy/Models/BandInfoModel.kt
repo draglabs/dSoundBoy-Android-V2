@@ -7,17 +7,11 @@ package com.draglabs.dsoundboy.dsoundboy.Models
  * Created by davrukin on 8/16/17.
  */
 
-class BandInfoModel {
+class BandInfoModel(artistEmail: String, recordingDescription: String, artistName: String, recordingVenue: String) {
 
-    var artistEmail: String? = null
-    var recordingDescription: String? = null
-    var artistName: String? = null
-    var recordingVenue: String? = null
+    private var artistEmail: String? = artistEmail
+    private var recordingDescription: String? = recordingDescription
+    private var artistName: String? = artistName
+    private var recordingVenue: String? = recordingVenue
 
-    constructor(artistEmail: String, recordingDescription: String, artistName: String, recordingVenue: String) {
-        this.artistEmail = artistEmail
-        this.recordingDescription = recordingDescription
-        this.artistName = artistName
-        this.recordingVenue = recordingVenue
-    }
 }

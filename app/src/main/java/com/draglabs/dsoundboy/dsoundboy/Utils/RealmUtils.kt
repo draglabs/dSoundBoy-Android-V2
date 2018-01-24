@@ -6,7 +6,6 @@ package com.draglabs.dsoundboy.dsoundboy.Utils
 
 import android.content.Context
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
-import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Models.UserModel
 import io.realm.Realm
 import io.realm.RealmResults
@@ -18,21 +17,21 @@ import java.util.*
  */
 class RealmUtils {
 
-    private object userVars {
-        val UUID = "UUID"
-        val LAT = "lat"
-        val LNG = "lng"
-        val FB_NAME = "fbName"
-        val FB_EMAIL = "fbEmail"
-        val FB_IMAGE = "fbImage"
+    private object UserVars {
+        const val UUID = "UUID"
+        const val LAT = "lat"
+        const val LNG = "lng"
+        const val FB_NAME = "fbName"
+        const val FB_EMAIL = "fbEmail"
+        const val FB_IMAGE = "fbImage"
     }
 
-    private object jamVars {
-        val ID = "id"
-        val LINK = "link"
-        val LOCATION = "location"
-        val NAME = "name"
-        val NOTES = "notes"
+    private object JamVars {
+        const val ID = "id"
+        const val LINK = "link"
+        const val LOCATION = "location"
+        const val NAME = "name"
+        const val NOTES = "notes"
     }
 
     fun startRealm(): Realm {
@@ -156,10 +155,10 @@ class RealmUtils {
         //val jam = jams // makes sure that there exists the jam I want to access, currently non-null asserted call
         realm.beginTransaction()
         when (attribute) {
-            jamVars.NAME -> jam.name = newValue
-            jamVars.LINK -> jam.link = newValue
-            jamVars.LOCATION -> jam.location = newValue
-            jamVars.NOTES -> jam.notes = newValue
+            JamVars.NAME -> jam.name = newValue
+            JamVars.LINK -> jam.link = newValue
+            JamVars.LOCATION -> jam.location = newValue
+            JamVars.NOTES -> jam.notes = newValue
         }
         realm.commitTransaction()
     }
@@ -190,12 +189,12 @@ class RealmUtils {
         realm.executeTransaction {
             val user = realm.createObject(UserModel::class.java)
             when (attribute) {
-                userVars.UUID -> user.UUID = value
-                userVars.LAT -> user.lat = value
-                userVars.LNG -> user.lng = value
-                userVars.FB_NAME -> user.fbName = value
-                userVars.FB_EMAIL -> user.fbEmail = value
-                userVars.FB_IMAGE -> user.fbImage = value
+                UserVars.UUID -> user.UUID = value
+                UserVars.LAT -> user.lat = value
+                UserVars.LNG -> user.lng = value
+                UserVars.FB_NAME -> user.fbName = value
+                UserVars.FB_EMAIL -> user.fbEmail = value
+                UserVars.FB_IMAGE -> user.fbImage = value
             }
         }
         realm.close()
@@ -203,7 +202,7 @@ class RealmUtils {
 
     fun getAttributeFromUser(context: Context, realm: Realm, attribute: String) {
         val query = realm.where(UserModel::class.java) // TYPE: RealmQuery<UserModel>
-        query.equalTo(userVars.UUID, PrefUtilsKt.Functions().retrieveUUID(context))
+        query.equalTo(UserVars.UUID, PrefUtilsKt.Functions().retrieveUUID(context))
         val result = query.findFirst() // TYPE: RealmResults<UserModel>
     }
 
@@ -211,11 +210,11 @@ class RealmUtils {
         realm.executeTransaction {
             val jam = realm.createObject(JamViewModel::class.java)
             when (attribute) {
-                jamVars.ID -> jam.jamID = value
-                jamVars.LINK -> jam.link = value
-                jamVars.LOCATION -> jam.location = value
-                jamVars.NAME -> jam.name = value
-                jamVars.NOTES -> jam.notes = value
+                JamVars.ID -> jam.jamID = value
+                JamVars.LINK -> jam.link = value
+                JamVars.LOCATION -> jam.location = value
+                JamVars.NAME -> jam.name = value
+                JamVars.NOTES -> jam.notes = value
             }
         }
         realm.close()
