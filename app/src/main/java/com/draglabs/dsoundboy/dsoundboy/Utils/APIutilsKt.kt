@@ -248,12 +248,16 @@ class APIutilsKt {
                 return "Content-Type"
             }
             override fun getValue(): String {
-                return "multipart/form-data"
+                return "multipart/form-data; boundary=123456789"
             }
 
             @Throws(ParseException::class)
             override fun getElements(): Array<HeaderElement?> {
                 return arrayOfNulls<HeaderElement>(0)
+            }
+
+            override fun toString(): String {
+                return "Name: $name; Value: $value; Elements: $elements"
             }
         }, object : Header {
             override fun getName(): String {
@@ -268,6 +272,10 @@ class APIutilsKt {
             override fun getElements(): Array<HeaderElement?> {
                 return arrayOfNulls<HeaderElement>(1)
             }
+
+            override fun toString(): String {
+                return "Name: $name; Value: $value; Elements: $elements"
+            }
         })
     }
 
@@ -279,12 +287,12 @@ class APIutilsKt {
                                    endTime: String): RequestParams {
         val requestParams = RequestParams()
         requestParams.put("user_id", UUID)
-        requestParams.put("jam_id", jamID)
-        requestParams.put("location", location)
+        requestParams.put("id", jamID)
+        //requestParams.put("location", location)
         requestParams.put("start_time", startTime)
         requestParams.put("end_time", endTime)
         try {
-            requestParams.put("file_name", File(path))
+            requestParams.put("file_name", File(path), "application/octet-stream")
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
@@ -299,6 +307,9 @@ class APIutilsKt {
         val headers = standardHeader(UUID)
         val requestParams = jamRecordingUploadParams(UUID, jamID, path, notes, startTime, endTime)
         val url = "http://api.draglabs.com/api/v2.0/jam/upload"
+
+        LogUtils.debug("Headers being sent", "${headers[0]}, ${headers[1]}")
+        LogUtils.debug("RequestParams for Upload", requestParams.toString())
 
         upload(context, headers, requestParams, "audioFile", path, url, object: JsonHttpResponseHandler() {
             override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
@@ -345,7 +356,7 @@ class APIutilsKt {
 
     private fun upload(context: Context, headers: Array<Header>, requestParams: RequestParams, filename: String, path: String, url: String, asyncHttpResponseHandler: AsyncHttpResponseHandler) {
         val asyncHttpClient = AsyncHttpClient(true, 80, 433)
-        val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, headers[0].value, asyncHttpResponseHandler)
+        val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, "multipart/form-data; boundary=123456789", asyncHttpResponseHandler)
         if (requestHandle.isFinished) {
             LogUtils.debug("Upload Result: ", "Done with Upload. Tag: " + requestHandle.tag)
         } else {
@@ -353,8 +364,8 @@ class APIutilsKt {
         }
     }
 
-    fun performRegisterUser(context: Context) {
-        val call = APIparamsKt().callRegisterUser()
+    fun performRegisterUser(activity: Activity, context: Context) {
+        val call = APIparamsKt().callRegisterUser(activity)
 
         call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
             override fun onResponse(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, response: Response<ResponseModelKt.UserFunctions.RegisterUser>) {

@@ -16,15 +16,15 @@ import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
+import android.support.v4.view.MotionEventCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -83,12 +83,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private var realm = RealmUtils().startRealm()
 
-    lateinit var jamPinView: Button
-    lateinit var rec: Button
-    lateinit var stop: Button
+    private lateinit var jamPinView: Button
+    private lateinit var rec: Button
+    private lateinit var stop: Button
 
-    lateinit var recorder: Recorder
-    lateinit var recorderUtils: RecorderUtils
+    private lateinit var recorder: Recorder
+    private lateinit var recorderUtils: RecorderUtils
+
+    private lateinit var gestureDetector: GestureDetectorCompat
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -140,6 +142,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         jamPinView = findViewById<Button>(R.id.jam_pin_view)
         jamPinView.bringToFront()
 
+        gestureDetector = GestureDetectorCompat(this, MyGestureListener())
+
         clickTestAuth()
         setListeners()
         async {setUserView()}
@@ -179,8 +183,22 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             clickJoin()
         }
 
-        jam_pin_view.setOnClickListener {
+        jamPinView.setOnClickListener {
             updatePinView()
+        }
+
+        jamPinView.setOnDragListener { view, event ->
+            if (event.action == MotionEvent.ACTION_UP) {
+                LogUtils.debug("Motion Event", "Action Up")
+                val intent = Intent(this, EditJamActivity::class.java)
+                intent.putExtra("jamID", PrefUtilsKt.Functions().retrieveJamID(this))
+                intent.putExtra("jamName", PrefUtilsKt.Functions().retrieveJamName(this))
+                intent.putExtra("jamLocation", "ActionSpot")
+                startActivity(intent)
+                return@setOnDragListener true
+            } else {
+                return@setOnDragListener false
+            }
         }
 
         /*button_test_auth.setOnClickListener {
@@ -191,6 +209,42 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             LogUtils.debug("Latitude", PrefUtilsKt.Functions().retrieveLatitude(this))
             LogUtils.debug("Longitude", PrefUtilsKt.Functions().retrieveLongitude(this))
         }*/
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        gestureDetector.onTouchEvent(event)
+        return super.onTouchEvent(event)
+        /*val action = MotionEventCompat.getActionMasked(event)
+        if (action == MotionEvent.ACTION_UP) {
+            LogUtils.debug("Motion Event", "Action Up")
+            val intent = Intent(this, EditJamActivity::class.java)
+            intent.putExtra("jamID", PrefUtilsKt.Functions().retrieveJamID(this))
+            intent.putExtra("jamName", PrefUtilsKt.Functions().retrieveJamName(this))
+            intent.putExtra("jamLocation", "ActionSpot")
+            startActivity(intent)
+            return true
+        } else {
+            return super.onTouchEvent(event)
+        }*/
+    }
+
+    private class MyGestureListener : GestureDetector.SimpleOnGestureListener() {
+        private val DEBUG_TAG = "Gestures"
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            LogUtils.debug("Action", "OnDown, event: $e")
+            return super.onDown(e)
+        }
+
+        override fun onFling(e1: MotionEvent?, e2: MotionEvent?, velocityX: Float, velocityY: Float): Boolean {
+            LogUtils.debug("Action", "OnFling, e1: $e1, e2: $e2")
+            return super.onFling(e1, e2, velocityX, velocityY)
+        }
+
+        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            LogUtils.debug("Action", "OnSingleTapUp, event: $e")
+            return super.onSingleTapUp(e)
+        }
     }
 
     private suspend fun setUserView() {
@@ -211,7 +265,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun registerUser() {
         LogUtils.debug("Registering User", "Done")
 
-        APIutilsKt().performRegisterUser(this)
+        APIutilsKt().performRegisterUser(this, this)
 
         LogUtils.debug("Registered User", "Done")
         LogUtils.debug("New UUID", PrefUtilsKt.Functions().retrieveUUID(this))

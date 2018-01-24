@@ -9,6 +9,7 @@ import android.os.Environment
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.google.gson.Gson
 import org.joda.time.DateTime
+import java.io.File
 import java.util.*
 
 /**
@@ -22,7 +23,18 @@ class FileUtils {
     private val extension = ".wav"
 
     fun generateAndSaveFilename(context: Context): String {
-        val name = getUsername(context) + " <-> " + getTime() + " - " + getJamName(context)
+        val folder = File(rootPath)
+        var success = true
+        if (!folder.exists()) {
+            success = folder.mkdirs()
+        }
+        if (success) {
+            LogUtils.debug("Folder Creation", "Success")
+        } else {
+            LogUtils.debug("Folder Creation", "Failure")
+        }
+
+        val name = getUsername(context) + " - " + getTime() + " <-> " + getJamName(context)
         val localPath = rootPath + name + extension
 
         PrefUtilsKt.Functions().storeLocalPath(context, localPath)

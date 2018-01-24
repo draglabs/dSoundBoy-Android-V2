@@ -64,7 +64,7 @@ class NewLoginActivity : AppCompatActivity() {
 
                 //loginRoutineKt!!.saveFacebookCredentials(loginResult)
                 //loginRoutineKt!!.authenticateUser()
-                APIutilsKt().performRegisterUser(this@NewLoginActivity)
+                APIutilsKt().performRegisterUser(this@NewLoginActivity,this@NewLoginActivity)
             }
 
             override fun onCancel() {

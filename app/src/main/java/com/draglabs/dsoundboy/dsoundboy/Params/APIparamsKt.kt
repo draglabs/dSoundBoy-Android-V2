@@ -4,14 +4,19 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Params
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.ArrayMap
+import com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Models.StringsModelKt
+import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
+import com.facebook.FacebookSdk
 import com.facebook.Profile
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -116,17 +121,27 @@ class APIparamsKt {
         //return userService.uploadJam(requestBody, fileBody)
     }
 
-    fun callRegisterUser(): Call<ResponseModelKt.UserFunctions.RegisterUser> {
+    fun callRegisterUser(activity: Activity): Call<ResponseModelKt.UserFunctions.RegisterUser> {
+        checkFacebookID(activity)
         val facebookID = Profile.getCurrentProfile().id
         val accessToken = AccessToken.getCurrentAccessToken().token
 
         //val userService = RetrofitClient().getClient().create(ApiInterface::class.java)
         val params = ArrayMap<String, Any>()
-        params.put(this.facebook_id, facebookID)
-        params.put(this.access_token, accessToken)
+        params[this.facebook_id] = facebookID
+        params[this.access_token] = accessToken
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.registerUser(requestBody)
+    }
+
+    private fun checkFacebookID(activity: Activity) {
+        val facebookID = Profile.getCurrentProfile().id
+        val accessToken = AccessToken.getCurrentAccessToken().token
+        if (facebookID == null || accessToken == null) {
+            MainRoutine().facebookAuthorize(activity)
+            //activity.startActivity(Intent(activity, MainActivity::class.java))
+        }
     }
 
     fun callGetUserActivity(context: Context): Call<ResponseModelKt.UserFunctions.GetUserActivity> {
@@ -141,8 +156,8 @@ class APIparamsKt {
         val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
         //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
         val params = ArrayMap<String, Any>()
-        params.put(this.user_id, uuid)
-        params.put(this.jam_id, jamID)
+        params[this.user_id] = uuid
+        params[this.jam_id] = jamID
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.compress(requestBody)

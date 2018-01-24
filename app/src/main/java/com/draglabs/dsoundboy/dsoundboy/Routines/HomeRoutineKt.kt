@@ -296,13 +296,13 @@ class HomeRoutineKt {
         return arrayOf(e0, e1, e2)
     }
 
-    private fun checkUUID(context: Context): String {
+    private fun checkUUID(activity: Activity, context: Context): String {
         var UUID = PrefUtilsKt.Functions().retrieveUUID(context)
         return if (UUID != "not working") {
             Log.v("Checked UUID:", UUID)
             UUID
         } else {
-            APIutilsKt().performRegisterUser(context)
+            APIutilsKt().performRegisterUser(activity, context)
             UUID = PrefUtilsKt.Functions().retrieveUUID(context)
             Log.v("Refreshed UUID:", UUID)
             UUID

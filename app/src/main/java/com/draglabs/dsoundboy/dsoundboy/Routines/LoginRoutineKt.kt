@@ -89,7 +89,7 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
     }
 
     fun clickContinueButton(view: View) {
-        APIutilsKt().performRegisterUser(context)
+        APIutilsKt().performRegisterUser(activity, context)
 
         Snackbar.make(view, "Unique ID: " + PrefUtilsKt.Functions().retrieveUUID(context), Snackbar.LENGTH_LONG).show()
         val intent = Intent(activity, TestNavActivity::class.java)
