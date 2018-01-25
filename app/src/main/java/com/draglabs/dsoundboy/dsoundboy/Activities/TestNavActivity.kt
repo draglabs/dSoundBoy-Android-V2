@@ -244,8 +244,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         val accessToken = AccessToken.getCurrentAccessToken()
         val graphRequest = GraphRequest.newMeRequest(accessToken) { `object`, response ->
-            Log.v("Main: ", response.toString())
-            loginRoutineKt.setProfileView(`object`)
+            if (`object` != null) {
+                LogUtils.debug("Main: ", response.toString())
+                loginRoutineKt.setProfileView(`object`) // TODO: save data even for when offline
+            }
         }
         val parameters = Bundle()
         parameters.putString("fields", "id,name,email")

@@ -7,10 +7,12 @@ package com.draglabs.dsoundboy.dsoundboy.Activities
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.widget.ProgressBar
+import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
@@ -27,6 +29,7 @@ class ListOfJamsActivity : AppCompatActivity() {
     // TODO: use kotlin coroutine to run getJams() async and await response in order to populate the cards
 
     private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
     private lateinit var customAdapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -46,6 +49,9 @@ class ListOfJamsActivity : AppCompatActivity() {
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
+        swipeRefreshLayout = SwipeRefreshLayout(this)
+        swipeRefreshLayout.setOnRefreshListener { refreshItems() }
+
         customAdapter = CustomAdapter(this, listOfJams)
         recyclerView.adapter = customAdapter
 
@@ -64,6 +70,29 @@ class ListOfJamsActivity : AppCompatActivity() {
         if (orientation == Configuration.ORIENTATION_PORTRAIT) {
             cardView.layoutManager = GridLayoutManager(this, 2, GridLayoutManager.VERTICAL, false)
         }*/
+    }
+
+    private fun refreshItems() {
+        // load items
+        realm = Realm.getDefaultInstance()
+        val jams = getJams(realm) // show the view, populate data as it shows
+        val listOfJams = prepareList(jams)
+
+        recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        linearLayoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = linearLayoutManager // TODO: doesn't refresh, does it indefinitely
+
+        customAdapter = CustomAdapter(this, listOfJams)
+        recyclerView.adapter = customAdapter
+        // load complete
+        onItemsLoadComplete()
+    }
+
+    private fun onItemsLoadComplete() {
+        // update the adapter and notify data set changed
+        Toast.makeText(this, "Jams Updated", Toast.LENGTH_LONG).show()
+        // stop refresh animation
+        swipeRefreshLayout.isRefreshing = false
     }
 
     private fun prepareList(jams: RealmResults<JamViewModel>?): ArrayList<JamViewModel> {

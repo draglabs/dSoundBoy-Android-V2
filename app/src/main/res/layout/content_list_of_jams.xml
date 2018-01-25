@@ -3,9 +3,10 @@
   ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipe_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorDLBlue2"
@@ -27,4 +28,4 @@
 
 
     </android.support.v7.widget.RecyclerView>
-</LinearLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
