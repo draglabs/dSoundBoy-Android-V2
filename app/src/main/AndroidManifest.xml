@@ -16,6 +16,7 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <!-- <uses-permission android:name="android.permission.SEND_SMS" /> -->
 
+
     <!-- To auto-complete the email text field in the login form with user's emails -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.READ_PROFILE" />
@@ -170,7 +171,16 @@
             android:parentActivityName=".Activities.ListOfJamsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.ListOfJamsActivity"/>
+                android:value=".Activities.ListOfJamsActivity" />
+        </activity>
+        <activity
+            android:name=".Activities.InstructionsActivity"
+            android:label="@string/title_activity_instructions"
+            android:parentActivityName=".Activities.TestNavActivity"
+            android:theme="@style/DragLabsNew">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity" />
         </activity>
     </application>
 

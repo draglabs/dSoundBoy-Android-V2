@@ -71,7 +71,7 @@ object StringsModelKt {
         const val COORDINATES = "coordinates"
         const val IS_CURRENT = "is_current"
         const val COLLABORATORS = "collaborators"
-        const val FILE_NAME = "file_name"
+        const val FILE_NAME = "audioFile"
         const val LINK = "link"
         const val FB_EMAIL = "fb_email"
         const val FB_ID = "fb_id"

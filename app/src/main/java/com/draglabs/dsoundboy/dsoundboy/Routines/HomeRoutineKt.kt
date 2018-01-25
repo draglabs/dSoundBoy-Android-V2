@@ -152,14 +152,14 @@ class HomeRoutineKt {
                 recordingStartTime, recordingEndTime,
                 view)*/
 
-        //val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+        val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
         val jamName = PrefUtilsKt.Functions().retrieveJamName(context)
-        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
         val recordingPath = PrefUtilsKt.Functions().retrieveLocalPath(context)
 
-        //APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
-        APIutilsKt.JamFunctions.jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
+        APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
+        //APIutilsKt.JamFunctions.jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationCompatBuilder = new NotificationCompat.Builder(context);
@@ -304,6 +304,11 @@ class HomeRoutineKt {
             Log.v("Refreshed UUID:", UUID)
             UUID
         }
+    }
+
+    fun clickWifiUploadsButton(view: View) {
+        Snackbar.make(view, "Under Construction", Snackbar.LENGTH_LONG).show()
+
     }
 
 }

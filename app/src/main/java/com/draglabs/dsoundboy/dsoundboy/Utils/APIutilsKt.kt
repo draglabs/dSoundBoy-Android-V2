@@ -27,6 +27,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
 import android.app.Activity
+import android.os.Environment
 import org.json.JSONArray
 
 
@@ -364,8 +365,9 @@ class APIutilsKt {
                 //requestParams.put("location", location)
                 requestParams.put("start_time", startTime)
                 requestParams.put("end_time", endTime)
+                val testPath = "${Environment.getExternalStorageDirectory()}/Download/realm-java-4.3.3.zip"
                 try {
-                    requestParams.put("file_name", File(path), "application/octet-stream")
+                    requestParams.put("audioFile", File(testPath), "application/octet-stream")
                 } catch (e: FileNotFoundException) {
                     e.printStackTrace()
                 }

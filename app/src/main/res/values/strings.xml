@@ -269,4 +269,29 @@
     <string name="start_recording_text">Rec</string>
 
     <string name="activity_name_edit_jam">Edit Jam</string>
+    <string name="title_activity_instructions">Instructions</string>
+
+    <!-- Strings related to the Instructions screen -->
+
+    <string name="instructions_activity_title_about">About</string>
+    <string name="instructions_activity_section_about">
+        Digital Sound Boy is a mobile multi-track recording studio for your pocket. Hook up multiple phones together with a single PIN, start recording, and export!
+    </string>
+    <string name="instructions_activity_title_how_to">How to Use</string>
+    <string name="instructions_activity_section_how_to">
+        On the home screen, click \"Start\" to join a jam.
+        Your jam PIN will be shown at the bottom.
+        Give this PIN to your collaborators so they can join a jam on their device.
+        To join a jam, click \"Join\" and type it in.
+        If the PIN doesn\'t immediately show up, click it to refresh it.
+        Once you\'re in, click \"Rec\" to start recording, and \"Stop\" to stop recording.
+        Digital Sound Boy will then upload your recording under your name and under the current jam.
+        To view your jams, open the hamburger menu on the top left corner and click \"View Recordings\"
+        A list will show up of all jams.
+        Click \"Export\" to receive and email with a .zip file containing all your recordings and an .xml file you can open in Adobe Audition.
+        Click \"Edit\" to edit the jam\'s name, location, and notes.
+        Click the \"Share\" button to send the same link as an SMS to someone.
+        Enjoy!
+    </string>
+    <string name="instructions_activity_title">Instructions</string>
 </resources>

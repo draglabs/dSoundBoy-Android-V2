@@ -105,14 +105,14 @@ class APIparamsKt {
         params[this.end_time] = endTime
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)*/
 
-        val file = File(filePath)
+        val file = File(filePath) // TODO: IF IT FAILS, TRY AGAIN 5X, OTHER WISE SHOW SNACKBAR
 
         //val multiPartBodyParams = createMultipartBody("", "", requestBody)
-        val multiPartBodyFile = createMultipartBody("file", file.name, RequestBody.create(MediaType.parse("*/*"), file))
+        val multiPartBodyFile = createMultipartBody("audioFile", file.name, RequestBody.create(MediaType.parse("application/octet-stream"), file))
         val multiPartBodyUserID = MultipartBody.Part.createFormData(this.user_id, userID)
         val multiPartBodyFileName = MultipartBody.Part.createFormData(this.file_name, fileName)
         val multiPartBodyLocation = MultipartBody.Part.createFormData(this.location, location)
-        val multiPartBodyJamID = MultipartBody.Part.createFormData(this.jam_id, jamID)
+        val multiPartBodyJamID = MultipartBody.Part.createFormData(this.id, jamID)
         val multiPartBodyStartTime = MultipartBody.Part.createFormData(this.start_time, startTime)
         val multiPartBodyEndTime = MultipartBody.Part.createFormData(this.end_time, endTime)
 

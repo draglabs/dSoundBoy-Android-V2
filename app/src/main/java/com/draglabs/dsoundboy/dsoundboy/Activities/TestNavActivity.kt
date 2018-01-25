@@ -51,6 +51,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     //lateinit var homeRoutineKt: HomeRoutineKt
     private lateinit var startTime: Date
     private lateinit var endTime: Date
+    private lateinit var filename: String
     private var buttons = HashMap<String, Any>()
     /*val apiInterface by lazy {
         ApiInterface.create()
@@ -109,9 +110,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //println(PrefUtilsKt().retrieveUUID(this))
         //PrefUtilsKt.Functions().deleteUUID(this)
         //PrefUtilsKt.Functions().deletePIN(this)
-        val filename = FileUtils().generateAndSaveFilename(this)
+        //filename = FileUtils().generateAndSaveFilename(this)
         recorderUtils = RecorderUtils(this, this)
-        recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
+        //recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
 
         initialize()
 
@@ -158,6 +159,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_rec_new.setOnClickListener { view ->
+            filename = FileUtils().generateAndSaveFilename(this)
+            recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
             clickRec(this, view, recorder)
             rec.visibility = View.GONE
             stop.visibility = View.VISIBLE
@@ -376,6 +379,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             R.id.nav_band_info -> {
                 // optional or modify
                 startActivity(Intent(this, EnterInfoActivity::class.java))
+            }
+            R.id.nav_instructions -> {
+                startActivity(Intent(this, InstructionsActivity::class.java))
             }
             R.id.nav_settings -> {
                 // show settings such as recording settings

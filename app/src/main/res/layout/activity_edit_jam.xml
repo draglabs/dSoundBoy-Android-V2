@@ -82,11 +82,6 @@
         android:textSize="14sp"
         android:labelFor="@id/entered_jam_notes"/>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="169dp"
-        app:srcCompat="@color/colorDLEditJamBG" />
-
     <Button
         android:id="@+id/edit_jam_button_done"
         android:layout_width="match_parent"

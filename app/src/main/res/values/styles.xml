@@ -55,4 +55,8 @@
 
     <style name="DragLabs.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="DragLabsNew.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="DragLabsNew.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>
