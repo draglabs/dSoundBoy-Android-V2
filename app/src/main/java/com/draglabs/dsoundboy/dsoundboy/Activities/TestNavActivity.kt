@@ -22,6 +22,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import android.widget.Button
+import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
@@ -323,10 +324,15 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private fun updatePinView() {
         val pin = PrefUtilsKt.Functions().retrievePIN(this)
+        val currentJamID = PrefUtilsKt.Functions().retrieveJamID(this)
+        val currentJamDetails = APIutilsKt.JamFunctions.getJamDetails(this, currentJamID)
+        //RealmUtils().retrieve
+
         if (pin == "not working") {
             jamPinView.text = "No Jam PIN"
+            Toast.makeText(this, "API currently offline. Please check again later.", Toast.LENGTH_LONG).show()
         } else {
-            jamPinView.text = pin
+            jamPinView.text = pin // TODO: Instead of retrieving the PIN, perform an API call to get the current jams pin
         }
     }
 

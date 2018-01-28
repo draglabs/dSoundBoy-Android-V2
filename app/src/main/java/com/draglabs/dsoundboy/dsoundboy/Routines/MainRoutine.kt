@@ -25,9 +25,9 @@ class MainRoutine {
     @Suppress("DEPRECATION")
     fun facebookAuthorize(activity: Context) {
 
-        FacebookSdk.setApplicationId(activity.getString(R.string.facebook_app_id))
-        FacebookSdk.sdkInitialize(activity)
-        AppEventsLogger.activateApp(activity)
+        //FacebookSdk.setApplicationId(activity.getString(R.string.facebook_app_id))
+        //FacebookSdk.sdkInitialize(activity)
+        //AppEventsLogger.activateApp(activity)
 
         try {
             val packageInfo = activity.packageManager.getPackageInfo("com.draglabs.dsoundboy.dsoundboy", GET_SIGNATURES)

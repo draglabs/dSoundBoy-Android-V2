@@ -33,8 +33,6 @@ class ListOfJamsActivity : AppCompatActivity() {
     private lateinit var customAdapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
 
-    private lateinit var realm: Realm
-
     //private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,8 +40,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         setContentView(R.layout.content_list_of_jams)
         setSupportActionBar(toolbar)
 
-        realm = Realm.getDefaultInstance()
-        val jams = getJams(realm) // show the view, populate data as it shows
+        val jams = getJams() // show the view, populate data as it shows
         val listOfJams = prepareList(jams)
 
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
@@ -74,8 +71,7 @@ class ListOfJamsActivity : AppCompatActivity() {
 
     private fun refreshItems() {
         // load items
-        realm = Realm.getDefaultInstance()
-        val jams = getJams(realm) // show the view, populate data as it shows
+        val jams = getJams() // show the view, populate data as it shows
         val listOfJams = prepareList(jams)
 
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
@@ -113,8 +109,8 @@ class ListOfJamsActivity : AppCompatActivity() {
         return list
     }
 
-    private fun getJams(realm: Realm): RealmResults<JamViewModel>? {
-        return ListOfJamsRoutine().getJams(realm, this)
+    private fun getJams(): RealmResults<JamViewModel>? {
+        return ListOfJamsRoutine().getJams(this)
     }
 
     private fun getDummyData(): Array<String> {

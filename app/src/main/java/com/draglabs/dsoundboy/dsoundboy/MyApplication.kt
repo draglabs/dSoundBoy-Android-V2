@@ -8,6 +8,8 @@ import android.content.Context
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
+import com.facebook.FacebookSdk
+import com.facebook.appevents.AppEventsLogger
 import io.realm.DynamicRealm
 import io.realm.Realm
 import io.realm.RealmConfiguration
@@ -22,7 +24,15 @@ class MyApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        initializeFacebook()
         initializeRealm()
+    }
+
+    private fun initializeFacebook() {
+        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
+        @Suppress("DEPRECATION")
+        FacebookSdk.sdkInitialize(applicationContext)
+        AppEventsLogger.activateApp(this)
     }
 
     private fun initializeRealm() {

@@ -39,21 +39,18 @@ class MainActivity : AppCompatActivity() {
         //val UUID = prefUtils.uniqueUserID
         val UUID = PrefUtilsKt.Functions().retrieveUUID(this)
         val accessToken = AccessToken.getCurrentAccessToken()
-        val token = accessToken.token
-        val id = accessToken.userId
 
         if ((UUID == "not working") && accessToken == null) {
             val loginIntent = Intent(this, NewLoginActivity::class.java)
             startActivity(loginIntent)
         } else if (accessToken == null) {
             MainRoutine().facebookAuthorize(this)
-
         } else {
-            if (token == null || id == null) {
+            if (accessToken.token == null || accessToken.userId == null) {
                 MainRoutine().facebookAuthorize(this)
             }
-            LogUtils.debug("FB ID: ", id)
-            LogUtils.debug("FB Access Token: ", token.toString())
+            LogUtils.debug("FB ID: ", accessToken.userId)
+            LogUtils.debug("FB Access Token: ", accessToken.token.toString())
             val homeIntent = Intent(this, TestNavActivity::class.java)
             startActivity(homeIntent)
         }

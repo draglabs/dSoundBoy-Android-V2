@@ -15,9 +15,11 @@ import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Models.StringsModelKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.Profile
+import com.facebook.login.LoginResult
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -136,8 +138,15 @@ class APIparamsKt {
     }
 
     private fun checkFacebookID(activity: Activity) {
-        val facebookID = Profile.getCurrentProfile().id
-        val accessToken = AccessToken.getCurrentAccessToken().token
+        //MainRoutine().facebookAuthorize(activity)
+        //Profile.fetchProfileForCurrentAccessToken()
+        //val profile = Profile.getCurrentProfile()
+
+        val user  = RealmUtils.UserModelUtils.Retrieve.retrieveUser()
+        val facebookID = user.fbID
+        val accessToken = user.fbAccessToken
+
+
         if (facebookID == null || accessToken == null) {
             MainRoutine().facebookAuthorize(activity)
             //activity.startActivity(Intent(activity, MainActivity::class.java))

@@ -51,12 +51,14 @@ class ResponseModelKt {
         data class UpdateJam(
             @SerializedName("id") var id: String,
             @SerializedName("name") var name: String,
+            @SerializedName("pin") var pin: String,
             @SerializedName("start_time") var start_time: String,
             @SerializedName("end_time") var end_time: String,
             @SerializedName("location") var location: String,
             @SerializedName("notes") var notes: String,
             @SerializedName("collaborators") var collaborators: Any,
-            @SerializedName("link") var link: String        )
+            @SerializedName("link") var link: String
+        )
 
         data class JoinJam(
             @SerializedName("id") var id: String,
@@ -130,7 +132,8 @@ class ResponseModelKt {
             @SerializedName("location") var location: String,
             @SerializedName("notes") var notes: String,
             @SerializedName("collaborators") var collaborators: Any,
-            @SerializedName("link") var link: String
+            @SerializedName("link") var link: String,
+            @SerializedName("pin") var pin: String
         )
     }
 

@@ -82,8 +82,9 @@ class APIutilsKt {
                         //val jamNotes = result.notes TODO: maybe add this into the JamViewModel later?
                         val jamLinkResponse = result.link
                         val jamNotesResponse = result.notes
+                        val jamPinResponse = result.pin
 
-                        RealmUtils().editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse)
+                        RealmUtils.JamViewModelUtils.Edit.editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse, jamPinResponse)
 
                         LogUtils.debug("UpdateJam Response", response.toString())
                         LogUtils.debug("UpdateJam Body", response.body().toString())
@@ -176,11 +177,11 @@ class APIutilsKt {
                     LogUtils.logSuccessResponse(statusCode, headers!!, response!!)
                     try {
                         val link = response.getString("link")
-                        val realm = RealmUtils().startRealm()
-                        RealmUtils().editJam(realm, jamID, "link", link)
+                        val pin = response.getString("pin")
+                        RealmUtils.JamViewModelUtils.Edit.editJam(jamID, "link", link)
                         LogUtils.debug("Jam Details: ", response.toString())
-                        LogUtils.debug("Realm'd Link", RealmUtils().retrieveJam(realm, jamID).toString())
-                        RealmUtils().closeRealm(realm)
+                        LogUtils.debug("Jam PIN: ", pin)
+                        LogUtils.debug("Realm'd Link", RealmUtils.JamViewModelUtils.Retrieve.retrieveJam(jamID).toString())
                         //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
                     } catch (e: JSONException) {
                         e.printStackTrace()
@@ -230,6 +231,7 @@ class APIutilsKt {
                         val id = result!!.id
                         LogUtils.debug("id", id)
                         PrefUtilsKt.Functions().storeUUID(context, id)
+                        RealmUtils.UserModelUtils.Store.storeUUID(id)
 
                         val code = response.code()
                         val message = response.message()
@@ -281,7 +283,7 @@ class APIutilsKt {
                         }
                         //val jams = JsonUtils.INSTANCE.getJsonObject(StringsModel.GET_USER_ACTIVITY, response, StringsModel.jsonTypes.JAMS.type())
                         LogUtils.debug("Jams: ", jams.toString())
-                        RealmUtils().storeJams(jams)
+                        RealmUtils.JamViewModelUtils.Store.storeJams(jams)
                         //PrefUtils(activity).saveUserActivity(jams)
                     } catch (e: JSONException) {
                         e.printStackTrace()
@@ -491,7 +493,7 @@ class APIutilsKt {
                         //LogUtils.debug("Jams", arrayList)
                         LogUtils.debug("Jams", jams.toString())
                         //PrefUtilsKt.Functions().storeJams(context, arrayList)
-                        RealmUtils().storeJams(jams)
+                        RealmUtils.JamViewModelUtils.Store.storeJams(jams)
                     } else {
                         // TODO: no jams, account for something here
                         LogUtils.debug("Result", "Result is null")
@@ -530,13 +532,14 @@ class APIutilsKt {
                             val location = element.location
                             val link = element.link
                             val notes = element.notes
-                            val jamViewModel = JamViewModel(id, name, location, link, notes)
+                            val pin = element.pin
+                            val jamViewModel = JamViewModel(id, name, location, link, notes, pin)
                             jams.add(jamViewModel)
                         }
                         LogUtils.debug("Jams", jams.toString())
                         LogUtils.debug("Result", result.toString())
                         //PrefUtilsKt.Functions().storeJams(context, arrayList)
-                        RealmUtils().storeJams(jams)
+                        RealmUtils.JamViewModelUtils.Store.storeJams(jams)
                     } else {
                         // TODO: no jams, account for something here
                         LogUtils.debug("Result", "Result is null")

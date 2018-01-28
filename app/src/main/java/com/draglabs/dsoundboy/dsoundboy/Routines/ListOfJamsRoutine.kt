@@ -16,12 +16,12 @@ import io.realm.RealmResults
  */
 class ListOfJamsRoutine {
 
-    fun getJams(realm: Realm, context: Context): RealmResults<JamViewModel>? {
+    fun getJams(context: Context): RealmResults<JamViewModel>? {
         //APIutilsKt().performGetUserActivityArray(context)
         APIutilsKt.UserFunctions.getUserActivity(context)
         //val itemsList = PrefUtilsKt.Functions().retrieveJams(context)
         //val realm = RealmUtils().startRealm()
-        val itemsList = RealmUtils().retrieveJams(realm)
+        val itemsList = RealmUtils.JamViewModelUtils.Retrieve.retrieveJams()
         LogUtils.debug("ItemsList in GetJams", itemsList.toString())
         //val list = FileUtils().stringToArrayList(itemsList)
 

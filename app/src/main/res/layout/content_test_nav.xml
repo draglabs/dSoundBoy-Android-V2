@@ -123,6 +123,7 @@
         android:background="@android:color/transparent"
         android:text="@string/jam_pin"
         android:textAlignment="center"
+        android:textAllCaps="false"
         android:textSize="24sp"
         android:textStyle="bold"
         android:typeface="sans"

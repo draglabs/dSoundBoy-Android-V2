@@ -20,11 +20,12 @@ open class JamViewModel(
         var name: String,
         var location: String,
         var link: String,
-        var notes: String
+        var notes: String,
+        var pin: String
 ) : Serializable, RealmObject() {
-    constructor() : this("", "", "", "", "")
+    constructor() : this("", "", "", "", "", "")
 
     override fun toString(): String {
-        return "jamID: $jamID; name: $name; location: $location; link: $link; notes: $notes"
+        return "jamID: $jamID; name: $name; location: $location; link: $link; notes: $notes; pin: $pin"
     }
 }

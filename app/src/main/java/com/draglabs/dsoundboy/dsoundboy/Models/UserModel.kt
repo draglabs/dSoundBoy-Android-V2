@@ -18,10 +18,12 @@ open class UserModel(
     @PrimaryKey var UUID: String,
     var lat: String,
     var lng: String,
+    var fbID: String,
+    var fbAccessToken: String,
     var fbName: String,
     var fbEmail: String,
     var fbImage: String,
     var localPath: String
 ) : Serializable, RealmObject() {
-    constructor() : this("", "", "", "", "", "", "")
+    constructor() : this("", "", "", "", "", "", "", "", "")
 }
