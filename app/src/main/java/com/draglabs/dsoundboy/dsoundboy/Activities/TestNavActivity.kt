@@ -394,7 +394,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
                 startActivity(Intent(this, SettingsActivity::class.java))
             }
             R.id.nav_log_out -> {
-                AccessToken.setCurrentAccessToken(null)
+                HomeRoutineKt().clickLogout()
+                Toast.makeText(this, "Logged Out", Toast.LENGTH_LONG).show()
                 startActivity(Intent(this, NewLoginActivity::class.java))
             }
         }

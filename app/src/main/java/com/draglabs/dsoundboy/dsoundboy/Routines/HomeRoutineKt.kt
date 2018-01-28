@@ -17,6 +17,10 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
+import com.facebook.AccessToken
+import com.facebook.GraphRequest
+import com.facebook.HttpMethod
+import com.facebook.login.LoginManager
 import omrecorder.Recorder
 import java.util.*
 
@@ -309,6 +313,16 @@ class HomeRoutineKt {
     fun clickWifiUploadsButton(view: View) {
         Snackbar.make(view, "Under Construction", Snackbar.LENGTH_LONG).show()
 
+    }
+
+    fun clickLogout() {
+        if (AccessToken.getCurrentAccessToken() != null) {
+            GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, GraphRequest.Callback {
+                AccessToken.setCurrentAccessToken(null)
+                LoginManager.getInstance().logOut()
+                //finish()
+            }).executeAsync()
+        }
     }
 
 }
