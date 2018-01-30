@@ -6,6 +6,8 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
@@ -16,7 +18,6 @@ import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import com.facebook.login.widget.LoginButton
 import java.util.*
-import com.facebook.Profile.getCurrentProfile
 import com.facebook.ProfileTracker
 
 
@@ -32,6 +33,10 @@ class NewLoginActivity : AppCompatActivity() {
     private var accessToken: AccessToken? = null
     private var accessTokenTracker: AccessTokenTracker? = null
     private var profileTracker: ProfileTracker? = null
+
+    private var fbLoginButton: LoginButton? = null
+    private var signUpButton: Button? = null
+    private var loginButton: Button? = null
 
     /**
      * The onCreate method for the new login activity
@@ -50,62 +55,11 @@ class NewLoginActivity : AppCompatActivity() {
 
         loginRoutineKt = LoginRoutineKt(buttons, this, this)
 
-        val loginButton = findViewById<View>(R.id.login_button) as LoginButton
-        loginButton.setOnClickListener({
-            callbackManager = CallbackManager.Factory.create()
-            LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"))
-            LoginManager.getInstance().registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
-                override fun onSuccess(loginResult: LoginResult) {
-                    val fbID = loginResult.accessToken.userId
-                    val fbAccessToken = loginResult.accessToken.token
-                    val fbApplicationID = loginResult.accessToken.applicationId
-
-                    val realm = RealmUtils.Functions.startRealm()
-                    RealmUtils.UserModelUtils.Initialize.initializeUserModel(fbID, fbAccessToken)
-                    realm.close()
-
-                    LogUtils.debug("UserModel ID: ", fbID)
-                    LogUtils.debug("Access Token: ", fbAccessToken)
-                    LogUtils.debug("Application ID: ", fbApplicationID)
-                    val graphRequest = GraphRequest.newMeRequest(loginResult.accessToken) { `object`, response ->
-                        Log.v("Main: ", response.toString())
-                        loginRoutineKt!!.setProfileView(`object`)
-                    }
-                    val parameters = Bundle()
-                    parameters.putString("fields", "id,name,email")
-                    graphRequest.parameters = parameters
-                    graphRequest.executeAsync()
-
-                    if (Profile.getCurrentProfile() == null) {
-                        profileTracker = object : ProfileTracker() {
-                            override fun onCurrentProfileChanged(oldProfile: Profile, currentProfile: Profile) {
-                                Log.v("facebook - profile", currentProfile.firstName)
-                                profileTracker?.stopTracking()
-                            }
-                        }
-                        // no need to call startTracking() on mProfileTracker
-                        // because it is called by its constructor, internally.
-                    } else {
-                        val profile = Profile.getCurrentProfile()
-                        Log.v("facebook - profile", profile.firstName)
-                    }
-
-                    //loginRoutineKt!!.saveFacebookCredentials(loginResult)
-                    //loginRoutineKt!!.authenticateUser()
-                    APIutilsKt.UserFunctions.performRegisterUser(this@NewLoginActivity,this@NewLoginActivity)
-                }
-
-                override fun onCancel() {
-                    Log.d("FB Login Cancelled", "")
-                }
-
-                override fun onError(error: FacebookException) {
-                    Log.d("Facebook Error: ", error.toString())
-                }
-            })
-        })
-        /*loginButton.setReadPermissions("email")
-        loginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+        setElements()
+        setListeners()
+        setAccessTokenTrackers()
+        /*fbLoginButton.setReadPermissions("email")
+        fbLoginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
                 Log.d("UserModel ID: ", loginResult.accessToken.userId)
                 Log.d("Access Token: ", loginResult.accessToken.token)
@@ -134,15 +88,38 @@ class NewLoginActivity : AppCompatActivity() {
             }
         })*/
 
-        accessTokenTracker = object : AccessTokenTracker() {
+        //buttons.put("facebookLoginButton", fbLoginButton);
+        loginRoutineKt!!.addButton("facebookLoginButton", fbLoginButton as Any)
+    }
+
+    private fun setElements() {
+        fbLoginButton = findViewById<LoginButton>(R.id.login_button)
+        signUpButton = findViewById<Button>(R.id.login_screen_button_sign_up)
+        loginButton = findViewById<Button>(R.id.login_screen_button_login)
+    }
+
+    private fun setListeners() {
+        fbLoginButton!!.setOnClickListener {
+            facebookLogin()
+        }
+
+        signUpButton!!.setOnClickListener {
+            Toast.makeText(this, "Sign Up Button Clicked", Toast.LENGTH_LONG).show()
+        }
+
+        loginButton!!.setOnClickListener {
+            Toast.makeText(this, "Login Button Clicked", Toast.LENGTH_LONG).show()
+
+        }
+    }
+
+    private fun setAccessTokenTrackers() {
+        accessTokenTracker = object: AccessTokenTracker() {
             override fun onCurrentAccessTokenChanged(oldAccessToken: AccessToken, currentAccessToken: AccessToken) {
                 // set the access token using currentAccessToken when it's loaded or set
                 accessToken = currentAccessToken
             }
         }
-
-        //buttons.put("facebookLoginButton", loginButton);
-        loginRoutineKt!!.addButton("facebookLoginButton", loginButton)
 
         if (AccessToken.getCurrentAccessToken() != null) {
             Log.d("Access Token:", AccessToken.getCurrentAccessToken().toString())
@@ -185,5 +162,59 @@ class NewLoginActivity : AppCompatActivity() {
     fun clickLogoLink(view: View) {
         val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse("http://draglabs.com"))
         startActivity(browserIntent)
+    }
+
+    private fun facebookLogin() {
+        callbackManager = CallbackManager.Factory.create()
+        LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("public_profile", "email"))
+        LoginManager.getInstance().registerCallback(callbackManager, object: FacebookCallback<LoginResult> {
+            override fun onSuccess(loginResult: LoginResult) {
+                val fbID = loginResult.accessToken.userId
+                val fbAccessToken = loginResult.accessToken.token
+                val fbApplicationID = loginResult.accessToken.applicationId
+
+                val realm = RealmUtils.Functions.startRealm()
+                RealmUtils.UserModelUtils.Initialize.initializeUserModel(fbID, fbAccessToken)
+                realm.close()
+
+                LogUtils.debug("UserModel ID: ", fbID)
+                LogUtils.debug("Access Token: ", fbAccessToken)
+                LogUtils.debug("Application ID: ", fbApplicationID)
+                val graphRequest = GraphRequest.newMeRequest(loginResult.accessToken) { `object`, response ->
+                    Log.v("Main: ", response.toString())
+                    loginRoutineKt!!.setProfileView(`object`)
+                }
+                val parameters = Bundle()
+                parameters.putString("fields", "id,name,email")
+                graphRequest.parameters = parameters
+                graphRequest.executeAsync()
+
+                if (Profile.getCurrentProfile() == null) {
+                    profileTracker = object : ProfileTracker() {
+                        override fun onCurrentProfileChanged(oldProfile: Profile, currentProfile: Profile) {
+                            Log.v("facebook - profile", currentProfile.firstName)
+                            profileTracker?.stopTracking()
+                        }
+                    }
+                    // no need to call startTracking() on mProfileTracker
+                    // because it is called by its constructor, internally.
+                } else {
+                    val profile = Profile.getCurrentProfile()
+                    Log.v("facebook - profile", profile.firstName)
+                }
+
+                //loginRoutineKt!!.saveFacebookCredentials(loginResult)
+                //loginRoutineKt!!.authenticateUser()
+                APIutilsKt.UserFunctions.performRegisterUser(this@NewLoginActivity,this@NewLoginActivity)
+            }
+
+            override fun onCancel() {
+                Log.d("FB Login Cancelled", "")
+            }
+
+            override fun onError(error: FacebookException) {
+                Log.d("Facebook Error: ", error.toString())
+            }
+        })
     }
 }
