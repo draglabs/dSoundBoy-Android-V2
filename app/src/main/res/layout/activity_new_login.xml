@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/concert_crowd_wallpaper_3200_2400"
+        app:srcCompat="@drawable/concert_crowd_wallpaper_3200_2400_jpg"
         android:contentDescription="Login Screen Background"/>
 
     <ImageButton

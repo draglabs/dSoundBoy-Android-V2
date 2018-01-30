@@ -162,6 +162,43 @@ class APIutilsKt {
             })
         }
 
+        fun performGetActiveJam(context: Context) {
+            val uuid = RealmUtils.UserModelUtils.Retrieve.retrieveUser().UUID
+            val call = APIparamsKt().callGetActiveJam(uuid)
+
+            call.enqueue(object: Callback<ResponseModelKt.UserFunctions.GetActiveJam> {
+                override fun onResponse(call: Call<ResponseModelKt.UserFunctions.GetActiveJam>, response: Response<ResponseModelKt.UserFunctions.GetActiveJam>) {
+                    if (response.isSuccessful) {
+                        val result = response.body()
+                        //val jamNameResponse = result!!.name
+                        //val jamLocationResponse = result.location
+                        //val jamNotes = result.notes TODO: maybe add this into the JamViewModel later?
+                        //val jamLinkResponse = result.link
+                        //val jamNotesResponse = result.notes
+                        val jamPinResponse = result!!.pin
+                        val jamIdResponse = result.id
+                        PrefUtilsKt.Functions().storePIN(context, jamPinResponse)
+                        PrefUtilsKt.Functions().storeJamID(context, jamIdResponse)
+                        //RealmUtils.JamViewModelUtils.Edit.editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse, jamPinResponse)
+
+                        LogUtils.debug("ActiveJam Response", response.toString())
+                        LogUtils.debug("ActiveJam Body", result.toString())
+                    } else {
+                        LogUtils.debug("ActiveJam Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("ActiveJam Code", "" + response.code())
+                        LogUtils.debug("ActiveJam Message", response.message())
+                        LogUtils.debug("ActiveJam Headers", response.headers().toString())
+                    }
+                }
+
+                override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetActiveJam>, t: Throwable) {
+                    LogUtils.logOnFailure(t)
+                    LogUtils.debug("ActiveJam onFailure Failed", "Canceled" + call.isCanceled.toString())
+                    LogUtils.debug("ActiveJam onFailure Failed", "Executed" + call.isExecuted.toString())
+                }
+            })
+        }
+
         fun getJamDetails(context: Context, jamID: String) {
             val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
             //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
@@ -181,6 +218,7 @@ class APIutilsKt {
                         //checkLink(link, jamID)
                         LogUtils.debug("Jam Details: ", response.toString())
                         LogUtils.debug("Jam PIN: ", pin) // TODO: create an NPE checker for all these potential values
+                        RealmUtils.JamViewModelUtils.Edit.editJam(jamID, RealmUtils.JamVars.PIN, pin)
                         //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
                     } catch (e: JSONException) {
                         e.printStackTrace()

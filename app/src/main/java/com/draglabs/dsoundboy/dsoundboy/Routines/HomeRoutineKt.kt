@@ -155,8 +155,8 @@ class HomeRoutineKt {
                 recordingPath, PrefUtils.getRecordingDescription(activity),
                 recordingStartTime, recordingEndTime,
                 view)*/
-
         val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+        APIutilsKt.JamFunctions.performGetActiveJam(context) // submitting now to active jam, before it may have had old information
         val jamName = PrefUtilsKt.Functions().retrieveJamName(context)
         val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 

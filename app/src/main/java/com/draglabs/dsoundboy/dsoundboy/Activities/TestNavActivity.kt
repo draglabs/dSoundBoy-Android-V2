@@ -327,16 +327,23 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     // TODO: add check uuid function, to prevent crashes, or just show snackbars or toasts when errors come up, so the app doesn't crash
 
     private fun updatePinView() {
-        val pin = PrefUtilsKt.Functions().retrievePIN(this)
+        /*val pin = PrefUtilsKt.Functions().retrievePIN(this)
         val currentJamID = PrefUtilsKt.Functions().retrieveJamID(this)
-        val currentJamDetails = APIutilsKt.JamFunctions.getJamDetails(this, currentJamID)
-        //RealmUtils().retrieve
+        //val currentJamDetails = APIutilsKt.JamFunctions.getJamDetails(this, currentJamID)
+        LogUtils.debug("UpdatePinView", "pin $pin, jamID $currentJamID")
+        val newPIN = RealmUtils.JamViewModelUtils.Retrieve.retrieveJamPinWithID(currentJamID)
+        LogUtils.debug("UpdatePinView", "newPIN $newPIN")*/ // TODO: actually do GetActiveJam
 
-        if (pin == "not working") {
+        APIutilsKt.JamFunctions.performGetActiveJam(this)
+        //val activeJamID = PrefUtilsKt.Functions().retrieveJamID(this)
+        val activeJamPIN = PrefUtilsKt.Functions().retrievePIN(this)
+
+        if (activeJamPIN == "not working") {
             jamPinView.text = "No Jam PIN"
             Toast.makeText(this, "API currently offline. Please check again later.", Toast.LENGTH_LONG).show()
+            // TODO: check if currently online by running check on server, if it is successful, tell user to create a new jam
         } else {
-            jamPinView.text = pin // TODO: Instead of retrieving the PIN, perform an API call to get the current jams pin
+            jamPinView.text = activeJamPIN // TODO: Instead of retrieving the PIN, perform an API call to get the current jams pin
         }
     }
 

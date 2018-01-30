@@ -97,6 +97,10 @@ class APIparamsKt {
         return userService.getJamDetails(jamID, uuid)
     }
 
+    fun callGetActiveJam(uuid: String): Call<ResponseModelKt.UserFunctions.GetActiveJam> {
+        return userService.getActiveJam(uuid)
+    }
+
     fun callUploadJam(filePath: String, userID: String, fileName: String, location: String, jamID: String,  startTime: String, endTime: String): Call<ResponseModelKt.JamFunctions.UploadJam> {
         /*val params = ArrayMap<String, Any>()
         params[this.user_id] = userID

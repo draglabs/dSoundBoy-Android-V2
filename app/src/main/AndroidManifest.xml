@@ -35,6 +35,8 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/DragLabsNew"
+        android:hardwareAccelerated="false"
+        android:largeHeap="true"
         tools:targetApi="m">
         <service android:name=".Services.LocationTrackingService" android:process=":location_tracking_service" />
         <meta-data

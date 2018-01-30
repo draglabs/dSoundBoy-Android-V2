@@ -40,6 +40,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
         var editButton: Button
         var exportButton: Button
         var shareButton: ImageButton
+        var pinView: TextView
 
         var view: View = itemView
         var jam: JamViewModel? = null
@@ -49,6 +50,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
             editButton = itemView.findViewById<Button>(R.id.jam_view_edit_button)
             exportButton = itemView.findViewById<Button>(R.id.jam_view_export_button)
             shareButton = itemView.findViewById<ImageButton>(R.id.jam_view_share_button)
+            pinView = itemView.findViewById<TextView>(R.id.text_recycler_jam_pin)
             // need api key to use map https://developers.google.com/maps/documentation/android-api/current-place-tutorial
 
             view.setOnClickListener(this)
@@ -57,6 +59,7 @@ class CustomAdapter(private val context: Context, private val list: ArrayList<Ja
         fun bindJam(jamViewModel: JamViewModel) {
             this.jam = jamViewModel
             view.text_jam_info.text = jamViewModel.name
+            view.text_recycler_jam_pin.text = jamViewModel.pin
             // add the other attributes here too
         }
 
