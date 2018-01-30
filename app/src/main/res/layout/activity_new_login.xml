@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,18 +7,24 @@
     android:gravity="center"
     android:orientation="vertical"
     android:theme="@style/DragLabs"
-    tools:context=".Activities.NewLoginActivity"
-    android:background="@color/colorDLBlue2">
+    tools:context=".Activities.NewLoginActivity">
+
+    <ImageView
+        android:id="@+id/login_screen_background"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop"
+        app:srcCompat="@drawable/concert_crowd_wallpaper_3200_2400"
+        android:contentDescription="Login Screen Background"/>
 
     <ImageButton
         android:id="@+id/image_about"
         android:layout_width="300dp"
         android:layout_height="300dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="25dp"
         android:adjustViewBounds="false"
         android:background="@android:color/transparent"
         android:contentDescription="@string/logo_description"
@@ -39,15 +45,14 @@
         android:id="@+id/login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/image_about"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/image_about" />
 
 
-</LinearLayout>
+</RelativeLayout>
