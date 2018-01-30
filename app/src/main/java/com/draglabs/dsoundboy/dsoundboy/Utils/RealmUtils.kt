@@ -144,6 +144,9 @@ class RealmUtils {
                     list += reversedJams
                 }*/
 
+                /*val currentJamID = PrefUtilsKt.Functions().retrieveJamID(context)
+                val currentJam = RealmUtils.JamViewModelUtils.Retrieve.retrieveJamWithID(currentJamID)*/
+
                 val list = ArrayList<JamViewModel>()
                 //val currentRealm = Realm.getDefaultInstance()
                 realm.executeTransaction {
