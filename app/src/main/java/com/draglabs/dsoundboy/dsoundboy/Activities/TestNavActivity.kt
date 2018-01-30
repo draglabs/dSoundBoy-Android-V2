@@ -27,6 +27,7 @@ import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
+import com.draglabs.dsoundboy.dsoundboy.Services.LocationTrackingService
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
@@ -128,6 +129,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val write = isWriteStoragePermissionGranted
         LogUtils.debug("Permission Codes: ", "read: $read; write: $write")
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
+
+        var service = startService(Intent(this, LocationTrackingService::class.java))
     }
 
     private fun initialize() {
@@ -311,6 +314,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun clickTestAuth() {
+        APIutilsKt.UserFunctions.performRegisterUser(this, this)
         val text = PrefUtilsKt.Functions().retrieveUUID(this)
         if (text == "not working") {
             registerUser()

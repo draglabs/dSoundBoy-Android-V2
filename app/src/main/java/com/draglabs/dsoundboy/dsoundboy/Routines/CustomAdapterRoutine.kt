@@ -16,6 +16,7 @@ import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
 
 /**
  * Created by davrukin on 1/18/18.
@@ -48,7 +49,11 @@ class CustomAdapterRoutine {
 
         APIutilsKt.JamFunctions.getJamDetails(context, jamID)
 
-        val newLink = checkLink(context, jamID, link)
+        //val newLink = checkLink(context, jamID, link)
+        APIutilsKt.JamFunctions.performCompressor(context, jamID)
+        val newLink = PrefUtilsKt.Functions().retrieveLink(context) // add suspend & async
+        LogUtils.debug("Retrieved Link", newLink)
+
         LogUtils.debug("NewLink upon first click", newLink)
 
         //progressBar.animate().cancel()
@@ -58,11 +63,15 @@ class CustomAdapterRoutine {
     fun clickShare(context: Context, jam: JamViewModel) {
         Toast.makeText(context, "Share Button Clicked", Toast.LENGTH_LONG).show()
         // TODO: add a share menu where I can share to multiple apps
-        var newLink = checkLink(context, jam.jamID, jam.link)
+        //var newLink = checkLink(context, jam.jamID, jam.link)
 
-        if (newLink == "") {
-            newLink = "Link not yet exported."
-        }
+        //if (newLink == "") {
+            //newLink = "Link not yet exported."
+        //}
+
+        APIutilsKt.JamFunctions.performCompressor(context, jam.jamID)
+        val newLink = RealmUtils.JamViewModelUtils.Retrieve.retrieveJam(jam.jamID).link // add suspend & async
+        LogUtils.debug("Retrieved Link", newLink)
 
         val sendIntent = Intent(Intent.ACTION_VIEW)
         sendIntent.data = Uri.parse("smsto:")

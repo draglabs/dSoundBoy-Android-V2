@@ -36,6 +36,7 @@
         android:supportsRtl="true"
         android:theme="@style/DragLabsNew"
         tools:targetApi="m">
+        <service android:name=".Services.LocationTrackingService" android:process=":location_tracking_service" />
         <meta-data
             android:name="com.facebook.sdk.ApplicationID"
             android:value="@string/facebook_app_id" />

@@ -132,7 +132,8 @@ class APIparamsKt {
         val params = ArrayMap<String, Any>()
         params[this.facebook_id] = facebookID
         params[this.access_token] = accessToken
-        val requestBody = createRequestBody(params, jsonTypeStringForRequest)
+        //val requestBody = createRequestBody(params, jsonTypeStringForRequest)
+        val requestBody = createRequestBody(params, "application/x-www-form-urlencoded")
 
         return userService.registerUser(requestBody)
     }
@@ -170,6 +171,7 @@ class APIparamsKt {
         val requestBody = createRequestBody(params, jsonTypeStringForRequest)
 
         return userService.compress(requestBody)
+        //return userService.compress(uuid, jamID)
     }
 
     private fun createRequestBody(params: ArrayMap<String, Any>, bodyType: String): RequestBody {

@@ -87,6 +87,7 @@ interface ApiInterface {
     USER FUNCTIONS
     */
 
+    //@FormUrlEncoded
     @POST("user/register")
     fun registerUser(
         //@Field("facebook_id") facebookID: String,
@@ -120,8 +121,11 @@ interface ApiInterface {
     COMPRESSOR FUNCTIONS
     */
 
+    //@FormUrlEncoded
     @POST("jam/archive")
     fun compress(
+        //@Field("user_id") userID: String,
+        //@Field("jam_id") jamID: String
         @Body params: RequestBody
     ): Call<ResponseModelKt.CompressorFunctions.Compressor>
 

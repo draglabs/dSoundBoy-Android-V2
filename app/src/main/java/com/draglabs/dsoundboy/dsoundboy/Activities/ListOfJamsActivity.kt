@@ -33,6 +33,9 @@ class ListOfJamsActivity : AppCompatActivity() {
     private lateinit var customAdapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
 
+    var realm = Realm.getDefaultInstance()
+    private val REALM_TAG = "__REALM__"
+
     //private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,16 +43,16 @@ class ListOfJamsActivity : AppCompatActivity() {
         setContentView(R.layout.content_list_of_jams)
         setSupportActionBar(toolbar)
 
-        val jams = getJams() // show the view, populate data as it shows
-        val listOfJams = prepareList(jams)
+        val listOfJams = getJams(realm) // show the view, populate data as it shows
+        //val listOfJams = prepareList(jams)
 
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager
         swipeRefreshLayout = SwipeRefreshLayout(this)
-        swipeRefreshLayout.setOnRefreshListener { refreshItems() }
+        swipeRefreshLayout.setOnRefreshListener { refreshItems(realm) }
 
-        customAdapter = CustomAdapter(this, listOfJams)
+        customAdapter = CustomAdapter(this, listOfJams!!)
         recyclerView.adapter = customAdapter
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
@@ -69,16 +72,16 @@ class ListOfJamsActivity : AppCompatActivity() {
         }*/
     }
 
-    private fun refreshItems() {
+    private fun refreshItems(realm: Realm) {
         // load items
-        val jams = getJams() // show the view, populate data as it shows
-        val listOfJams = prepareList(jams)
+        val listOfJams = getJams(realm) // show the view, populate data as it shows
+        //val listOfJams = prepareList(jams)
 
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager // TODO: doesn't refresh, does it indefinitely
 
-        customAdapter = CustomAdapter(this, listOfJams)
+        customAdapter = CustomAdapter(this, listOfJams!!)
         recyclerView.adapter = customAdapter
         // load complete
         onItemsLoadComplete()
@@ -109,8 +112,8 @@ class ListOfJamsActivity : AppCompatActivity() {
         return list
     }
 
-    private fun getJams(): RealmResults<JamViewModel>? {
-        return ListOfJamsRoutine().getJams(this)
+    private fun getJams(realm: Realm): ArrayList<JamViewModel>? {
+        return ListOfJamsRoutine().getJams(this, realm)
     }
 
     private fun getDummyData(): Array<String> {
@@ -120,5 +123,19 @@ class ListOfJamsActivity : AppCompatActivity() {
         val jamLink = PrefUtilsKt.Functions().retrieveLink(this)
         val jamNotes = "Hi"
         return arrayOf(jamID, jamName, jamLocation, jamLink, jamNotes)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        realm.close()
+        realm = null
+    }
+
+    override fun getSystemService(name: String?): Any {
+        if (REALM_TAG == name) {
+            return realm
+        } else {
+            return super.getSystemService(name)
+        }
     }
 }

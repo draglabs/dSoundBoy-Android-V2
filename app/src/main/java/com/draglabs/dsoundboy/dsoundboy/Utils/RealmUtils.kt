@@ -17,7 +17,7 @@ import java.util.*
  */
 class RealmUtils {
 
-    private object UserVars {
+    object UserVars {
         const val UUID = "UUID"
         const val LAT = "lat"
         const val LNG = "lng"
@@ -28,7 +28,7 @@ class RealmUtils {
         const val FB_IMAGE = "fbImage"
     }
 
-    private object JamVars {
+    object JamVars {
         const val JAM_ID = "jamID"
         const val LINK = "link"
         const val LOCATION = "location"
@@ -131,13 +131,31 @@ class RealmUtils {
                 return jam
             }
 
-            fun retrieveJams(): RealmResults<JamViewModel>? {
-                val realm = Functions.startRealm()
+            fun retrieveJams(realm: Realm): ArrayList<JamViewModel>? {
+                //val realm = Functions.startRealm()
 
-                val jams = realm.where(JamViewModel::class.java).findAll()
+                //val jams = realm.where(JamViewModel::class.java).findAll()
 
-                Functions.closeRealm(realm)
-                return jams
+                //Functions.closeRealm(realm)
+
+                //val list = ArrayList<JamViewModel>()
+                /*if (jams != null) {
+                    val reversedJams = jams.reversed()
+                    list += reversedJams
+                }*/
+
+                val list = ArrayList<JamViewModel>()
+                //val currentRealm = Realm.getDefaultInstance()
+                realm.executeTransaction {
+                    val jams = it.where(JamViewModel::class.java).findAll()
+                    if (jams != null) {
+                        val reversedJams = jams.reversed()
+                        list += reversedJams
+                    }
+                }
+                //currentRealm.close()
+
+                return list
             }
 
             fun retrieveJamPinWithID(jamID: String): String {

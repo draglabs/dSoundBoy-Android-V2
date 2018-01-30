@@ -6,7 +6,6 @@ package com.draglabs.dsoundboy.dsoundboy.Utils
 
 import android.content.Context
 import android.support.design.widget.Snackbar
-import android.util.Log
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
@@ -178,10 +177,10 @@ class APIutilsKt {
                     try {
                         val link = response.getString("link")
                         val pin = response.getString("pin")
-                        RealmUtils.JamViewModelUtils.Edit.editJam(jamID, "link", link)
+                        LogUtils.debug("GetJamDetails NPE", "link $link, pin $pin, jamID $jamID")
+                        //checkLink(link, jamID)
                         LogUtils.debug("Jam Details: ", response.toString())
-                        LogUtils.debug("Jam PIN: ", pin)
-                        LogUtils.debug("Realm'd Link", RealmUtils.JamViewModelUtils.Retrieve.retrieveJam(jamID).toString())
+                        LogUtils.debug("Jam PIN: ", pin) // TODO: create an NPE checker for all these potential values
                         //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
                     } catch (e: JSONException) {
                         e.printStackTrace()
@@ -195,6 +194,13 @@ class APIutilsKt {
             })
         }
 
+        private fun checkLink(link: String, jamID: String) {
+            if (link != null && link != "") {
+                RealmUtils.JamViewModelUtils.Edit.editJam(jamID, RealmUtils.JamVars.LINK, link)
+                LogUtils.debug("Realm'd Link", RealmUtils.JamViewModelUtils.Retrieve.retrieveJam(jamID).toString())
+            }
+        }
+
         fun performCompressor(context: Context, jamID: String) {
             val call = APIparamsKt().callCompressor(context, jamID)
 
@@ -203,13 +209,13 @@ class APIutilsKt {
                     if (response.isSuccessful) {
                         val result = response.body()
 
-                        LogUtils.debug("Upload Response Body", result.toString())
-                        LogUtils.debug("Upload Response Message", "Code: ${response.code()}; Message: ${response.message()}")
+                        LogUtils.debug("Compressor Response Body", result.toString())
+                        LogUtils.debug("Compressor Response Message", "Code: ${response.code()}; Message: ${response.message()}")
                     } else {
-                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("Code", "" + response.code())
-                        LogUtils.debug("Message", response.message())
-                        LogUtils.debug("Headers", response.headers().toString())
+                        LogUtils.debug("Compressor Failed Response", response.errorBody()!!.toString())
+                        LogUtils.debug("Compressor Code", "" + response.code())
+                        LogUtils.debug("Compressor Message", response.message())
+                        LogUtils.debug("Compressor Headers", response.headers().toString())
                     }
                 }
 
@@ -231,7 +237,7 @@ class APIutilsKt {
                         val id = result!!.id
                         LogUtils.debug("id", id)
                         PrefUtilsKt.Functions().storeUUID(context, id)
-                        RealmUtils.UserModelUtils.Store.storeUUID(id)
+                        //RealmUtils.UserModelUtils.Store.storeUUID(id)
 
                         val code = response.code()
                         val message = response.message()
@@ -276,6 +282,8 @@ class APIutilsKt {
                             jamViewModel.name = jam.getString("name")
                             jamViewModel.location = jam.getString("location")
                             jamViewModel.link = jam.getString("link")
+                            jamViewModel.pin = jam.getString("pin")
+                            jamViewModel.notes = jam.getString("notes")
 
                             jams.add(jamViewModel)
 
