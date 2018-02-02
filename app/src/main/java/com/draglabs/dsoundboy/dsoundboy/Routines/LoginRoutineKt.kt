@@ -23,47 +23,59 @@ import java.util.*
  * @author Daniel Avrukin
  */
 
-class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val activity: Activity, private val context: Context) {
+class LoginRoutineKt {
 
     //private val mAuthTask: LoginActivity.UserLoginTask? = null
+    //private var buttons: HashMap<String, Any>? = null
+    private var activity: Activity? = null
+    private var context: Context? = null
 
     private val callbackManager: CallbackManager = CallbackManager.Factory.create()
     private val accessTokenTracker: AccessTokenTracker? = null
     private var accessToken: AccessToken? = null
 
-    fun clickFacebookLogin() {
+    fun clickFacebookLogin(facebookLoginButton: LoginButton, activity: Activity, context: Context) {
+        //this.buttons = buttons
+        this.activity = activity
+        this.context = context
+
         //facebookLoginButton.setReadPermissions("email");
-        val facebookLoginButton = buttons["facebookLoginButton"] as LoginButton
+        //val facebookLoginButton = buttons!!["facebookLoginButton"] as LoginButton
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"))
         facebookLoginButton.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
-            internal var loginResultText = buttons["loginResultText"] as TextView
+            /*internal var loginResultText = buttons["loginResultText"] as TextView
             internal var continueButton = buttons["continueButton"] as Button
-            internal var mEmailSignInButton = buttons["emailSignInButton"] as Button
+            internal var mEmailSignInButton = buttons["emailSignInButton"] as Button*/
 
             override fun onSuccess(loginResult: LoginResult) {
                 // app code
                 accessToken = AccessToken.getCurrentAccessToken()
                 val loginResultTextText = "UserModel ID: + " + loginResult.accessToken.userId + "\nAuth Token: " + loginResult.accessToken.token
-                loginResultText.text = loginResultTextText
+                /*loginResultText.text = loginResultTextText
                 continueButton.isEnabled = true
-                mEmailSignInButton.isEnabled = false
+                mEmailSignInButton.isEnabled = false*/
             }
 
             override fun onCancel() {
                 // app code
-                loginResultText.text = context.getString(R.string.login_attempt_canceled)
-                mEmailSignInButton.isEnabled = true
+                /*loginResultText.text = context.getString(R.string.login_attempt_canceled)
+                mEmailSignInButton.isEnabled = true*/
             }
 
             override fun onError(error: FacebookException) {
                 // app code
-                loginResultText.text = context.getString(R.string.login_attempt_failed)
-                mEmailSignInButton.isEnabled = true
+                /*loginResultText.text = context.getString(R.string.login_attempt_failed)
+                mEmailSignInButton.isEnabled = true*/
             }
         })
     }
 
-    fun setProfileView(response: JSONObject) {
+    fun facebookLogin() {
+        //var callbackManager = CallbackManager.Factory.create()
+
+    }
+
+    fun setProfileView(response: JSONObject, activity: Activity, context: Context) {
         val name = response.getString("name")
         val email = response.getString("email")
         val id = response.getString("id")
@@ -84,11 +96,11 @@ class LoginRoutineKt(private val buttons: HashMap<String, Any>, private val acti
         //PrefUtilsKt.Functions().storeFbAccessToken // is this necessary?
     }
 
-    fun addButton(string: String, `object`: Any) {
-        buttons[string] = `object`
-    }
+    /*fun addButton(string: String, `object`: Any) {
+        buttons!![string] = `object`
+    }*/
 
-    fun clickContinueButton(view: View) {
+    fun clickContinueButton(view: View, activity: Activity, context: Context) {
         APIutilsKt.UserFunctions.performRegisterUser(activity, context)
 
         Snackbar.make(view, "Unique ID: " + PrefUtilsKt.Functions().retrieveUUID(context), Snackbar.LENGTH_LONG).show()

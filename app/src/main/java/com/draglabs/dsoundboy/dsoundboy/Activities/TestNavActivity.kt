@@ -124,10 +124,6 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         //homeRoutineKt = HomeRoutineKt(buttons, this, this,   filename, button_rec_new)
 
-        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        val read = isReadStoragePermissionGranted
-        val write = isWriteStoragePermissionGranted
-        LogUtils.debug("Permission Codes: ", "read: $read; write: $write")
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
 
         var service = startService(Intent(this, LocationTrackingService::class.java))
@@ -150,6 +146,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         //stop.isEnabled = false
         stop.visibility = View.GONE
+
+        doPermissionsCheck()
     }
 
     private fun setListeners() {
@@ -209,6 +207,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
     }
 
+    private fun doPermissionsCheck() {
+        val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        LogUtils.debug("Permission Check: ", "$permissionCheck")
+        val read = isReadStoragePermissionGranted
+        val write = isWriteStoragePermissionGranted
+        LogUtils.debug("Permission Codes: ", "read: $read; write: $write")
+    }
+
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         gestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
@@ -247,13 +253,13 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private suspend fun setUserView() {
         delay(1500) // this is here because it would cause the app to crash since it didn't retrieve the data from the server right away
-        val loginRoutineKt = LoginRoutineKt(buttons, this, this)
+        //val loginRoutineKt = LoginRoutineKt(buttons, this, this)
 
         val accessToken = AccessToken.getCurrentAccessToken()
         val graphRequest = GraphRequest.newMeRequest(accessToken) { `object`, response ->
             if (`object` != null) {
                 LogUtils.debug("Main: ", response.toString())
-                loginRoutineKt.setProfileView(`object`) // TODO: save data even for when offline
+                LoginRoutineKt().setProfileView(`object`, this, this) // TODO: save data even for when offline
             }
         }
         val parameters = Bundle()
@@ -340,7 +346,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         if (activeJamPIN == "not working") {
             jamPinView.text = "No Jam PIN"
-            Toast.makeText(this, "API currently offline. Please check again later.", Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, "API currently offline. Please check again later.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "No current jam. Please click either New or Join to get a PIN.", Toast.LENGTH_LONG).show()
             // TODO: check if currently online by running check on server, if it is successful, tell user to create a new jam
         } else {
             jamPinView.text = activeJamPIN // TODO: Instead of retrieving the PIN, perform an API call to get the current jams pin

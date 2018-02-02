@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
+import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
@@ -27,10 +28,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         MainRoutine().facebookAuthorize(this)
+        LoginRoutineKt().facebookLogin()
         //new MainRoutine().googleAuthorize();
         setContentView(R.layout.activity_main)
 
-        Realm.init(this)
+        //Realm.init(this) // already initialized in MyApplication
 
         //startActivity(new Intent(this, TestNavActivity.class));
         //startActivity(new Intent(this, NewLoginActivity.class));
@@ -41,13 +43,14 @@ class MainActivity : AppCompatActivity() {
         val accessToken = AccessToken.getCurrentAccessToken()
 
         if ((UUID == "not working") && accessToken == null) {
-            val loginIntent = Intent(this, NewLoginActivity::class.java)
-            startActivity(loginIntent)
+            startLoginActivity()
         } else if (accessToken == null) {
             MainRoutine().facebookAuthorize(this)
+            startLoginActivity()
         } else {
             if (accessToken.token == null || accessToken.userId == null) {
                 MainRoutine().facebookAuthorize(this)
+                startLoginActivity()
             }
             LogUtils.debug("FB ID: ", accessToken.userId)
             LogUtils.debug("FB Access Token: ", accessToken.token.toString())
@@ -71,6 +74,11 @@ class MainActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_MAIN)
         intent.addCategory(Intent.CATEGORY_HOME)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+    }
+
+    private fun startLoginActivity() {
+        val intent = Intent(this, NewLoginActivity::class.java)
         startActivity(intent)
     }
 }

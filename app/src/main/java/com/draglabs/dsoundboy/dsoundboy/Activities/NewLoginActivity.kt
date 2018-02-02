@@ -29,7 +29,7 @@ import com.facebook.ProfileTracker
 class NewLoginActivity : AppCompatActivity() {
 
     private var callbackManager: CallbackManager? = null
-    private var loginRoutineKt: LoginRoutineKt? = null
+    //private var loginRoutineKt: LoginRoutineKt? = null
     private var accessToken: AccessToken? = null
     private var accessTokenTracker: AccessTokenTracker? = null
     private var profileTracker: ProfileTracker? = null
@@ -37,6 +37,8 @@ class NewLoginActivity : AppCompatActivity() {
     private var fbLoginButton: LoginButton? = null
     private var signUpButton: Button? = null
     private var loginButton: Button? = null
+
+    //private var buttons: HashMap<String, Any>? = null
 
     /**
      * The onCreate method for the new login activity
@@ -51,9 +53,9 @@ class NewLoginActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_new_login)
 
-        val buttons = HashMap<String, Any>()
+        //buttons = HashMap()
 
-        loginRoutineKt = LoginRoutineKt(buttons, this, this)
+        //loginRoutineKt = LoginRoutineKt()
 
         setElements()
         setListeners()
@@ -89,13 +91,13 @@ class NewLoginActivity : AppCompatActivity() {
         })*/
 
         //buttons.put("facebookLoginButton", fbLoginButton);
-        loginRoutineKt!!.addButton("facebookLoginButton", fbLoginButton as Any)
     }
 
     private fun setElements() {
         fbLoginButton = findViewById<LoginButton>(R.id.login_button)
         signUpButton = findViewById<Button>(R.id.login_screen_button_sign_up)
         loginButton = findViewById<Button>(R.id.login_screen_button_login)
+        //LoginRoutineKt().addButton("facebookLoginButton", fbLoginButton as Any)
     }
 
     private fun setListeners() {
@@ -152,7 +154,7 @@ class NewLoginActivity : AppCompatActivity() {
      * @param view the view calling the login
      */
     fun clickFacebookLogin(view: View) {
-        loginRoutineKt!!.clickFacebookLogin()
+        LoginRoutineKt().clickFacebookLogin(fbLoginButton!!, this, this)
     }
 
     /**
@@ -174,7 +176,7 @@ class NewLoginActivity : AppCompatActivity() {
                 val fbApplicationID = loginResult.accessToken.applicationId
 
                 val realm = RealmUtils.Functions.startRealm()
-                RealmUtils.UserModelUtils.Initialize.initializeUserModel(fbID, fbAccessToken)
+                RealmUtils.UserModelUtils.Initialize.initializeUserModel(realm, fbID, fbAccessToken)
                 realm.close()
 
                 LogUtils.debug("UserModel ID: ", fbID)
@@ -182,7 +184,7 @@ class NewLoginActivity : AppCompatActivity() {
                 LogUtils.debug("Application ID: ", fbApplicationID)
                 val graphRequest = GraphRequest.newMeRequest(loginResult.accessToken) { `object`, response ->
                     Log.v("Main: ", response.toString())
-                    loginRoutineKt!!.setProfileView(`object`)
+                    LoginRoutineKt().setProfileView(`object`, this@NewLoginActivity, this@NewLoginActivity)
                 }
                 val parameters = Bundle()
                 parameters.putString("fields", "id,name,email")

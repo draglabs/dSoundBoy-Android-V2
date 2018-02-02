@@ -221,8 +221,14 @@ class RealmUtils {
     object UserModelUtils {
         object Initialize {
 
-            fun initializeUserModel(fbID: String, fbAccessToken: String) {
-                val realm = Functions.startRealm()
+            fun initializeUserModel(realm: Realm, fbID: String, fbAccessToken: String) {
+                //val realm = Functions.startRealm()
+
+                if (realm.isInTransaction) {
+                    realm.commitTransaction()
+                }
+
+                realm.beginTransaction()
 
                 val user = realm.where(UserModel::class.java).equalTo(UserVars.FB_ID, fbID).findFirst()
                 if (user == null) { // if there is no such user
@@ -233,15 +239,18 @@ class RealmUtils {
                     user.fbAccessToken = fbAccessToken
                 }
 
-                Functions.closeRealm(realm)
+                realm.commitTransaction()
+
+                //Functions.closeRealm(realm)
             }
 
-            fun initializeUserModel(context: Context) {
+            fun initializeUserModel(context: Context, fbID: String, fbAccessToken: String) {
                 val realm = Functions.startRealm()
 
                 val person = realm.createObject(UserModel::class.java)
-                val prefUtils = PrefUtilsKt.Functions()
-                person.UUID = prefUtils.retrieveUUID(context) // also sets the user's primary key
+                person.UUID = PrefUtilsKt.Functions().retrieveUUID(context) // also sets the user's primary key
+                person.fbID = fbID
+                person.fbAccessToken = fbAccessToken
                 // add other attributes here
 
                 Functions.closeRealm(realm)

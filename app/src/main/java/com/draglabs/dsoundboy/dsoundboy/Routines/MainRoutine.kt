@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException
 
 /**
  * Created by davrukin on 11/1/17.
+ * @author Daniel Avrukin
  */
 class MainRoutine {
 
