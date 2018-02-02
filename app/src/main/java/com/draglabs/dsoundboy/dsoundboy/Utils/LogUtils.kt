@@ -4,6 +4,7 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Utils
 
+import android.content.Context
 import android.util.Log
 
 import com.draglabs.dsoundboy.dsoundboy.BuildConfig
@@ -56,6 +57,12 @@ object LogUtils {
         LogUtils.debug("onFailure Failed Message", t.message.toString())
         LogUtils.debug("onFailure Failed Cause", t.cause.toString())
         LogUtils.debug("onFailure Failed StackTrace", t.printStackTrace().toString())
+    }
+
+    fun logAppSettings(context: Context) {
+        val wifiOnlyUploads = SystemUtils.Settings.Networking.getWifiOnlyUploadsSetting(context)
+        LogUtils.debug("App Settings", "Printed here")
+        LogUtils.debug("Wifi-Only Uploads", "$wifiOnlyUploads")
     }
 
 }

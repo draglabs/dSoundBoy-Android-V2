@@ -7,11 +7,14 @@ package com.draglabs.dsoundboy.dsoundboy.Activities
 import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
+import android.preference.Preference
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -22,6 +25,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.*
 import android.widget.Button
+import android.widget.Switch
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
@@ -180,6 +184,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         jamPinView.setOnClickListener {
             updatePinView()
+            LogUtils.logAppSettings(this@TestNavActivity)
         }
 
         jamPinView.setOnDragListener { view, event ->

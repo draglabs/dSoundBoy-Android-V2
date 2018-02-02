@@ -323,13 +323,20 @@ class RealmUtils {
     object Functions {
         fun startRealm(): Realm {
             val realm = Realm.getDefaultInstance()
+            if (realm.isInTransaction) {
+                realm.commitTransaction()
+            }
             realm.beginTransaction()
             return realm
         }
 
         fun closeRealm(realm: Realm) {
-            realm.commitTransaction()
-            realm.close()
+            if (realm.isInTransaction) {
+                realm.commitTransaction()
+            }
+            if (!realm.isClosed) {
+                realm.close()
+            }
         }
 
         fun getAttributeFromUser(context: Context, realm: Realm, attribute: String) {
