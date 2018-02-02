@@ -25,4 +25,14 @@ class OfflineUploader {
         // if wifi-only is on
             // save recording, write the filename/filepath to a text file, and don't upload
             // upload only if wifi is on
+
+    // instead of two text files, there are two methods
+        // create json and parse with gson where each file is an element in an array
+            // filename and tag
+        // *map<k,v> in sharedpreferences or even in realm that's read, modified, and re-written
+            // potential problem: if user uninstalls app and has recordings not uploaded, the
+            // sharedpreferences won't know which ones were and weren't
+            // therefore should include processing with api call to see which recordings (getrecordings)
+            // and address the non-uploaded ones by recording id to re-upload them by filename
+            // a more complex but also a more robust method
 }
