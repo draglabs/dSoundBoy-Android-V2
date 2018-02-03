@@ -4,6 +4,14 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Tasks
 
+import android.content.Context
+import android.os.Environment
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.SystemUtils
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import java.io.File
+
 /**
  * Created by davrukin on 2/1/2018.
  * @author Daniel Avrukin
@@ -35,4 +43,64 @@ class OfflineUploader {
             // therefore should include processing with api call to see which recordings (getrecordings)
             // and address the non-uploaded ones by recording id to re-upload them by filename
             // a more complex but also a more robust method
+
+    suspend fun prepareUpload(context: Context) {
+        val readyForUpload = SystemUtils.Networking.ConnectionStatus.ableToUpload(context)
+    }
+
+    private object FileUtils {
+        fun createFile(): File {
+            val rootPath = "${Environment.getExternalStorageDirectory()}/dSoundBoyRecordings"
+            val filename = "dSoundBoy Wifi Uploads.json"
+            val path = "$rootPath/$filename"
+            LogUtils.debug("Path to Uploads", path)
+
+            return File(path)
+        }
+
+        fun readFile(): File {
+            val rootPath = "${Environment.getExternalStorageDirectory()}/dSoundBoyRecordings"
+            val filename = "dSoundBoy Wifi Uploads.json"
+            val path = "$rootPath/$filename"
+            LogUtils.debug("Path to Uploads", path)
+
+            val file = File(path)
+
+            if (!file.exists()) {
+                return createFile()
+            } else {
+                return file
+            }
+        }
+
+        fun writeFile(string: String, file: File) {
+            file.writeText(string) // over-writes the file
+        }
+
+        fun modifyFile(string: String, file: File) {
+            file.appendText(string) // appends lines to the file
+        }
+
+        fun addFileToUpload(filePath: String, jamID: String, arrayOfFiles: JsonArray): JsonArray {
+            // [recording file name, jam id]
+            val jsonObject = JsonObject()
+            jsonObject.addProperty(filePath, jamID)
+            arrayOfFiles.add(jsonObject)
+            LogUtils.debug("Added File", "$jsonObject")
+            LogUtils.debug("Array of Files", "$arrayOfFiles")
+            return arrayOfFiles
+        }
+
+        fun constructJson(): JsonObject {
+            return JsonObject()
+        }
+
+        fun convertJsonObjectToString(jsonObject: JsonObject): String {
+            return jsonObject.toString()
+        }
+
+        fun clearFile(file: File) {
+            file.writeText("")
+        }
+    }
 }

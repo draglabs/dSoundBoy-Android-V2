@@ -107,11 +107,17 @@ class NewLoginActivity : AppCompatActivity() {
 
         signUpButton!!.setOnClickListener {
             Toast.makeText(this, "Sign Up Button Clicked", Toast.LENGTH_LONG).show()
+            // launch intent to go to login screen
+            val intent = Intent(this, EmailLoginActivity::class.java)
+            intent.putExtra("type", "sign_up")
+            startActivity(intent)
         }
 
         loginButton!!.setOnClickListener {
             Toast.makeText(this, "Login Button Clicked", Toast.LENGTH_LONG).show()
-
+            val intent = Intent(this, EmailLoginActivity::class.java)
+            intent.putExtra("type", "log_in")
+            startActivity(intent)
         }
     }
 
@@ -176,7 +182,7 @@ class NewLoginActivity : AppCompatActivity() {
                 val fbApplicationID = loginResult.accessToken.applicationId
 
                 val realm = RealmUtils.Functions.startRealm()
-                RealmUtils.UserModelUtils.Initialize.initializeUserModel(realm, fbID, fbAccessToken)
+                RealmUtils.UserModelUtils.Initialize.initializeUserModel(realm, this@NewLoginActivity, fbID, fbAccessToken)
                 realm.close()
 
                 LogUtils.debug("UserModel ID: ", fbID)

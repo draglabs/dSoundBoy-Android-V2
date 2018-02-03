@@ -31,20 +31,36 @@ object SystemUtils {
                 return (activeNetworkInfo != null) && (activeNetworkInfo.isConnectedOrConnecting)
             }
 
-            fun ableToUpload(context: Context, wifiOnly: Boolean): Boolean {
+            fun checkNetworkStatus(context: Context) {
                 val isConnectedToInternet = isConnectedToInternet(context)
                 val isConnectedToWifi = isConnectedToWifi(context)
                 val isConnectedToMobile = isConnectedToMobile(context)
 
+                LogUtils.debug("Connection Status", "Connected to Internet: $isConnectedToInternet\nConnected to Wifi: $isConnectedToWifi\nConnected to Mobile: $isConnectedToMobile")
+            }
+
+            fun ableToUpload(context: Context): Boolean {
+                val wifiOnly = Settings.Networking.getWifiOnlyUploadsSetting(context)
+
+                val isConnectedToInternet = isConnectedToInternet(context)
+                val isConnectedToWifi = isConnectedToWifi(context)
+                val isConnectedToMobile = isConnectedToMobile(context)
+
+                LogUtils.debug("Connection Status", "Connected to Internet: $isConnectedToInternet\nConnected to Wifi: $isConnectedToWifi\nConnected to Mobile: $isConnectedToMobile")
+
                 if (wifiOnly) {
                     if (isConnectedToInternet && isConnectedToWifi) {
+                        LogUtils.debug("Able to Upload", "true")
                         return true
                     } else if (isConnectedToInternet && isConnectedToMobile && !isConnectedToWifi) {
+                        LogUtils.debug("Able to Upload", "false")
                         return false
                     } else {
+                        LogUtils.debug("Able to Upload", "false")
                         return false
                     }
                 } else {
+                    LogUtils.debug("Able to Upload", "true")
                     return true
                 }
             }

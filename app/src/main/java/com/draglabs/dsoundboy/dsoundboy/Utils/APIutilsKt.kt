@@ -27,6 +27,7 @@ import java.io.FileNotFoundException
 import java.util.*
 import android.app.Activity
 import android.os.Environment
+import io.realm.Realm
 import org.json.JSONArray
 
 
@@ -163,7 +164,9 @@ class APIutilsKt {
         }
 
         fun performGetActiveJam(context: Context) {
-            val uuid = RealmUtils.UserModelUtils.Retrieve.retrieveUser().UUID
+            val realm = Realm.getDefaultInstance()
+            val uuid = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm).UUID
+            realm.close()
             val call = APIparamsKt().callGetActiveJam(uuid)
 
             call.enqueue(object: Callback<ResponseModelKt.UserFunctions.GetActiveJam> {

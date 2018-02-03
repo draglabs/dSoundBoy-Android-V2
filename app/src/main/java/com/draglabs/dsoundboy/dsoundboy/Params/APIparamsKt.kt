@@ -20,6 +20,7 @@ import com.facebook.AccessToken
 import com.facebook.FacebookSdk
 import com.facebook.Profile
 import com.facebook.login.LoginResult
+import io.realm.Realm
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
@@ -129,7 +130,7 @@ class APIparamsKt {
 
     fun callRegisterUser(activity: Activity): Call<ResponseModelKt.UserFunctions.RegisterUser> {
         checkFacebookID(activity)
-        val facebookID = Profile.getCurrentProfile().id
+        val facebookID = Profile.getCurrentProfile()?.id
         val accessToken = AccessToken.getCurrentAccessToken().token
 
         //val userService = RetrofitClient().getClient().create(ApiInterface::class.java)
@@ -147,9 +148,11 @@ class APIparamsKt {
         //Profile.fetchProfileForCurrentAccessToken()
         //val profile = Profile.getCurrentProfile()
 
-        val user  = RealmUtils.UserModelUtils.Retrieve.retrieveUser()
+        val realm = Realm.getDefaultInstance()
+        val user  = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm)
         val facebookID = user.fbID
         val accessToken = user.fbAccessToken
+        realm.close()
 
 
         if (facebookID == null || accessToken == null) {

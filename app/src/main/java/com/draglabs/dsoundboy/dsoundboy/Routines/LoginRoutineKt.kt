@@ -77,19 +77,37 @@ class LoginRoutineKt {
 
     fun setProfileView(response: JSONObject, activity: Activity, context: Context) {
         val name = response.getString("name")
-        val email = response.getString("email")
+        var email: String? = null
+        if (response.has("email")) {
+            email = response.getString("email")
+        }
         val id = response.getString("id")
-        PrefUtilsKt.Functions().storeFbName(context, name)
-        PrefUtilsKt.Functions().storeFbEmail(context, email)
-        PrefUtilsKt.Functions().storeFbImage(context, id)
-        val pictureView = activity.findViewById<View>(R.id.user_picture) as ProfilePictureView
-        pictureView.presetSize = ProfilePictureView.NORMAL
-        pictureView.profileId = id
 
-        val userNameTextView = activity.findViewById<View>(R.id.user_name) as TextView
-        val userEmailTextView = activity.findViewById<View>(R.id.user_email) as TextView
-        userNameTextView.text = name
-        userEmailTextView.text = email
+        if (email != null) {
+            PrefUtilsKt.Functions().storeFbName(context, name)
+            PrefUtilsKt.Functions().storeFbEmail(context, email)
+            PrefUtilsKt.Functions().storeFbImage(context, id)
+            val pictureView = activity.findViewById<View>(R.id.user_picture) as ProfilePictureView
+            pictureView.presetSize = ProfilePictureView.NORMAL
+            pictureView.profileId = id
+
+            val userNameTextView = activity.findViewById<View>(R.id.user_name) as TextView
+            val userEmailTextView = activity.findViewById<View>(R.id.user_email) as TextView
+            userNameTextView.text = name
+            userEmailTextView.text = email
+        } else {
+            PrefUtilsKt.Functions().storeFbName(context, name)
+            //PrefUtilsKt.Functions().storeFbEmail(context, email)
+            PrefUtilsKt.Functions().storeFbImage(context, id)
+            val pictureView = activity.findViewById<View>(R.id.user_picture) as ProfilePictureView
+            pictureView.presetSize = ProfilePictureView.NORMAL
+            pictureView.profileId = id
+
+            val userNameTextView = activity.findViewById<View>(R.id.user_name) as TextView
+            val userEmailTextView = activity.findViewById<View>(R.id.user_email) as TextView
+            userNameTextView.text = name
+            userEmailTextView.text = "$name"
+        }
     }
 
     fun saveFacebookCredentials(loginResult: LoginResult) {

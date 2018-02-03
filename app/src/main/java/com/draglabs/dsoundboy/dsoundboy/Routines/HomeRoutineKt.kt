@@ -316,13 +316,15 @@ class HomeRoutineKt {
     }
 
     fun clickLogout() {
-        if (AccessToken.getCurrentAccessToken() != null) {
+        /*if (AccessToken.getCurrentAccessToken() != null) {
             GraphRequest(AccessToken.getCurrentAccessToken(), "/me/permissions/", null, HttpMethod.DELETE, GraphRequest.Callback {
                 AccessToken.setCurrentAccessToken(null)
                 LoginManager.getInstance().logOut()
                 //finish()
             }).executeAsync()
-        }
+        }*/
+        AccessToken.setCurrentAccessToken(null)
+        LoginManager.getInstance().logOut()
     }
 
 }

@@ -1,4 +1,4 @@
-/*
+  /*
  * Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
  */
 
@@ -11,11 +11,13 @@ import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.Window
 import android.widget.ProgressBar
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.ListOfJamsRoutine
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
 import com.draglabs.dsoundboy.dsoundboy.ViewAdapters.CustomAdapter
@@ -41,7 +43,7 @@ class ListOfJamsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.content_list_of_jams)
-        setSupportActionBar(toolbar)
+        //setSupportActionBar(toolbar)
 
         val listOfJams = getJams(realm) // show the view, populate data as it shows
         //val listOfJams = prepareList(jams)
@@ -54,6 +56,10 @@ class ListOfJamsActivity : AppCompatActivity() {
 
         customAdapter = CustomAdapter(this, listOfJams!!)
         recyclerView.adapter = customAdapter
+
+        val usersName = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm).fbName
+        LogUtils.debug("User's Name in Jams View", "$usersName")
+        this.title = "$usersName's Jams"
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
 
