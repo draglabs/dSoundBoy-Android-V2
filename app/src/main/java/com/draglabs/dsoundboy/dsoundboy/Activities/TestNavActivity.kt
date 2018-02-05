@@ -32,6 +32,7 @@ import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Services.LocationTrackingService
+import com.draglabs.dsoundboy.dsoundboy.Tasks.OfflineUploader
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
 import com.facebook.FacebookSdk
@@ -173,7 +174,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_stop_new.setOnClickListener { view ->
-            clickStop(this, view, recorder)
+            async { OfflineUploader().prepareUpload(this@TestNavActivity, view, recorder, ::clickStop) }
+            //clickStop(this, view, recorder)
             rec.visibility = View.VISIBLE
             stop.visibility = View.GONE
         }

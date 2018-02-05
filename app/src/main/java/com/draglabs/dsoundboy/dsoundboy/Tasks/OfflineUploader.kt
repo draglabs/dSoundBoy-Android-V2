@@ -6,11 +6,19 @@ package com.draglabs.dsoundboy.dsoundboy.Tasks
 
 import android.content.Context
 import android.os.Environment
+import android.view.View
+import android.widget.Button
+import android.widget.Chronometer
+import com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
+import com.draglabs.dsoundboy.dsoundboy.Utils.RecorderUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.SystemUtils
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import kotlinx.coroutines.experimental.delay
+import omrecorder.Recorder
 import java.io.File
+import java.util.*
 
 /**
  * Created by davrukin on 2/1/2018.
@@ -44,8 +52,43 @@ class OfflineUploader {
             // and address the non-uploaded ones by recording id to re-upload them by filename
             // a more complex but also a more robust method
 
-    suspend fun prepareUpload(context: Context) {
+    suspend fun prepareUpload(context: Context, view: View, recorder: Recorder, stop: (Context, View, Recorder) -> (Unit)) {
+        delay(250)
+        LogUtils.debug("Preparing Upload", "Checking if Ready")
         val readyForUpload = SystemUtils.Networking.ConnectionStatus.ableToUpload(context)
+        LogUtils.debug("Ready for Upload", "$readyForUpload")
+
+        //clickStop.run {  }
+        stop.invoke(context, view, recorder)
+
+
+        if (readyForUpload) {
+            // upload current recording {async}
+            // read through json file to upload deferred files {async}
+                // on success of all, clear the file
+        } else {
+            // defer current recording by appending to file {async}
+        }
+        // send notification for each action
+            // say how many recordings are being deferred and how many are being uploaded
+                // show a finite notification progress bar as each one goes through
+        // performClickStop here
+    }
+
+    private fun doStop(context: Context, jamPinView: Button, recorder: Recorder, recorderUtils: RecorderUtils, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
+        updatePinView(context, jamPinView)
+
+        clickStop(recorder, recorderUtils, context, view, chronometer, startTime, endTime)
+
+        updatePinView(context, jamPinView)
+    }
+
+    private fun clickStop(recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
+
+    }
+
+    private fun updatePinView(context: Context, jamPinView: Button) {
+
     }
 
     private object FileUtils {
@@ -81,10 +124,13 @@ class OfflineUploader {
             file.appendText(string) // appends lines to the file
         }
 
-        fun addFileToUpload(filePath: String, jamID: String, arrayOfFiles: JsonArray): JsonArray {
+        fun addFileToUpload(filePath: String, jamID: String, startTime: String, endTime: String, arrayOfFiles: JsonArray): JsonArray {
             // [recording file name, jam id]
             val jsonObject = JsonObject()
-            jsonObject.addProperty(filePath, jamID)
+            jsonObject.addProperty("file_path", filePath)
+            jsonObject.addProperty("jam_id", jamID)
+            jsonObject.addProperty("start_time", startTime)
+            jsonObject.addProperty("end_time", endTime)
             arrayOfFiles.add(jsonObject)
             LogUtils.debug("Added File", "$jsonObject")
             LogUtils.debug("Array of Files", "$arrayOfFiles")

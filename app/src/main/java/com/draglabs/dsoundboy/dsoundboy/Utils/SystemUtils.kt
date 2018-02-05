@@ -41,6 +41,7 @@ object SystemUtils {
 
             fun ableToUpload(context: Context): Boolean {
                 val wifiOnly = Settings.Networking.getWifiOnlyUploadsSetting(context)
+                LogUtils.debug("Wifi-Only Upload Setting", "$wifiOnly")
 
                 val isConnectedToInternet = isConnectedToInternet(context)
                 val isConnectedToWifi = isConnectedToWifi(context)
