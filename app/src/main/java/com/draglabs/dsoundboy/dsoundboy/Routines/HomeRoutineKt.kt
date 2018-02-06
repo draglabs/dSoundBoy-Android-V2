@@ -21,6 +21,7 @@ import com.facebook.AccessToken
 import com.facebook.GraphRequest
 import com.facebook.HttpMethod
 import com.facebook.login.LoginManager
+import io.realm.Realm
 import omrecorder.Recorder
 import java.util.*
 
@@ -112,14 +113,14 @@ class HomeRoutineKt {
      * @param startTime submits the recording's start time to the server
      * @param endTime submits the recording's end time to the server
      */
-    fun clickStop(recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
+    fun clickStop(realm: Realm, jamID: String, recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
         //recorderUtils.stopRecording();
         recorderUtils.stopRecording(recorder)
         chronometer.stop()
 
         Toast.makeText(context, "Stopped recording.", Toast.LENGTH_LONG).show()
 
-        submitToServer(context, view, startTime, endTime)
+        //submitToServer(realm, jamID, context, view, startTime, endTime)
     }
 
     /**
@@ -128,7 +129,7 @@ class HomeRoutineKt {
      * @param startTime the recording's start time
      * @param endTime the recording's end time
      */
-    private fun submitToServer(context: Context, view: View, startTime: Date?, endTime: Date?) {
+    private fun submitToServer(realm: Realm, jamID: String, context: Context, view: View, startTime: Date?, endTime: Date?) {
         var recordingStartTime = startTime
         var recordingEndTime = endTime
 
@@ -158,11 +159,11 @@ class HomeRoutineKt {
         val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
         APIutilsKt.JamFunctions.performGetActiveJam(context) // submitting now to active jam, before it may have had old information
         val jamName = PrefUtilsKt.Functions().retrieveJamName(context)
-        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
         val recordingPath = PrefUtilsKt.Functions().retrieveLocalPath(context)
 
-        APIutilsKt().performUploadJam(context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
+        APIutilsKt().performUploadJam(realm, context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
         //APIutilsKt.JamFunctions.jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);

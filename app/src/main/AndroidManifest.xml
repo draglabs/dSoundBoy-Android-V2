@@ -91,12 +91,9 @@
             android:parentActivityName=".Activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.MainActivity" />
@@ -111,12 +108,9 @@
             android:parentActivityName=".Activities.NewLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.NewLoginActivity" />
@@ -130,23 +124,18 @@
             android:parentActivityName=".Activities.NewLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
-
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".Activities.NewLoginActivity" />
         </activity>
-
         <provider
             android:name="com.facebook.FacebookContentProvider"
             android:authorities="com.facebook.app.FacebookContentProvider147689855771285"
             android:exported="false" />
-
         <activity
             android:name=".Activities.TestNavActivity"
             android:label="@string/title_activity_test_nav"

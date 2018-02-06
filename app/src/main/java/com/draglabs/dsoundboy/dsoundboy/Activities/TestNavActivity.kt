@@ -40,6 +40,7 @@ import com.facebook.GraphRequest
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
+import io.realm.Realm
 import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
@@ -90,6 +91,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private lateinit var recorderUtils: RecorderUtils
 
     private lateinit var gestureDetector: GestureDetectorCompat
+
+    private lateinit var realm: Realm
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,6 +156,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         stop.visibility = View.GONE
 
         doPermissionsCheck()
+
+        realm = Realm.getDefaultInstance()
     }
 
     private fun setListeners() {
@@ -174,8 +179,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_stop_new.setOnClickListener { view ->
-            async { OfflineUploader().prepareUpload(this@TestNavActivity, view, recorder, ::clickStop) }
-            //clickStop(this, view, recorder)
+            clickStop(this, view, recorder)
+            async { initiateOfflineUploader(view) }
             rec.visibility = View.VISIBLE
             stop.visibility = View.GONE
         }
@@ -213,6 +218,15 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             LogUtils.debug("Longitude", PrefUtilsKt.Functions().retrieveLongitude(this))
         }*/
     }
+
+    private suspend fun initiateOfflineUploader(view: View) {
+        endTime = Date()
+        val jamID = PrefUtilsKt.Functions().retrieveJamID(this) // current jam id
+        val jamName = PrefUtilsKt.Functions().retrieveFbName(this)
+        //OfflineUploader().prepareUpload(realm, jamID, this, jamPinView, recorder, recorderUtils, view, chronometer_new, startTime, endTime)
+        OfflineUploader().addRecordingToQueue(realm, filename, jamID, jamName, startTime.toString(), endTime.toString())
+        OfflineUploader().queueInteractor(this, realm)
+    } // driedSpaghetti
 
     private fun doPermissionsCheck() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -306,7 +320,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         updatePinView()
 
         endTime = Date()
-        HomeRoutineKt().clickStop(recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
+        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        HomeRoutineKt().clickStop(realm, jamID, recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
 
         updatePinView()
     }
@@ -364,7 +379,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
+            realm.close()
         } else {
+            realm.close()
             super.onBackPressed()
         }
     }
@@ -439,6 +456,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     override fun onStop() {
         locationUtils?.onStop(locationVars)
+        realm.close()
         super.onStop()
     }
 

@@ -15,13 +15,13 @@ import java.io.Serializable
  */
 @RealmClass
 open class JamViewModel(
-       // @PrimaryKey var id: Int,
-        @PrimaryKey var jamID: String,
-        var name: String,
-        var location: String,
-        var link: String,
-        var notes: String,
-        var pin: String
+   // @PrimaryKey var id: Int,
+    @PrimaryKey var jamID: String,
+    var name: String,
+    var location: String,
+    var link: String,
+    var notes: String,
+    var pin: String
 ) : Serializable, RealmObject() {
     constructor() : this("", "", "", "", "", "")
 

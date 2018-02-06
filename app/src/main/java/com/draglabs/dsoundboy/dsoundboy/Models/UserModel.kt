@@ -26,4 +26,8 @@ open class UserModel(
     var localPath: String
 ) : Serializable, RealmObject() {
     constructor() : this("", "", "", "", "", "", "", "", "")
+
+    override fun toString(): String {
+        return "UUID: $UUID; lat: $lat; lng: $lng; fbID: $fbID; fbAccessToken: $fbAccessToken; fbName: $fbName; fbEmail: $fbEmail; fbImage: $fbImage; localPath: $localPath"
+    }
 }

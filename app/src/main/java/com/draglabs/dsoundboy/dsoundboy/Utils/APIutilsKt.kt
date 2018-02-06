@@ -477,7 +477,7 @@ class APIutilsKt {
     }
 
     @Deprecated("Use jamRecordingUpload instead")
-    fun performUploadJam(context: Context, filePath: String, userID: String, fileName: String, location: String, jamID: String, startTime: String, endTime: String) {
+    fun performUploadJam(realm: Realm, context: Context, filePath: String, userID: String, fileName: String, location: String, jamID: String, startTime: String, endTime: String) {
         val call = APIparamsKt().callUploadJam(filePath, userID, fileName, location, jamID, startTime, endTime)
 
         call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UploadJam> {
@@ -488,6 +488,7 @@ class APIutilsKt {
                     val message = response.message()
                     LogUtils.debug("Upload Response Body", result.toString())
                     LogUtils.debug("Upload Response Message", "Code: $code; Message: $message")
+                    RealmUtils.RecordingModelUtils.Edit.setRecordingAsUploaded(realm, filePath)
                 } else {
                     LogUtils.debug("Failed Response", response.errorBody()!!.toString())
                     LogUtils.debug("Code", "" + response.code())

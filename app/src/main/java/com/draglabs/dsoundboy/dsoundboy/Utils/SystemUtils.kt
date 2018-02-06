@@ -61,8 +61,13 @@ object SystemUtils {
                         return false
                     }
                 } else {
-                    LogUtils.debug("Able to Upload", "true")
-                    return true
+                    if (isConnectedToInternet) {
+                        LogUtils.debug("Able to Upload", "true")
+                        return true
+                    } else {
+                        LogUtils.debug("Able to Upload", "false")
+                        return false
+                    }
                 }
             }
 

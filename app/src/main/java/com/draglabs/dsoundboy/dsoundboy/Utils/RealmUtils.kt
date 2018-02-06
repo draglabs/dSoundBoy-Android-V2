@@ -6,9 +6,13 @@ package com.draglabs.dsoundboy.dsoundboy.Utils
 
 import android.content.Context
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
+import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
 import com.draglabs.dsoundboy.dsoundboy.Models.UserModel
 import io.realm.Realm
+import io.realm.RealmChangeListener
 import io.realm.RealmResults
+import io.realm.kotlin.deleteFromRealm
+import java.io.File
 import java.util.*
 
 /**
@@ -316,6 +320,131 @@ class RealmUtils {
                 user!!.fbAccessToken = fbAccessToken
 
                 Functions.closeRealm(realm)
+            }
+        }
+    }
+
+    object RecordingModelUtils {
+        object Initialize {
+            fun initializeRecordingModel(realm: Realm, filepath: String, jamID: String, jamName: String, startTime: String, endTime: String, didUpload: Boolean) {
+                realm.beginTransaction()
+
+                val testObject = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
+                if (testObject == null) {
+                    val recording = realm.createObject(RecordingModel::class.java, filepath)
+                    recording.jamID = jamID
+                    recording.jamName = jamName
+                    recording.startTime = startTime
+                    recording.endTime = endTime
+                    recording.didUpload = didUpload
+                    createListener(recording)
+                } else {
+                    testObject.jamID = jamID
+                    testObject.jamName = jamName
+                    testObject.startTime = startTime
+                    testObject.endTime = endTime
+                    testObject.didUpload = didUpload
+                    createListener(testObject)
+                }
+
+                realm.commitTransaction()
+            }
+
+            private fun createListener(recording: RecordingModel) {
+                recording.addChangeListener(RealmChangeListener {
+                    if (recording.didUpload) {
+                        val path = recording.filePath
+                        Delete.deleteRecordingModel(recording, path)
+                        it.deleteFromRealm()
+                        // doesn't necessarily need to be deleted, it can just be flagged away
+                        // delete record if the file is not existing anymore locally
+                    }
+                })
+            }
+        }
+        object Store {
+            fun storeRecordingModel(realm: Realm, filepath: String, jamID: String, jamName: String, startTime: String, endTime: String, didUpload: Boolean) {
+                Initialize.initializeRecordingModel(realm, filepath, jamID, jamName, startTime, endTime, didUpload)
+            }
+        }
+        object Retrieve {
+            fun retrieveRecordingModel(realm: Realm, filepath: String): RecordingModel {
+                realm.beginTransaction()
+
+                val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
+
+                if (recording != null) {
+                    val path = recording.filePath
+                    val file = File(path)
+                    if (file.exists()) {
+                        realm.commitTransaction()
+                        return recording
+                    } else {
+                        recording.deleteFromRealm()
+                        realm.commitTransaction()
+                        return RecordingModel()
+                    }
+                } else {
+                    realm.commitTransaction()
+                    return RecordingModel() // return empty RecordingModel otherwise, so it's not null
+                }
+
+            }
+
+            fun retrieveRecordingModelByUploadStatus(realm: Realm, didUpload: Boolean): RealmResults<RecordingModel> {
+                realm.beginTransaction()
+
+                val recordings = realm.where(RecordingModel::class.java).equalTo("didUpload", didUpload).findAll()
+
+                realm.commitTransaction()
+
+                return recordings
+            }
+        }
+        object Edit {
+            fun editRecordingModel() {
+
+            }
+
+            fun recordingDidUpload(realm: Realm, didUpload: Boolean) {
+                realm.beginTransaction()
+
+                val recording = realm.where(RecordingModel::class.java).equalTo("didUpload", didUpload).findFirst()
+
+                if (recording != null) {
+                    recording.didUpload = didUpload
+                }
+
+                realm.commitTransaction()
+            }
+
+            fun setRecordingAsUploaded(realm: Realm, filepath: String) {
+                realm.beginTransaction()
+
+                val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
+                recording!!.didUpload = true
+
+                realm.commitTransaction()
+            }
+        }
+        object Delete {
+            fun deleteRecordingModel(realm: Realm, filepath: String) {
+                realm.beginTransaction()
+
+                val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
+                if (recording != null) {
+                    val file = File(filepath)
+                    file.delete()
+                    recording.deleteFromRealm()
+                }
+
+                realm.commitTransaction()
+            }
+
+            fun deleteRecordingModel(recording: RecordingModel, filepath: String) {
+                val file = File(filepath)
+                file.delete()
+                recording.deleteFromRealm()
             }
         }
     }
