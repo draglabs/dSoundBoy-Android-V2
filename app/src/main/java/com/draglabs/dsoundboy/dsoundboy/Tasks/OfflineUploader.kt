@@ -4,24 +4,32 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Tasks
 
+import android.app.NotificationManager
 import android.content.Context
 import android.os.Environment
+import android.support.v4.app.NotificationCompat
 import android.view.View
 import android.widget.Button
 import android.widget.Chronometer
 import android.widget.Toast
+import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
+import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModelForList
+import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.realm.Realm
+import io.realm.RealmResults
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
 import omrecorder.Recorder
 import java.io.File
 import java.io.FileReader
 import java.util.*
+import kotlin.concurrent.thread
 
 /**
  * Created by davrukin on 2/1/2018.
@@ -55,34 +63,98 @@ class OfflineUploader {
             // and address the non-uploaded ones by recording id to re-upload them by filename
             // a more complex but also a more robust method
 
-    suspend fun addRecordingToQueue(realm: Realm, filepath: String, jamID: String, jamName: String, startTime: String, endTime: String) {
-        delay(0)
+    fun addRecordingToQueue(realm: Realm, filepath: String, jamID: String, jamName: String, startTime: String, endTime: String) {
+        LogUtils.debug("Entering Function", "addRecordingToQueue")
         RealmUtils.RecordingModelUtils.Store.storeRecordingModel(realm, filepath, jamID, jamName, startTime, endTime, didUpload = false)
     }
 
-    suspend fun queueInteractor(context: Context, realm: Realm) {
-        delay(0)
+    suspend fun queueInteractor(context: Context) {
+        delay(2500)
         // check readiness
+        LogUtils.debug("Entering Function", "queueInteractor")
         LogUtils.debug("Preparing Upload", "Checking if Ready")
         val readyForUpload = SystemUtils.Networking.ConnectionStatus.ableToUpload(context)
         LogUtils.debug("Ready for Upload", "$readyForUpload")
 
-        if (readyForUpload) {
-            val queue = RealmUtils.RecordingModelUtils.Retrieve.retrieveRecordingModelByUploadStatus(realm, false)
-            val length = queue.size
-            var index = 0
-            for (item in queue) {
-                doDeferredUpload(realm, context, item.filePath, item.jamName, item.jamID, item.startTime, item.endTime)
-                LogUtils.debug("Queue Uploader", "$index of $length")
-                index++
-            }
-        }
         // go through queue of pending uploads
-        // uploads a file
-        // once it's been uploaded, mark it as uploaded
-            // once uploaded, gets automatically deleted
+        //if (readyForUpload == true) {
+        val realm = Realm.getDefaultInstance()
+            val queue = RealmUtils.RecordingModelUtils.Retrieve.retrieveRecordingModelByUploadStatus(realm, false)
+        //val queueList = ArrayList<RecordingModelForList>()
+        /*for (item in queue) {
+            val recording = RecordingModelForList()
+            recording.filePath = item.filePath
+            recording.jamID = item.jamID
+            recording.jamName = item.jamName
+            recording.startTime = item.startTime
+            recording.endTime = item.startTime
+            recording.didUpload = item.didUpload
+            queueList.add(recording)
+        }*/
+        val size = queue.size
+            LogUtils.debug("Upload Queue", "$queue")
+            LogUtils.debug("Queue Size", "$size")
+            LogUtils.debug("Starting Uploads", "Starting Notification Progress")
+            if (size > 0) {
+                createProgressNotificationWhileUpload(context, realm, size, queue)
+            } else {
+                LogUtils.debug("Upload Status", "Nothing to Upload")
+            }
+        //newRealm.close()
+            /*var index = 0
+            for (item in queue) {
+            // uploads a file
+            // once it's been uploaded, mark it as uploaded
+                // once uploaded, gets automatically deleted
                 // delete local file and realm record
-        // repeat
+                doDeferredUpload(realm, context, item.filePath, item.jamName, item.jamID, item.startTime, item.endTime)
+                LogUtils.debug("Queue Uploader", "Item $index of $size")
+                index++
+            }*/
+        //} else { // repeat
+        //    LogUtils.debug("Exiting Function queueInteractor", "Not Ready for Upload")
+        //}
+    }
+
+    private fun createProgressNotificationWhileUpload(context: Context, realm: Realm, size: Int, queue: RealmResults<RecordingModel>) {
+        LogUtils.debug("Entering Function", "createProgressNotificationWhileUpload")
+        val id = 1
+        val notifyManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationBuilder = NotificationCompat.Builder(context, id.toString())
+        notificationBuilder.setContentTitle("Digital Sound Boy").setContentText("Currently Uploading Recordings").setSmallIcon(R.drawable.ic_logo)
+        val task = launch {
+            var increment = 0
+            while (increment < size) {
+                notificationBuilder.setProgress(size, increment, false)
+                notifyManager.notify(id, notificationBuilder.build())
+
+                for ((index, item) in queue.withIndex()) {
+                    // uploads a file
+                    // once it's been uploaded, mark it as uploaded
+                    // once uploaded, gets automatically deleted
+                    // delete local file and realm record
+                    doDeferredUpload(item, context, realm)
+                    LogUtils.debug("Queue Uploader", "Item $index of $size")
+                }
+
+                increment++
+            }
+            notificationBuilder.setContentText("Upload Complete").setProgress(0, 0, false)
+            notifyManager.notify(id, notificationBuilder.build())
+            //realm.close()
+        }
+        task.start()
+        //task.invokeOnCompletion { realm.close() }
+    }
+
+    private fun doDeferredUpload(recording: RecordingModel, context: Context, realm: Realm) {
+        LogUtils.debug("Entering Function", "doDeferredUpload")
+        //val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
+        APIutilsKt().performUploadJam(realm, context, recording, "location") // may have to switch functions?
+        //APIutilsKt.JamFunctions.jamRecordingUpload(recording, context, "hi")
+        // TODO: success response from server makes didUpload true
+        // TODO: once uploaded, file gets deleted locally
+        // TODO: if file doesn't exist anymore, then didUpload is set to true
     }
 
     suspend fun prepareUpload(realm: Realm, jamID: String, context: Context, jamPinView: Button, recorder: Recorder, recorderUtils: RecorderUtils, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
@@ -109,7 +181,7 @@ class OfflineUploader {
                     val jEndTime = jsonObject["end_time"].asString
                     val jDidUpload = jsonObject["did_upload"].asBoolean
 
-                    async { doDeferredUpload(realm, context, jFilePath, jJamName, jJamID, jStartTime, jEndTime) }
+                    //async { doDeferredUpload(RecordingModel(), context, jFilePath, jJamName, jJamID, jStartTime, jEndTime) }
                 }
             }
             // read through json file to upload deferred files {async}
@@ -141,14 +213,7 @@ class OfflineUploader {
         updatePinView(context, jamPinView)
     }
 
-    private suspend fun doDeferredUpload(realm: Realm, context: Context, recordingPath: String, jamName: String, jamID: String, startTime: String, endTime: String) {
-        val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
-        APIutilsKt().performUploadJam(realm, context, recordingPath, uuid, jamName, "location", jamID, startTime, endTime) // may have to switch functions?
-        //APIutilsKt.JamFunctions.jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
-        // TODO: success response from server makes didUpload true
-        // TODO: once uploaded, file gets deleted locally
-        // TODO: if file doesn't exist anymore, then didUpload is set to true
-    }
+
 
     private fun clickStop(realm: Realm, jamID: String, recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
         HomeRoutineKt().clickStop(realm, jamID, recorder, recorderUtils, context, view, chronometer, startTime, endTime)

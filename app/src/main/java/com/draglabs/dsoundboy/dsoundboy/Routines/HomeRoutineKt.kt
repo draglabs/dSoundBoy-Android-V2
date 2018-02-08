@@ -163,7 +163,7 @@ class HomeRoutineKt {
 
         val recordingPath = PrefUtilsKt.Functions().retrieveLocalPath(context)
 
-        APIutilsKt().performUploadJam(realm, context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
+        //APIutilsKt().performUploadJam(realm, context, recordingPath, uuid, jamName, "location", jamID, startTime.toString(), endTime.toString())
         //APIutilsKt.JamFunctions.jamRecordingUpload(context, recordingPath, "hi", startTime.toString(), endTime.toString(), view)
         /*int id = 1;
         NotificationManager notificationManager = (NotificationManager)activity.getSystemService(Context.NOTIFICATION_SERVICE);

@@ -49,6 +49,7 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import omrecorder.Recorder
 import java.util.*
+import kotlin.concurrent.thread
 
 /**
  * @author Daniel Avrukin
@@ -145,7 +146,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         clickTestAuth()
         setListeners()
-        async {setUserView()}
+        async { setUserView() }
         initializeLocationClient()
         updatePinView()
 
@@ -157,7 +158,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         doPermissionsCheck()
 
-        realm = Realm.getDefaultInstance()
+        //realm = Realm.getDefaultInstance()
+        async { OfflineUploader().queueInteractor(this@TestNavActivity) }
     }
 
     private fun setListeners() {
@@ -179,8 +181,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_stop_new.setOnClickListener { view ->
+            LogUtils.debug("Button Clicked", "Stop")
             clickStop(this, view, recorder)
-            async { initiateOfflineUploader(view) }
+            initiateOfflineUploader()
+            async { OfflineUploader().queueInteractor(this@TestNavActivity) }
             rec.visibility = View.VISIBLE
             stop.visibility = View.GONE
         }
@@ -219,13 +223,13 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
     }
 
-    private suspend fun initiateOfflineUploader(view: View) {
-        endTime = Date()
+    private fun initiateOfflineUploader() {
+        LogUtils.debug("Entering Function", "initiateOfflineUploader")
+        //endTime = Date()
         val jamID = PrefUtilsKt.Functions().retrieveJamID(this) // current jam id
         val jamName = PrefUtilsKt.Functions().retrieveFbName(this)
         //OfflineUploader().prepareUpload(realm, jamID, this, jamPinView, recorder, recorderUtils, view, chronometer_new, startTime, endTime)
         OfflineUploader().addRecordingToQueue(realm, filename, jamID, jamName, startTime.toString(), endTime.toString())
-        OfflineUploader().queueInteractor(this, realm)
     } // driedSpaghetti
 
     private fun doPermissionsCheck() {
@@ -456,7 +460,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     override fun onStop() {
         locationUtils?.onStop(locationVars)
-        realm.close()
+        //realm.close()
         super.onStop()
     }
 

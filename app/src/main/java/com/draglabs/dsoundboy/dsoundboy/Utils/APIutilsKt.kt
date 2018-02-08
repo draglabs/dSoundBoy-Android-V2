@@ -10,10 +10,6 @@ import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Params.APIparamsKt
-import com.loopj.android.http.AsyncHttpClient
-import com.loopj.android.http.AsyncHttpResponseHandler
-import com.loopj.android.http.JsonHttpResponseHandler
-import com.loopj.android.http.RequestParams
 import cz.msebera.android.httpclient.Header
 import cz.msebera.android.httpclient.HeaderElement
 import cz.msebera.android.httpclient.ParseException
@@ -27,6 +23,10 @@ import java.io.FileNotFoundException
 import java.util.*
 import android.app.Activity
 import android.os.Environment
+import android.widget.Toast
+import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
+import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModelForList
+import com.loopj.android.http.*
 import io.realm.Realm
 import org.json.JSONArray
 
@@ -131,30 +131,35 @@ class APIutilsKt {
             })
         }
 
-        fun jamRecordingUpload(context: Context, path: String, notes: String, startTime: String, endTime: String, view: View) { // convert through binary data and multi-part upload
+        fun jamRecordingUpload(recording: RecordingModel, context: Context, notes: String) { // convert through binary data and multi-part upload
 
             val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
-            val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+            //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
             val headers = HttpFunctions.Headers.standardHeader(UUID)
-            val requestParams = HttpFunctions.Params.jamRecordingUploadParams(UUID, jamID, path, notes, startTime, endTime)
+            val requestParams = HttpFunctions.Params.jamRecordingUploadParams(UUID, recording.jamID, recording.filePath, notes, recording.startTime, recording.endTime)
             val url = "http://api.draglabs.com/api/v2.0/jam/upload"
 
             LogUtils.debug("Headers being sent", "${headers[0]}, ${headers[1]}")
             LogUtils.debug("RequestParams for Upload", requestParams.toString())
 
-            HttpFunctions.Requests.upload(context, headers, requestParams, "audioFile", path, url, object: JsonHttpResponseHandler() {
+            HttpFunctions.Requests.upload(context, headers, requestParams, "audioFile", recording.filePath, url, object: JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
                     LogUtils.logSuccessResponse(statusCode, headers!!, response!!)
                     try {
                         //val message = JsonUtils.INSTANCE.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type())
-
                         LogUtils.debug("Response Message: ", response.toString())
+                        LogUtils.debug("Recording Being Deleted", "$recording")
+                        //val path = recording.filePath
+                        RealmUtils.RecordingModelUtils.Delete.deleteRecordingModel(recording)
+                        recording.deleteFromRealm()
+                        LogUtils.debug("Recording Deleted", "Done")
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
 
-                    Snackbar.make(view, "Recording uploaded.", Snackbar.LENGTH_LONG).show()
+                    //Snackbar.make(view, "Recording uploaded.", Snackbar.LENGTH_LONG).show()
+                    Toast.makeText(context, "Recording Uploaded", Toast.LENGTH_LONG).show()
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
@@ -437,7 +442,7 @@ class APIutilsKt {
             }
 
             fun upload(context: Context, headers: Array<Header>, requestParams: RequestParams, filename: String, path: String, url: String, asyncHttpResponseHandler: AsyncHttpResponseHandler) {
-                val asyncHttpClient = AsyncHttpClient(true, 80, 433)
+                val asyncHttpClient = SyncHttpClient(true, 80, 433)
                 val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, "multipart/form-data; boundary=123456789", asyncHttpResponseHandler)
                 if (requestHandle.isFinished) {
                     LogUtils.debug("Upload Result: ", "Done with Upload. Tag: " + requestHandle.tag)
@@ -472,23 +477,41 @@ class APIutilsKt {
                 LogUtils.logOnFailure(t)
                 LogUtils.debug("onFailure Call", call.toString())
                 LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())                  }
+                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
+            }
         })
     }
 
     @Deprecated("Use jamRecordingUpload instead")
-    fun performUploadJam(realm: Realm, context: Context, filePath: String, userID: String, fileName: String, location: String, jamID: String, startTime: String, endTime: String) {
-        val call = APIparamsKt().callUploadJam(filePath, userID, fileName, location, jamID, startTime, endTime)
+    fun performUploadJam(realm: Realm, context: Context, recording: RecordingModel, location: String) {
+        LogUtils.debug("Entering Function", "performUploadJam")
+        val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+        val call = APIparamsKt().callUploadJam(recording.filePath, UUID, "audioFile", location, recording.jamID, recording.startTime, recording.endTime)
 
         call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UploadJam> {
             override fun onResponse(call: Call<ResponseModelKt.JamFunctions.UploadJam>, response: Response<ResponseModelKt.JamFunctions.UploadJam>) {
+                LogUtils.debug("performUploadJam", "API Responded")
                 if (response.isSuccessful) {
                     val result = response.body()
                     val code = response.code()
                     val message = response.message()
                     LogUtils.debug("Upload Response Body", result.toString())
                     LogUtils.debug("Upload Response Message", "Code: $code; Message: $message")
-                    RealmUtils.RecordingModelUtils.Edit.setRecordingAsUploaded(realm, filePath)
+
+                    //RealmUtils.RecordingModelUtils.Edit.setRecordingAsUploaded(realm, recording.filePath)
+                    //realm.close()
+                    val newRealm = Realm.getDefaultInstance()
+
+                    val path = recording.filePath
+                    LogUtils.debug("performUploadJam", "File Path: $path")
+                    //RealmUtils.RecordingModelUtils.Delete.deleteRecordingModel(realm, path)
+                    //recording.deleteFromRealm()
+                    File(path).delete()
+                    LogUtils.debug("performUploadJam", "File Deleted")
+                    newRealm.executeTransaction { recording.deleteFromRealm() }
+                    LogUtils.debug("performUploadJam", "Recording Deleted from Realm")
+
+                    newRealm.close()
                 } else {
                     LogUtils.debug("Failed Response", response.errorBody()!!.toString())
                     LogUtils.debug("Code", "" + response.code())

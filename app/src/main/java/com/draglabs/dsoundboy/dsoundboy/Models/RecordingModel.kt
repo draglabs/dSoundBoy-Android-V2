@@ -29,3 +29,18 @@ open class RecordingModel(
         return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload"
     }
 }
+
+data class RecordingModelForList(
+    var filePath: String,
+    var jamID: String,
+    var jamName: String,
+    var startTime: String,
+    var endTime: String,
+    var didUpload: Boolean
+): Serializable {
+    constructor() : this("", "", "", "", "", false)
+
+    override fun toString(): String {
+        return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload\n"
+    }
+}
