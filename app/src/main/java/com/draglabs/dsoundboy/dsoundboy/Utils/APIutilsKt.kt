@@ -483,47 +483,75 @@ class APIutilsKt {
     }
 
     @Deprecated("Use jamRecordingUpload instead")
-    fun performUploadJam(realm: Realm, context: Context, recording: RecordingModel, location: String) {
+    fun performUploadJam(filepath: String, context: Context, location: String) {
         LogUtils.debug("Entering Function", "performUploadJam")
+        val realm = Realm.getDefaultInstance()
+        val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
+
         val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
-        val call = APIparamsKt().callUploadJam(recording.filePath, UUID, "audioFile", location, recording.jamID, recording.startTime, recording.endTime)
+        val call = APIparamsKt().callUploadJam(recording!!.filePath, UUID, "audioFile", location, recording.jamID, recording.startTime, recording.endTime)
 
         call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UploadJam> {
             override fun onResponse(call: Call<ResponseModelKt.JamFunctions.UploadJam>, response: Response<ResponseModelKt.JamFunctions.UploadJam>) {
                 LogUtils.debug("performUploadJam", "API Responded")
                 if (response.isSuccessful) {
+                    LogUtils.debug("performUploadJam", "Successful Response")
                     val result = response.body()
                     val code = response.code()
                     val message = response.message()
-                    LogUtils.debug("Upload Response Body", result.toString())
-                    LogUtils.debug("Upload Response Message", "Code: $code; Message: $message")
+                    LogUtils.debug("performUploadJam Response Body", result.toString())
+                    LogUtils.debug("performUploadJam Response Message", "Code: $code; Message: $message")
 
                     //RealmUtils.RecordingModelUtils.Edit.setRecordingAsUploaded(realm, recording.filePath)
                     //realm.close()
-                    val newRealm = Realm.getDefaultInstance()
+                    //val newRealm = Realm.getDefaultInstance()
 
-                    val path = recording.filePath
-                    LogUtils.debug("performUploadJam", "File Path: $path")
+                    LogUtils.debug("performUploadJam", "File Path: $filepath")
                     //RealmUtils.RecordingModelUtils.Delete.deleteRecordingModel(realm, path)
                     //recording.deleteFromRealm()
-                    File(path).delete()
-                    LogUtils.debug("performUploadJam", "File Deleted")
-                    newRealm.executeTransaction { recording.deleteFromRealm() }
-                    LogUtils.debug("performUploadJam", "Recording Deleted from Realm")
 
-                    newRealm.close()
+                    //realm.executeTransaction { recording.deleteFromRealm() }
+                    //deleteRecording(filepath, realm)
+                    File(filepath).delete()
+                    LogUtils.debug("performUploadJam", "File Deleted")
+
+                    //newRealm.close()
                 } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
-                    LogUtils.debug("Headers", response.headers().toString())
+                    LogUtils.debug("performUploadJam Failed Response", "${response.errorBody()}")
+                    LogUtils.debug("performUploadJam Code", "${response.code()}")
+                    LogUtils.debug("performUploadJam Message", response.message())
+                    LogUtils.debug("performUploadJam Headers", response.headers().toString())
                 }
             }
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UploadJam>, t: Throwable) {
+                LogUtils.debug("performUploadJam", "onFailure")
                 LogUtils.logOnFailure(t)
             }
         })
+        /*LogUtils.debug("performUploadJam Success?", "$success")
+        if (success) {
+            File(filepath).delete()
+            LogUtils.debug("performUploadJam", "File Deleted")
+            realm.executeTransaction { recording.deleteFromRealm() }
+            LogUtils.debug("performUploadJam", "Recording Deleted from Realm")
+        }
+        realm.close()*/
+    }
+
+    private fun deleteRecording(filepath: String, realm: Realm) {
+        if (!realm.isClosed) {
+            realm.close()
+        }
+        var newRealm = Realm.getDefaultInstance()
+
+        val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
+        File(filepath).delete()
+        LogUtils.debug("performUploadJam", "File Deleted")
+        realm.executeTransaction { recording!!.deleteFromRealm() }
+        LogUtils.debug("performUploadJam", "Recording Deleted from Realm")
+
+        newRealm.close()
     }
 
     @Deprecated("Use getUserActivity instead")

@@ -113,7 +113,7 @@ class HomeRoutineKt {
      * @param startTime submits the recording's start time to the server
      * @param endTime submits the recording's end time to the server
      */
-    fun clickStop(realm: Realm, jamID: String, recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
+    fun clickStop(recorder: Recorder, recorderUtils: RecorderUtils, context: Context, chronometer: Chronometer) {
         //recorderUtils.stopRecording();
         recorderUtils.stopRecording(recorder)
         chronometer.stop()
