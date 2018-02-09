@@ -45,7 +45,7 @@
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationID"
-            android:value="@string/facebook_app_id" />
+            android:value="@string/com.facebook.sdk.ApplicationId" />
 
         <activity
             android:name=".Activities.MainActivity"
@@ -99,7 +99,7 @@
                 android:value=".Activities.MainActivity" />
             <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
-                android:value="@string/facebook_app_id" />
+                android:value="@string/com.facebook.sdk.ApplicationId" />
         </activity>
         <activity
             android:name="com.facebook.FacebookActivity"
@@ -116,7 +116,7 @@
                 android:value=".Activities.NewLoginActivity" />
             <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
-                android:value="@string/facebook_app_id" />
+                android:value="@string/com.facebook.sdk.ApplicationId" />
         </activity>
         <activity
             android:name="com.facebook.CustomTabActivity"

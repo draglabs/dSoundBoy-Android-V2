@@ -9,6 +9,7 @@ import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.facebook.FacebookSdk
+import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
 import io.realm.DynamicRealm
 import io.realm.Realm
@@ -29,9 +30,13 @@ class MyApplication : MultiDexApplication() {
     }
 
     private fun initializeFacebook() {
-        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
+        FacebookSdk.setApplicationId(getString(R.string.com_facebook_sdk_ApplicationId))
         @Suppress("DEPRECATION")
         FacebookSdk.sdkInitialize(applicationContext)
+        if (BuildConfig.DEBUG) {
+            FacebookSdk.setIsDebugEnabled(true)
+            FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS)
+        }
         AppEventsLogger.activateApp(this)
     }
 

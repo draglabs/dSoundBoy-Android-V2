@@ -3,6 +3,7 @@ package com.draglabs.dsoundboy.dsoundboy.Routines
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
 import android.widget.Button
@@ -10,6 +11,7 @@ import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.*
 import com.facebook.login.LoginResult
@@ -54,6 +56,31 @@ class LoginRoutineKt {
                 /*loginResultText.text = loginResultTextText
                 continueButton.isEnabled = true
                 mEmailSignInButton.isEnabled = false*/
+                val request = GraphRequest.newMeRequest(accessToken) {`object`, response ->
+                    var facebookID = ""
+                    var facebookEmail = ""
+                    var facebookName = ""
+
+                    try {
+                        if (`object`.has("id")) {
+                            facebookID = `object`.getString("id")
+                        }
+                        if (`object`.has("email")) {
+                            facebookEmail = `object`.getString("email")
+                        }
+                        if (`object`.has("name")) {
+                            facebookName = `object`.getString("name")
+                        }
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+
+                    LogUtils.debug("GraphRequest Parameters", "facebookID: $facebookID\nfacebookEmail: $facebookEmail\nfacebookName: $facebookName")
+                }
+                val parameters = Bundle()
+                parameters.putString("fields", "id,email,name")
+                request.parameters = parameters
+                request.executeAsync()
             }
 
             override fun onCancel() {

@@ -123,7 +123,7 @@ class NewLoginActivity : AppCompatActivity() {
 
     private fun setAccessTokenTrackers() {
         accessTokenTracker = object: AccessTokenTracker() {
-            override fun onCurrentAccessTokenChanged(oldAccessToken: AccessToken, currentAccessToken: AccessToken) {
+            override fun onCurrentAccessTokenChanged(oldAccessToken: AccessToken?, currentAccessToken: AccessToken) {
                 // set the access token using currentAccessToken when it's loaded or set
                 accessToken = currentAccessToken
             }

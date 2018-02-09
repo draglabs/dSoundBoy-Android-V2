@@ -43,10 +43,10 @@ class MainRoutine {
             e.printStackTrace()
         }
 
-        if (BuildConfig.DEBUG) {
+        /*if (BuildConfig.DEBUG) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS)
-        }
+        }*/
 
         Log.v("App ID and App Name: ", FacebookSdk.getApplicationId() + "; " + FacebookSdk.getApplicationName())
     }
