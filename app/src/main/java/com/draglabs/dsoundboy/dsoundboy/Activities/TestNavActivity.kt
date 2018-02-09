@@ -7,14 +7,11 @@ package com.draglabs.dsoundboy.dsoundboy.Activities
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.preference.Preference
-import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -22,12 +19,9 @@ import android.support.v4.view.GestureDetectorCompat
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.*
 import android.widget.Button
-import android.widget.Switch
 import android.widget.Toast
-import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
@@ -41,7 +35,6 @@ import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
 import io.realm.Realm
-import io.realm.RealmResults
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
@@ -49,7 +42,6 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import omrecorder.Recorder
 import java.util.*
-import kotlin.concurrent.thread
 
 /**
  * @author Daniel Avrukin
@@ -157,7 +149,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //stop.isEnabled = false
         stop.visibility = View.GONE
 
-        //doPermissionsCheck()
+        //doPermissionsCheckWriteExternalStorage()
 
         //realm = Realm.getDefaultInstance()
         async { OfflineUploader().queueInteractor(this@TestNavActivity) }
@@ -170,7 +162,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
 
         button_new_jam_new.setOnClickListener {
-            doPermissionsCheck()
+            //doPermissionsCheckWriteExternalStorage()
+            doPermissionsCheckRead()
+            doPermissionsCheckWrite()
             clickNew()
         }
 
@@ -192,7 +186,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_join_jam_new.setOnClickListener {
-            doPermissionsCheck()
+            //doPermissionsCheckWriteExternalStorage()
+            doPermissionsCheckRead()
+            doPermissionsCheckWrite()
             clickJoin()
         }
 
@@ -235,12 +231,19 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         OfflineUploader().addRecordingToQueue(realm, filename, jamID, jamName, startTime.toString(), endTime.toString())
     } // driedSpaghetti
 
-    private fun doPermissionsCheck() {
+    private fun doPermissionsCheckWriteExternalStorage() {
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         LogUtils.debug("Permission Check: ", "$permissionCheck")
+    }
+
+    private fun doPermissionsCheckRead() {
         val read = isReadStoragePermissionGranted
+        LogUtils.debug("Permission Code: ", "read: $read")
+    }
+
+    private fun doPermissionsCheckWrite() {
         val write = isWriteStoragePermissionGranted
-        LogUtils.debug("Permission Codes: ", "read: $read; write: $write")
+        LogUtils.debug("Permission Code: ", "write: $write")
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {

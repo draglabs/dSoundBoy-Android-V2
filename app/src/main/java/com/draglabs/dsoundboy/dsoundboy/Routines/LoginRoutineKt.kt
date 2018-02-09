@@ -114,26 +114,42 @@ class LoginRoutineKt {
             PrefUtilsKt.Functions().storeFbName(context, name)
             PrefUtilsKt.Functions().storeFbEmail(context, email)
             PrefUtilsKt.Functions().storeFbImage(context, id)
-            val pictureView = activity.findViewById<ProfilePictureView>(R.id.user_picture) as ProfilePictureView
-            pictureView.presetSize = ProfilePictureView.NORMAL
-            pictureView.profileId = id
+            val pictureView = activity.findViewById<ProfilePictureView>(R.id.user_picture)
+            if (pictureView != null) {
+                pictureView.presetSize = ProfilePictureView.NORMAL
+                pictureView.profileId = id
+            }
 
-            val userNameTextView = activity.findViewById<TextView>(R.id.user_name) as TextView
-            val userEmailTextView = activity.findViewById<TextView>(R.id.user_email) as TextView
-            userNameTextView.text = name
-            userEmailTextView.text = email
+            val userNameTextView = activity.findViewById<TextView>(R.id.user_name)
+            val userEmailTextView = activity.findViewById<TextView>(R.id.user_email)
+
+            if (userNameTextView != null) {
+                if (userNameTextView.text == null) {
+                    userNameTextView.text = "John Smith"
+                } else {
+                    userNameTextView.text = name
+                }
+            }
+
+            if (userEmailTextView != null) {
+                if (userEmailTextView.text == null) {
+                    userEmailTextView.text = "john.smith@contoso.net"
+                } else {
+                    userEmailTextView.text = email
+                }
+            }
         } else {
             PrefUtilsKt.Functions().storeFbName(context, name)
             //PrefUtilsKt.Functions().storeFbEmail(context, email)
             PrefUtilsKt.Functions().storeFbImage(context, id)
-            val pictureView = activity.findViewById<ProfilePictureView>(R.id.user_picture) as ProfilePictureView
+            val pictureView = activity.findViewById<ProfilePictureView>(R.id.user_picture)
             pictureView.presetSize = ProfilePictureView.NORMAL
             pictureView.profileId = id
 
-            val userNameTextView = activity.findViewById<TextView>(R.id.user_name) as TextView
-            val userEmailTextView = activity.findViewById<TextView>(R.id.user_email) as TextView
+            val userNameTextView = activity.findViewById<TextView>(R.id.user_name)
+            val userEmailTextView = activity.findViewById<TextView>(R.id.user_email)
             userNameTextView.text = name
-            userEmailTextView.text = "$name"
+            userEmailTextView.text = name
         }
     }
 
