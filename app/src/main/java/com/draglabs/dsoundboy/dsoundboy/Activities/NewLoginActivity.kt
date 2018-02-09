@@ -24,7 +24,7 @@ import com.facebook.ProfileTracker
 
 /**
  * The new and improved login activity, with just a single button!
- * @author Daniel Avrukin
+ * @author  ---------
  */
 class NewLoginActivity : AppCompatActivity() {
 
@@ -214,6 +214,8 @@ class NewLoginActivity : AppCompatActivity() {
                 //loginRoutineKt!!.saveFacebookCredentials(loginResult)
                 //loginRoutineKt!!.authenticateUser()
                 APIutilsKt.UserFunctions.performRegisterUser(this@NewLoginActivity,this@NewLoginActivity)
+
+                startActivity(Intent(this@NewLoginActivity, TestNavActivity::class.java))
             }
 
             override fun onCancel() {

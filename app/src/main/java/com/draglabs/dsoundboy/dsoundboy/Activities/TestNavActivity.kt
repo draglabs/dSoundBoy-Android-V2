@@ -136,6 +136,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
         realm = Realm.getDefaultInstance()
         var service = startService(Intent(this, LocationTrackingService::class.java))
+        LogUtils.debug("FB Access Token", "${AccessToken.getCurrentAccessToken()}")
     }
 
     private fun initialize() {

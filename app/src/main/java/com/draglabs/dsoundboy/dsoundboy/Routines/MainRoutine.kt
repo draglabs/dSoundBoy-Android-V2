@@ -30,17 +30,19 @@ class MainRoutine {
         //FacebookSdk.sdkInitialize(activity)
         //AppEventsLogger.activateApp(activity)
 
-        try {
-            val packageInfo = activity.packageManager.getPackageInfo("com.draglabs.dsoundboy.dsoundboy", GET_SIGNATURES)
-            packageInfo.signatures.forEach { signature ->
-                val messageDigest = MessageDigest.getInstance("SHA")
-                messageDigest.update(signature.toByteArray())
-                Log.d("KeyHash: ", Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT))
+        if (BuildConfig.DEBUG) {
+            try {
+                val packageInfo = activity.packageManager.getPackageInfo("com.draglabs.dsoundboy.dsoundboy", GET_SIGNATURES)
+                packageInfo.signatures.forEach { signature ->
+                    val messageDigest = MessageDigest.getInstance("SHA")
+                    messageDigest.update(signature.toByteArray())
+                    Log.d("KeyHash: ", Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT))
+                }
+            } catch (e: PackageManager.NameNotFoundException) {
+                e.printStackTrace()
+            } catch (e: NoSuchAlgorithmException) {
+                e.printStackTrace()
             }
-        } catch (e: PackageManager.NameNotFoundException) {
-            e.printStackTrace()
-        } catch (e: NoSuchAlgorithmException) {
-            e.printStackTrace()
         }
 
         /*if (BuildConfig.DEBUG) {

@@ -13,8 +13,8 @@ android {
         applicationId "com.draglabs.dsoundboy.dsoundboy"
         minSdkVersion 21
         targetSdkVersion 27
-        versionCode 8
-        versionName "8"
+        versionCode 9
+        versionName "9"
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {

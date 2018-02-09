@@ -130,7 +130,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.NewLoginActivity" />
+                android:value="com.facebook.FacebookActivity" />
         </activity>
         <provider
             android:name="com.facebook.FacebookContentProvider"
