@@ -157,7 +157,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //stop.isEnabled = false
         stop.visibility = View.GONE
 
-        doPermissionsCheck()
+        //doPermissionsCheck()
 
         //realm = Realm.getDefaultInstance()
         async { OfflineUploader().queueInteractor(this@TestNavActivity) }
@@ -170,6 +170,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
 
         button_new_jam_new.setOnClickListener {
+            doPermissionsCheck()
             clickNew()
         }
 
@@ -191,6 +192,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_join_jam_new.setOnClickListener {
+            doPermissionsCheck()
             clickJoin()
         }
 
