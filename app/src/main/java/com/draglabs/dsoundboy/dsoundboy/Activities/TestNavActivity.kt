@@ -134,7 +134,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //homeRoutineKt = HomeRoutineKt(buttons, this, this,   filename, button_rec_new)
 
         //Log.v("API ID:", PrefUtils(this).uniqueUserID)
-
+        realm = Realm.getDefaultInstance()
         var service = startService(Intent(this, LocationTrackingService::class.java))
     }
 
@@ -324,8 +324,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         updatePinView()
 
         endTime = Date()
-        val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
-        HomeRoutineKt().clickStop(realm, jamID, recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
+        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+        HomeRoutineKt().clickStop(recorder, recorderUtils, context, chronometer_new)
 
         updatePinView()
     }

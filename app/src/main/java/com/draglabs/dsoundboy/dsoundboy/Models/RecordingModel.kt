@@ -26,7 +26,7 @@ open class RecordingModel(
     constructor() : this("", "", "", "", "", false)
 
     override fun toString(): String {
-        return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload"
+        return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload\n"
     }
 }
 

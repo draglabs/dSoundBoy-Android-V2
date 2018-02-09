@@ -472,6 +472,28 @@ class RealmUtils {
                 //recording.deleteFromRealm()
             }
         }
+
+        fun collectGarbage(realm: Realm) {
+            val collectGarbage = "collectGarbage"
+            LogUtils.debug("Entering Function", collectGarbage)
+            val models = Retrieve.retrieveRecordingModels(realm)
+            val size = models.size
+
+            LogUtils.debug("$collectGarbage Models", "$models")
+            LogUtils.debug("$collectGarbage Models Size", "$size")
+
+            for ((count, model) in models.withIndex()) {
+                val filepath = model.filePath
+                val file = File(filepath)
+                val exists = file.exists()
+                LogUtils.debug("$collectGarbage Model Exists?", "filepath: $file\nexists: $exists")
+                if (!exists) {
+                    LogUtils.debug("$collectGarbage Deleting Model", "count: $count\nfilepath: $filepath\nmodel: $model")
+                    realm.executeTransaction { model.deleteFromRealm() }
+                    LogUtils.debug("$collectGarbage Model Deleted", "count: $count")
+                }
+            }
+        }
     }
 
     object Functions {

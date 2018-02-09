@@ -79,9 +79,12 @@ class OfflineUploader {
         // go through queue of pending uploads
         //if (readyForUpload == true) {
         val realm = Realm.getDefaultInstance()
+        RealmUtils.RecordingModelUtils.collectGarbage(realm)
+
+        if (readyForUpload) {
             val queue = RealmUtils.RecordingModelUtils.Retrieve.retrieveRecordingModelByUploadStatus(realm, false)
-        //val queueList = ArrayList<RecordingModelForList>()
-        /*for (item in queue) {
+            //val queueList = ArrayList<RecordingModelForList>()
+            /*for (item in queue) {
             val recording = RecordingModelForList()
             recording.filePath = item.filePath
             recording.jamID = item.jamID
@@ -91,7 +94,7 @@ class OfflineUploader {
             recording.didUpload = item.didUpload
             queueList.add(recording)
         }*/
-        val size = queue.size
+            val size = queue.size
             LogUtils.debug("Upload Queue", "$queue")
             LogUtils.debug("Queue Size", "$size")
             LogUtils.debug("Starting Uploads", "Starting Notification Progress")
@@ -100,6 +103,7 @@ class OfflineUploader {
             } else {
                 LogUtils.debug("Upload Status", "Nothing to Upload")
             }
+        }
         //newRealm.close()
             /*var index = 0
             for (item in queue) {
@@ -133,7 +137,8 @@ class OfflineUploader {
                     // once it's been uploaded, mark it as uploaded
                     // once uploaded, gets automatically deleted
                     // delete local file and realm record
-                    doDeferredUpload(item, context, realm)
+                    val filepath = item.filePath
+                    doDeferredUpload(filepath, context)
                     LogUtils.debug("Queue Uploader", "Item $index of $size")
                 }
 
@@ -147,10 +152,11 @@ class OfflineUploader {
         //task.invokeOnCompletion { realm.close() }
     }
 
-    private fun doDeferredUpload(recording: RecordingModel, context: Context, realm: Realm) {
+    private fun doDeferredUpload(filepath: String, context: Context) {
         LogUtils.debug("Entering Function", "doDeferredUpload")
         //val uuid = PrefUtilsKt.Functions().retrieveUUID(context)
-        APIutilsKt().performUploadJam(realm, context, recording, "location") // may have to switch functions?
+        //realm.close()
+        APIutilsKt().performUploadJam(filepath, context, "location") // may have to switch functions?
         //APIutilsKt.JamFunctions.jamRecordingUpload(recording, context, "hi")
         // TODO: success response from server makes didUpload true
         // TODO: once uploaded, file gets deleted locally
@@ -167,7 +173,7 @@ class OfflineUploader {
 
         if (readyForUpload) {
             //val jamID = PrefUtilsKt.Functions().retrieveJamID(context) // current jam id
-            async { doInitialUpload(realm, jamID, context, jamPinView, recorder, recorderUtils, view, chronometer, startTime, endTime) }
+            async { doInitialUpload(context, jamPinView, recorder, recorderUtils, chronometer) }
             // upload current recording {async}
             val file = FileUtils.readFile()
             val jsonArray = FileUtils.readLines(file) // TODO: essentially building up a queue
@@ -205,18 +211,18 @@ class OfflineUploader {
     // {operate on settings}
     // write settings
 
-    private suspend fun doInitialUpload(realm: Realm, jamID: String, context: Context, jamPinView: Button, recorder: Recorder, recorderUtils: RecorderUtils, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
+    private suspend fun doInitialUpload(context: Context, jamPinView: Button, recorder: Recorder, recorderUtils: RecorderUtils, chronometer: Chronometer) {
         updatePinView(context, jamPinView)
 
-        clickStop(realm, jamID, recorder, recorderUtils, context, view, chronometer, startTime, endTime)
+        clickStop(recorder, recorderUtils, context, chronometer)
 
         updatePinView(context, jamPinView)
     }
 
 
 
-    private fun clickStop(realm: Realm, jamID: String, recorder: Recorder, recorderUtils: RecorderUtils, context: Context, view: View, chronometer: Chronometer, startTime: Date, endTime: Date) {
-        HomeRoutineKt().clickStop(realm, jamID, recorder, recorderUtils, context, view, chronometer, startTime, endTime)
+    private fun clickStop(recorder: Recorder, recorderUtils: RecorderUtils, context: Context, chronometer: Chronometer) {
+        HomeRoutineKt().clickStop(recorder, recorderUtils, context, chronometer)
     }
 
     private fun updatePinView(context: Context, jamPinView: Button) {
