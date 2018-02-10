@@ -5,13 +5,18 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
 import android.Manifest
+import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import android.support.design.widget.NavigationView
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
@@ -21,6 +26,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
@@ -40,7 +46,9 @@ import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
+import omrecorder.OmRecorder
 import omrecorder.Recorder
+import java.io.File
 import java.util.*
 
 /**
@@ -129,6 +137,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         realm = Realm.getDefaultInstance()
         var service = startService(Intent(this, LocationTrackingService::class.java))
         LogUtils.debug("FB Access Token", "${AccessToken.getCurrentAccessToken()}")
+
+        //async { doPermissionsCheckWriteExternalStorage() }
     }
 
     private fun initialize() {
@@ -162,9 +172,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
 
         button_new_jam_new.setOnClickListener {
-            //doPermissionsCheckWriteExternalStorage()
-            doPermissionsCheckRead()
-            doPermissionsCheckWrite()
+            doPermissionsCheckWriteExternalStorage()
+            //doPermissionsCheckRead()
+            //doPermissionsCheckWrite()
             clickNew()
         }
 
@@ -186,9 +196,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         button_join_jam_new.setOnClickListener {
-            //doPermissionsCheckWriteExternalStorage()
-            doPermissionsCheckRead()
-            doPermissionsCheckWrite()
+            doPermissionsCheckWriteExternalStorage()
+            //doPermissionsCheckRead()
+            //doPermissionsCheckWrite()
             clickJoin()
         }
 
@@ -232,8 +242,40 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     } // driedSpaghetti
 
     private fun doPermissionsCheckWriteExternalStorage() {
+        // delay(300)
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-        LogUtils.debug("Permission Check: ", "$permissionCheck")
+        LogUtils.debug("Permission Check", "$permissionCheck")
+            showPermissionsDialog()
+        if (permissionCheck != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+        }
+        File("${Environment.getExternalStorageDirectory()}/test.txt").writeText("abc")
+        File("${Environment.getExternalStorageDirectory()}/test.txt").delete()
+    }
+
+    private fun showPermissionsDialog() {
+        LogUtils.debug("Entering Function", "showPermissionsDialog")
+
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Please fix app permissions")
+        builder.setMessage("After clicking \"Okay\", please enable all listed permissions for proper app functioning. Once done, back out and click \"Done\". Thank you.")
+        builder.setCancelable(false)
+        builder.setPositiveButton("Okay") { dialogInterface, _ ->
+            LogUtils.debug("showPermissionsDialog", "Okay Clicked")
+            val intent = Intent()
+            intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+            intent.addCategory(Intent.CATEGORY_DEFAULT)
+            intent.data = Uri.parse("package:$packageName")
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+            intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS)
+            startActivity(intent)
+            dialogInterface.dismiss()
+        }
+        builder.setNeutralButton("Done") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 
     private fun doPermissionsCheckRead() {

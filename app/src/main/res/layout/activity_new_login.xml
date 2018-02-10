@@ -19,8 +19,8 @@
 
     <ImageButton
         android:id="@+id/image_about"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="275dp"
+        android:layout_height="275dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center"
@@ -38,7 +38,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.153"
-        app:srcCompat="@mipmap/ic_launcher" />
+        app:srcCompat="@drawable/ic_logo" />
 
 
     <com.facebook.login.widget.LoginButton
@@ -48,7 +48,7 @@
         android:layout_below="@+id/image_about"
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="14dp"
+        android:layout_marginTop="88dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,8 @@
         android:layout_alignStart="@+id/image_about"
         android:layout_below="@+id/login_button"
         android:layout_marginTop="73dp"
-        android:text="Sign Up" />
+        android:text="Sign Up"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/login_screen_button_login"
@@ -71,7 +72,8 @@
         android:layout_alignBottom="@+id/login_screen_button_sign_up"
         android:layout_alignEnd="@+id/image_about"
         android:layout_marginEnd="25dp"
-        android:text="Login" />
+        android:text="Login"
+        android:visibility="gone" />
 
 
 </RelativeLayout>
