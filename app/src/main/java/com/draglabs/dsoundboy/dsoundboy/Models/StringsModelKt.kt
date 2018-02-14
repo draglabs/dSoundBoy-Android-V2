@@ -83,16 +83,16 @@ object StringsModelKt {
     }
 
     object ApiFunctionPaths {
-        val NEW_JAM = JAM + "new"
-        val UPDATE_JAM = JAM + "update"
-        val JOIN_JAM = JAM + "join"
-        val JAM_RECORDING_UPLOAD = JAM + "upload"
-        val GET_JAM_DETAILS = JAM + "details/" // append Jam ID
-        val GET_RECORDINGS = JAM + "recording/" // append Jam ID
-        val REGISTER_USER = USER + "register"
-        val UPDATE_USER = USER + "update"
-        val GET_ACTIVE_JAM = USER + "jam/active"
-        val GET_USER_ACTIVITY = USER + "activity"
+        const val NEW_JAM = JAM + "new"
+        const val UPDATE_JAM = JAM + "update"
+        const val JOIN_JAM = JAM + "join"
+        const val JAM_RECORDING_UPLOAD = JAM + "upload"
+        const val GET_JAM_DETAILS = JAM + "details/" // append Jam ID
+        const val GET_RECORDINGS = JAM + "recording/" // append Jam ID
+        const val REGISTER_USER = USER + "register"
+        const val UPDATE_USER = USER + "update"
+        const val GET_ACTIVE_JAM = USER + "jam/active"
+        const val GET_USER_ACTIVITY = USER + "activity"
     }
 
     object FacebookUserDataParams {
@@ -116,10 +116,10 @@ object StringsModelKt {
 
     @Deprecated(message = deprecationString)
     object ApiFunctionPathsOld {
-        val EXIT_JAM = JAM + "exit"
-        val GET_COLLABORATORS = JAM + "collaborators"
-        val COMPRESS = JAM + "archive"
-        val NOTIFY_USER = JAM + "notifyuser"
+        const val EXIT_JAM = JAM + "exit"
+        const val GET_COLLABORATORS = JAM + "collaborators"
+        const val COMPRESS = JAM + "archive"
+        const val NOTIFY_USER = JAM + "notifyuser"
         const val SOLO_UPLOAD_RECORDING = "/soloupload/id"
     }
 }

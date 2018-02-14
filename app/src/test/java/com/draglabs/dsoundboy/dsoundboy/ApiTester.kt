@@ -9,9 +9,4 @@ package com.draglabs.dsoundboy.dsoundboy
  * @author Daniel Avrukin
  */
 
-class ApiTester {
-
-    
-
-
-}
+class ApiTester

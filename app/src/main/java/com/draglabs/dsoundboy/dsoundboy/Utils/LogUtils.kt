@@ -30,39 +30,81 @@ object LogUtils {
         }
     }
 
+    fun verbose(tag: String, message: String) {
+        if (BuildConfig.DEBUG) {
+            Log.v(tag, message)
+        }
+    }
+
+    fun info(tag: String, message: String) {
+        if (BuildConfig.DEBUG) {
+            Log.i(tag, message)
+        }
+    }
+
+    fun warn(tag: String, message: String) {
+        if (BuildConfig.DEBUG) {
+            Log.w(tag, message)
+        }
+    }
+
+    fun wtf(tag: String, message: String) {
+        if (BuildConfig.DEBUG) {
+            Log.wtf(tag, message)
+        }
+    }
+
+    fun error(tag: String, message: String) {
+        if (BuildConfig.DEBUG) {
+            Log.e(tag, message)
+        }
+    }
+
+    object Types {
+
+    }
+
     fun logSuccessResponse(statusCode: Int, headers: Array<Header>, response: JSONArray) {
-        LogUtils.debug("Status Code: ", statusCode.toString() + "")
-        LogUtils.debug("Headers: ", Arrays.toString(headers))
-        LogUtils.debug("Response: ", response.toString())
+        info("Status Code: ", statusCode.toString() + "")
+        info("Headers: ", Arrays.toString(headers))
+        info("Response: ", response.toString())
     }
 
     fun logSuccessResponse(statusCode: Int, headers: Array<Header>, response: JSONObject) {
-        LogUtils.debug("Status Code: ", statusCode.toString() + "")
-        LogUtils.debug("Headers: ", Arrays.toString(headers))
-        LogUtils.debug("Response: ", response.toString())
+        info("Status Code: ", statusCode.toString() + "")
+        info("Headers: ", Arrays.toString(headers))
+        info("Response: ", response.toString())
     }
 
     fun logFailureResponse(statusCode: Int, headers: Array<Header>, throwable: Throwable, response: JSONObject) {
         if (headers != null && throwable != null && response != null) {
-            Log.v("Status Code: ", "" + statusCode)
-            Log.v("Headers: ", Arrays.toString(headers) + "")
-            Log.v("Throwable: ", throwable.message)
-            Log.v("Response: ", response.toString())
+            error("Status Code: ", "" + statusCode)
+            error("Headers: ", Arrays.toString(headers) + "")
+            error("Throwable: ", throwable.message!!)
+            error("Response: ", response.toString())
         } else {
-            Log.v("Reason: ", "Other Failure.")
+            error("Reason: ", "Other Failure.")
         }
     }
 
+    fun logFailureResponse(tag: String, errorBody: String, code: Int, message: String, headers: String) {
+        val failedResponseMessage = "Response: $errorBody\nCode: $code\nMessage: $message\nHeaders: $headers"
+        error("$tag Failed Response", failedResponseMessage)
+    }
+
     fun logOnFailure(t: Throwable) {
-        LogUtils.debug("onFailure Failed Message", t.message.toString())
-        LogUtils.debug("onFailure Failed Cause", t.cause.toString())
-        LogUtils.debug("onFailure Failed StackTrace", t.printStackTrace().toString())
+        error("onFailure Failed Message", t.message.toString())
+        error("onFailure Failed Cause", t.cause.toString())
+        error("onFailure Failed StackTrace", t.printStackTrace().toString())
     }
 
     fun logAppSettings(context: Context) {
         val wifiOnlyUploads = SystemUtils.Settings.Networking.getWifiOnlyUploadsSetting(context)
-        LogUtils.debug("App Settings", "Printed here")
-        LogUtils.debug("Wifi-Only Uploads", "$wifiOnlyUploads")
+        debug("App Settings", "Printed here")
+        debug("Wifi-Only Uploads", "$wifiOnlyUploads")
     }
 
+    fun logEnteringFunction(functionName: String) {
+        info("Entering Function", functionName)
+    }
 }

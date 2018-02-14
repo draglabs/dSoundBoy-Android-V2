@@ -4,6 +4,7 @@
   -->
 
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:name="mic"
     android:width="80dp"
     android:height="111dp"
@@ -136,6 +137,7 @@ L163.652174,177 C156.928696,177 151.478261,182.435531 151.478261,189.140625
 L151.478261,246.375 L148,246.375 L148,260.25 L151.478261,260.25
 L151.478261,274.125 L165.391304,281.0625 L165.391304,288 L210.608696,288
 L210.608696,281.0625 L224.521739,274.125 L224.521739,260.25 L228,260.25
-L228,246.375 L224.521739,246.375 Z" />
+L228,246.375 L224.521739,246.375 Z"
+            tools:ignore="VectorPath" />
     </group>
 </vector>

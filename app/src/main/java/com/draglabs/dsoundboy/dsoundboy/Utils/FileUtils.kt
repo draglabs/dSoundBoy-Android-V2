@@ -4,12 +4,14 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Utils
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Environment
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.google.gson.Gson
 import org.joda.time.DateTime
 import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -22,7 +24,9 @@ class FileUtils {
     private val rootPath = "${Environment.getExternalStorageDirectory()}" + recordingsDirectory
     private val extension = ".wav"
 
-    fun generateAndSaveFilename(context: Context): String {
+    fun generateAndSaveFilename(context: Context, date: Date): String {
+        LogUtils.logEnteringFunction("generateAndSaveFilename")
+
         val folder = File(rootPath)
         var success = true
         if (!folder.exists()) {
@@ -34,7 +38,7 @@ class FileUtils {
             LogUtils.debug("Folder Creation", "Failure")
         }
 
-        val name = getUsername(context) + " - " + getTime() + " <-> " + getJamName(context)
+        val name = getUsername(context) + " - " + getFormattedDate(date) + " <-> " + getJamName(context)
         val localPath = rootPath + name + extension
 
         PrefUtilsKt.Functions().storeLocalPath(context, localPath)
@@ -42,6 +46,7 @@ class FileUtils {
     }
 
     private fun getUsername(context: Context): String {
+        LogUtils.logEnteringFunction("getUsername")
         return PrefUtilsKt.Functions().retrieveFbName(context)
     }
 
@@ -62,7 +67,20 @@ class FileUtils {
         return "$year-$month-$day $hours:$minutes:$seconds"
     }
 
+    @SuppressLint("SimpleDateFormat")
+    fun getFormattedDate(date: Date): String {
+        LogUtils.logEnteringFunction("getFormattedDate")
+
+        val pattern = "yyyy-MM-dd HH:mm:ss.SS Z"
+        val format = SimpleDateFormat(pattern)
+        val formatted = format.format(date)
+        LogUtils.debug("Formatted Date", formatted)
+        return formatted
+    }
+
     private fun getJamName(context: Context): String {
+        LogUtils.logEnteringFunction("getJamName")
+
         return PrefUtilsKt.Functions().retrieveJamName(context)
     }
 

@@ -50,23 +50,23 @@ object SystemUtils {
                 LogUtils.debug("Connection Status", "Connected to Internet: $isConnectedToInternet\nConnected to Wifi: $isConnectedToWifi\nConnected to Mobile: $isConnectedToMobile")
 
                 if (wifiOnly) {
-                    if (isConnectedToInternet && isConnectedToWifi) {
+                    return if (isConnectedToInternet && isConnectedToWifi) {
                         LogUtils.debug("Able to Upload", "true")
-                        return true
+                        true
                     } else if (isConnectedToInternet && isConnectedToMobile && !isConnectedToWifi) {
                         LogUtils.debug("Able to Upload", "false")
-                        return false
+                        false
                     } else {
                         LogUtils.debug("Able to Upload", "false")
-                        return false
+                        false
                     }
                 } else {
-                    if (isConnectedToInternet) {
+                    return if (isConnectedToInternet) {
                         LogUtils.debug("Able to Upload", "true")
-                        return true
+                        true
                     } else {
                         LogUtils.debug("Able to Upload", "false")
-                        return false
+                        false
                     }
                 }
             }

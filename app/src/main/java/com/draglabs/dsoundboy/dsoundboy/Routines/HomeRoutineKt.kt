@@ -1,3 +1,7 @@
+/*
+ * Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+ */
+
 package com.draglabs.dsoundboy.dsoundboy.Routines
 
 import android.annotation.SuppressLint
@@ -10,7 +14,10 @@ import android.os.SystemClock
 import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.View
-import android.widget.*
+import android.widget.Chronometer
+import android.widget.EditText
+import android.widget.TextView
+import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
@@ -18,8 +25,6 @@ import com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
-import com.facebook.GraphRequest
-import com.facebook.HttpMethod
 import com.facebook.login.LoginManager
 import io.realm.Realm
 import omrecorder.Recorder
@@ -31,18 +36,6 @@ import java.util.*
  * @author Daniel Avrukin
  */
 class HomeRoutineKt {
-
-    //var recorderUtils: RecorderUtils? = null
-    //var recorder: Recorder
-    var path: String? = null
-    private var recordButton: Button? = null
-
-    init {
-        this.path = path
-        //this.recorderUtils = RecorderUtils(context, activity)
-        //this.recorder = recorderUtils!!.setupRecorder(path, recordButton)
-        this.recordButton = recordButton
-    }
 
     /**
      * Opens the About Activity
@@ -108,10 +101,7 @@ class HomeRoutineKt {
 
     /**
      * Stops recording audio
-     * @param view the view calling the method
      * @param chronometer stops the chronometer
-     * @param startTime submits the recording's start time to the server
-     * @param endTime submits the recording's end time to the server
      */
     fun clickStop(recorder: Recorder, recorderUtils: RecorderUtils, context: Context, chronometer: Chronometer) {
         //recorderUtils.stopRecording();
@@ -273,13 +263,18 @@ class HomeRoutineKt {
         }
 
         val dialog = builder.create()
+
+        if (dialog != null && dialog.isShowing) {
+            dialog.dismiss()
+        }
+
         dialog.show()
         // TODO: enter jam pin here and return it
     }
 
     private fun generateJamName(context: Context): String {
         val name = PrefUtilsKt.Functions().retrieveFbName(context)
-        val dateTimeString = FileUtils().getTime()
+        val dateTimeString = FileUtils().getFormattedDate(Date())
 
         val generatedName = "$name $dateTimeString"
         LogUtils.debug("Generated Jam Name", generatedName)

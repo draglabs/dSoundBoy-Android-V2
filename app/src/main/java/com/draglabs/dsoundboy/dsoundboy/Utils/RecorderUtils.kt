@@ -10,15 +10,15 @@ import android.media.AudioFormat
 import android.media.MediaRecorder
 import android.os.Build
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import com.draglabs.dsoundboy.dsoundboy.R
 import omrecorder.*
 import java.io.File
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -57,12 +57,12 @@ class RecorderUtils(private val context: Context, private val activity: Activity
         LogUtils.debug("Recorder", "Paused")
     }
 
-    fun setupRecorder(name: String, mic: ImageView): Recorder {
-        return OmRecorder.wav(PullTransport.Default(mic(), PullTransport.OnAudioChunkPulledListener { audioChunk -> animateVoice((audioChunk.maxAmplitude() / 200.0).toFloat(), mic) }), File(name))
+    fun setupRecorder(name: String, image: ImageView): Recorder {
+        return OmRecorder.wav(PullTransport.Default(chooseSourceBasedOnSettings(), PullTransport.OnAudioChunkPulledListener { audioChunk -> animateVoice((audioChunk.maxAmplitude() / 200.0).toFloat(), image) }), File(name))
     }
 
-    private fun animateVoice(maxPeak: Float, mic: ImageView) {
-        mic.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start()
+    private fun animateVoice(maxPeak: Float, image: ImageView) {
+        image.animate().scaleX(1 + maxPeak).scaleY(1 + maxPeak).setDuration(10).start()
     }
 
     private fun mic(): PullableSource { // TODO: Create function in settings to allow changing of these parameters
@@ -71,6 +71,43 @@ class RecorderUtils(private val context: Context, private val activity: Activity
                         PullableSource.Default(
                                 AudioRecordConfig.Default(MediaRecorder.AudioSource.MIC,
                                         AudioFormat.ENCODING_PCM_16BIT, AudioFormat.CHANNEL_IN_MONO, 44100))))
+    }
+
+    private fun chooseSourceBasedOnSettings(): PullableSource {
+        val preference = PreferenceManager.getDefaultSharedPreferences(context)
+        val quality = preference.getString("pref_recording_settings_qualities", "Streaming") // Streaming, CD, DVD
+        val options = context.resources.getStringArray(R.array.pref_recording_settings_values)
+
+        LogUtils.debug("Recording Setting", quality)
+        LogUtils.debug("Recording Options", "$options")
+
+        var encoding = AudioFormat.ENCODING_PCM_8BIT
+        var frequency = 44100
+        when (quality) {
+            options[0] -> { // Streaming
+                //encoding = AudioFormat.ENCODING_DEFAULT
+                //frequency = 44100 // don't need to change, they're at default
+            }
+            options[1] -> { // CD
+                //encoding = AudioFormat.ENCODING_E_AC3
+                encoding = AudioFormat.ENCODING_PCM_16BIT
+                frequency = 48000
+            }
+            /*options[2] -> { // DVD
+                encoding = AudioFormat.ENCODING_PCM_FLOAT
+                frequency = 48000
+            }*/
+            options[2] -> { // Studio
+                encoding = AudioFormat.ENCODING_PCM_FLOAT
+                frequency = 96000
+            }
+        }
+
+        return PullableSource.AutomaticGainControl(
+                PullableSource.NoiseSuppressor(
+                        PullableSource.Default(
+                                AudioRecordConfig.Default(MediaRecorder.AudioSource.MIC,
+                                        encoding, AudioFormat.CHANNEL_IN_MONO, frequency))))
     }
 
     private val recordingsDirectory = "/dSoundBoyRecordings/"

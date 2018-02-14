@@ -12,8 +12,6 @@ import android.view.View
 import android.widget.Button
 import android.widget.Chronometer
 import android.widget.Toast
-import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
-import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModelForList
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
@@ -21,7 +19,6 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import io.realm.Realm
-import io.realm.RealmResults
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
@@ -29,7 +26,6 @@ import omrecorder.Recorder
 import java.io.File
 import java.io.FileReader
 import java.util.*
-import kotlin.concurrent.thread
 
 /**
  * Created by davrukin on 2/1/2018.
@@ -95,11 +91,15 @@ class OfflineUploader {
             queueList.add(recording)
         }*/
             val size = queue.size
+
+            val urls = queue.map { it.filePath }
+
             LogUtils.debug("Upload Queue", "$queue")
             LogUtils.debug("Queue Size", "$size")
             LogUtils.debug("Starting Uploads", "Starting Notification Progress")
+
             if (size > 0) {
-                createProgressNotificationWhileUpload(context, realm, size, queue)
+                createProgressNotificationWhileUpload(context, size, urls)
             } else {
                 LogUtils.debug("Upload Status", "Nothing to Upload")
             }
@@ -120,7 +120,7 @@ class OfflineUploader {
         //}
     }
 
-    private fun createProgressNotificationWhileUpload(context: Context, realm: Realm, size: Int, queue: RealmResults<RecordingModel>) {
+    private fun createProgressNotificationWhileUpload(context: Context, size: Int, queue: List<String>) {
         LogUtils.debug("Entering Function", "createProgressNotificationWhileUpload")
         val id = 1
         val notifyManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -137,8 +137,8 @@ class OfflineUploader {
                     // once it's been uploaded, mark it as uploaded
                     // once uploaded, gets automatically deleted
                     // delete local file and realm record
-                    val filepath = item.filePath
-                    doDeferredUpload(filepath, context)
+                    //val filepath = item
+                    doDeferredUpload(item, context)
                     LogUtils.debug("Queue Uploader", "Item $index of $size")
                 }
 
@@ -260,10 +260,10 @@ class OfflineUploader {
 
             val file = File(path)
 
-            if (!file.exists()) {
-                return createFile()
+            return if (!file.exists()) {
+                createFile()
             } else {
-                return file
+                file
             }
         }
 

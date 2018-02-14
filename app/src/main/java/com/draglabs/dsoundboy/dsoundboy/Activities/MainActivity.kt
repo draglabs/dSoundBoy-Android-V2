@@ -3,7 +3,6 @@ package com.draglabs.dsoundboy.dsoundboy.Activities
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.View
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
@@ -11,8 +10,6 @@ import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
-import com.facebook.FacebookSdk
-import io.realm.Realm
 
 
 /**

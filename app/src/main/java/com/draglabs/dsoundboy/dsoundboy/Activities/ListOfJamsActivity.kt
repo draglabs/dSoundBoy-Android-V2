@@ -4,15 +4,11 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.Window
-import android.widget.ProgressBar
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.R
@@ -23,10 +19,9 @@ import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
 import com.draglabs.dsoundboy.dsoundboy.ViewAdapters.CustomAdapter
 import io.realm.Realm
 import io.realm.RealmResults
-import kotlinx.android.synthetic.main.activity_list_of_jams.*
 import java.util.*
 
-class ListOfJamsActivity : AppCompatActivity() {
+  class ListOfJamsActivity : AppCompatActivity() {
 
     // TODO: use kotlin coroutine to run getJams() async and await response in order to populate the cards
 
@@ -35,7 +30,7 @@ class ListOfJamsActivity : AppCompatActivity() {
     private lateinit var customAdapter: CustomAdapter
     private lateinit var recyclerView: RecyclerView
 
-    var realm = Realm.getDefaultInstance()
+    var realm: Realm = Realm.getDefaultInstance()
     private val REALM_TAG = "__REALM__"
 
     //private var progressBar = findViewById<ProgressBar>(R.id.export_progress_bar)
@@ -58,7 +53,7 @@ class ListOfJamsActivity : AppCompatActivity() {
         recyclerView.adapter = customAdapter
 
         val usersName = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm).fbName
-        LogUtils.debug("User's Name in Jams View", "$usersName")
+        LogUtils.debug("User's Name in Jams View", usersName)
         this.title = "$usersName's Jams"
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
@@ -134,14 +129,13 @@ class ListOfJamsActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         realm.close()
-        realm = null
     }
 
     override fun getSystemService(name: String?): Any {
-        if (REALM_TAG == name) {
-            return realm
+        return if (REALM_TAG == name) {
+            realm
         } else {
-            return super.getSystemService(name)
+            super.getSystemService(name)
         }
     }
 }

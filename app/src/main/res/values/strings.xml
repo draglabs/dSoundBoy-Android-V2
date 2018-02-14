@@ -246,6 +246,13 @@
         <item>Entry 3</item>
     </string-array>
 
+    <string-array name="pref_recording_settings_values">
+        <item>Streaming</item>
+        <item>CD</item>
+        <!-- <item>DVD</item> -->
+        <item>Studio</item>
+    </string-array>
+
     <string-array name="list_preference_entry_values">
         <item>1</item>
         <item>2</item>

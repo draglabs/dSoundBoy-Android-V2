@@ -1,0 +1,32 @@
+<!--
+  ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+  -->
+
+<!--
+  ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+  -->
+
+<vector android:height="24dp" android:viewportHeight="320.0"
+    android:viewportWidth="320.0" android:width="24dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd"
+        android:pathData="M24,0L296,0A24,24 0,0 1,320 24L320,296A24,24 0,0 1,296 320L24,320A24,24 0,0 1,0 296L0,24A24,24 0,0 1,24 0z"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#00000000" android:fillType="evenOdd"
+        android:pathData="M28,4L292,4A24,24 0,0 1,316 28L316,292A24,24 0,0 1,292 316L28,316A24,24 0,0 1,4 292L4,28A24,24 0,0 1,28 4z"
+        android:strokeColor="#252525" android:strokeWidth="8"/>
+    <path android:fillColor="#252525" android:fillType="evenOdd"
+        android:pathData="M189.9,0h141.2v334.6h-141.2z"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd"
+        android:pathData="M193.1,43l70.2,0.8l0,210.3l35.9,0l0,19.4l-49.2,0l0,-215.6l-56.3,0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#00000000" android:fillType="evenOdd"
+        android:pathData="M148,137.8L148,248.4C137.1,255.6 123.9,259.7 109.8,259.7C72,259.7 41.3,229.9 41.3,193.1C41.3,156.3 72,126.4 109.8,126.4C123.9,126.4 137.1,130.6 148,137.8Z"
+        android:strokeColor="#252525" android:strokeWidth="16"/>
+    <path android:fillColor="#252525" android:fillType="evenOdd"
+        android:pathData="M193.9,58.4l-36.5,0l0,212.3l-16.2,0l0,-227.7l52.7,0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+    <path android:fillColor="#BA4646" android:fillType="evenOdd"
+        android:pathData="M100,193.8m-17.8,0a17.8,17.8 0,1 1,35.6 0a17.8,17.8 0,1 1,-35.6 0"
+        android:strokeColor="#00000000" android:strokeWidth="1"/>
+</vector>

@@ -6,10 +6,8 @@ import android.content.pm.PackageManager.GET_SIGNATURES
 import android.util.Base64
 import android.util.Log
 import com.draglabs.dsoundboy.dsoundboy.BuildConfig
-import com.draglabs.dsoundboy.dsoundboy.R
+import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.facebook.FacebookSdk
-import com.facebook.LoggingBehavior
-import com.facebook.appevents.AppEventsLogger
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 
@@ -36,7 +34,7 @@ class MainRoutine {
                 packageInfo.signatures.forEach { signature ->
                     val messageDigest = MessageDigest.getInstance("SHA")
                     messageDigest.update(signature.toByteArray())
-                    Log.d("KeyHash: ", Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT))
+                    LogUtils.debug("KeyHash: ", Base64.encodeToString(messageDigest.digest(), Base64.DEFAULT))
                 }
             } catch (e: PackageManager.NameNotFoundException) {
                 e.printStackTrace()

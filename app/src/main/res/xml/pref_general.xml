@@ -34,11 +34,5 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_add_friends_to_messages" />
 
-    <SwitchPreference
-        android:defaultValue="false"
-        android:disableDependentsState="true"
-        android:key="wifi_switch"
-        android:summary="Enable switch to enable WiFi-Only Uploads"
-        android:title="WiFi-Only Uploads" />
 
 </PreferenceScreen>

@@ -6,19 +6,25 @@
 
     <!-- These settings headers are only used on tablets. -->
 
-    <header
+    <!--<header
         android:fragment="com.draglabs.dsoundboy.dsoundboy.Activities.SettingsActivity$GeneralPreferenceFragment"
         android:icon="@drawable/ic_info_black_24dp"
-        android:title="@string/pref_header_general" />
+        android:title="@string/pref_header_general" /> -->
 
     <header
+        android:fragment="com.draglabs.dsoundboy.dsoundboy.Activities.SettingsActivity$RecordingPreferenceFragment"
+        android:icon="@drawable/recording"
+        android:title="Recording Settings"
+        />
+
+    <!-- <header
         android:fragment="com.draglabs.dsoundboy.dsoundboy.Activities.SettingsActivity$NotificationPreferenceFragment"
         android:icon="@drawable/ic_notifications_black_24dp"
-        android:title="@string/pref_header_notifications" />
+        android:title="@string/pref_header_notifications" /> -->
 
-    <header
+    <!-- <header
         android:fragment="com.draglabs.dsoundboy.dsoundboy.Activities.SettingsActivity$DataSyncPreferenceFragment"
         android:icon="@drawable/ic_sync_black_24dp"
-        android:title="@string/pref_header_data_sync" />
+        android:title="@string/pref_header_data_sync" /> -->
 
 </preference-headers>

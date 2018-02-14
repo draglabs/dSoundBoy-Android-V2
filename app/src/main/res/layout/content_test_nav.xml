@@ -5,11 +5,11 @@
     android:id="@+id/constraint_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorDLBlue2"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity"
     tools:showIn="@layout/app_bar_test_nav">
+    <!-- android:background="@color/colorDLBlue2" -->
 
     <Button
         android:id="@+id/button_stop_new"
@@ -111,7 +111,8 @@
         android:text="@string/button_test_auth"
         android:visibility="gone"
         tools:layout_editor_absoluteX="48dp"
-        tools:layout_editor_absoluteY="263dp" />
+        tools:layout_editor_absoluteY="263dp"
+        tools:ignore="MissingConstraints" />
 
     <Button
         android:id="@+id/jam_pin_view"

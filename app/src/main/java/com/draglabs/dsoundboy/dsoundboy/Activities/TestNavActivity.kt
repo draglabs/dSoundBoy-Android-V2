@@ -5,7 +5,6 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
 import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
@@ -18,6 +17,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
 import android.support.design.widget.NavigationView
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.support.v4.view.GestureDetectorCompat
@@ -26,7 +26,6 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.*
 import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
@@ -35,7 +34,6 @@ import com.draglabs.dsoundboy.dsoundboy.Services.LocationTrackingService
 import com.draglabs.dsoundboy.dsoundboy.Tasks.OfflineUploader
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
-import com.facebook.FacebookSdk
 import com.facebook.GraphRequest
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -46,7 +44,6 @@ import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.delay
-import omrecorder.OmRecorder
 import omrecorder.Recorder
 import java.io.File
 import java.util.*
@@ -95,21 +92,33 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private lateinit var realm: Realm
 
+    private lateinit var activeJamPIN: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FacebookSdk.setApplicationId(getString(R.string.facebook_app_id))
-        @Suppress("DEPRECATION")
-        FacebookSdk.sdkInitialize(this)
         setContentView(R.layout.activity_test_nav)
         setSupportActionBar(toolbar)
 
-        //getJams()
+        initialize()
+        LogUtils.debug("FB Access Token", "${AccessToken.getCurrentAccessToken()}")
+    }
 
-        //recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        //linearLayoutManager = LinearLayoutManager(this)
-        //recyclerView.layoutManager = linearLayoutManager
-        //customAdapter = CustomAdapter(this, jams)
-        //recyclerView.adapter = customAdapter
+    private fun initialize() {
+        LogUtils.logEnteringFunction("initialize")
+
+        initializeUIElements()
+        initializeServices()
+        initializeTasks()
+
+        clickTestAuth()
+        initializeListeners()
+        initializeLocationClient()
+
+        updatePinView()
+    }
+
+    private fun initializeUIElements() {
+        LogUtils.logEnteringFunction("initializeUIElements")
 
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
@@ -117,88 +126,53 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        //PrefUtilsKt().storeUUID(this, postmanUUID)
-        //println(PrefUtilsKt().retrieveUUID(this))
-        //PrefUtilsKt.Functions().deleteUUID(this)
-        //PrefUtilsKt.Functions().deletePIN(this)
-        //filename = FileUtils().generateAndSaveFilename(this)
-        recorderUtils = RecorderUtils(this, this)
-        //recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
+        jamPinView = findViewById<Button>(R.id.jam_pin_view)
+        jamPinView.bringToFront()
 
-        initialize()
+        rec = findViewById<Button>(R.id.button_rec_new)
+        stop = findViewById<Button>(R.id.button_stop_new)
+        stop.visibility = View.GONE
 
         buttons["new_jam"] = button_new_jam_new as Any
         buttons["new_recording"] = button_rec_new as Any
         buttons["join_jam"] = button_join_jam_new as Any
-
-        //homeRoutineKt = HomeRoutineKt(buttons, this, this,   filename, button_rec_new)
-
-        //Log.v("API ID:", PrefUtils(this).uniqueUserID)
-        realm = Realm.getDefaultInstance()
-        var service = startService(Intent(this, LocationTrackingService::class.java))
-        LogUtils.debug("FB Access Token", "${AccessToken.getCurrentAccessToken()}")
-
-        //async { doPermissionsCheckWriteExternalStorage() }
     }
 
-    private fun initialize() {
-        jamPinView = findViewById<Button>(R.id.jam_pin_view)
-        jamPinView.bringToFront()
+    private fun initializeServices() {
+        LogUtils.logEnteringFunction("initializeServices")
 
         gestureDetector = GestureDetectorCompat(this, MyGestureListener())
+        realm = Realm.getDefaultInstance()
+        var locationService = startService(Intent(this, LocationTrackingService::class.java))
+        recorderUtils = RecorderUtils(this, this)
+    }
 
-        clickTestAuth()
-        setListeners()
+    private fun initializeTasks() {
+        LogUtils.logEnteringFunction("initializeTasks")
+
         async { setUserView() }
-        initializeLocationClient()
-        updatePinView()
-
-        rec = findViewById<Button>(R.id.button_rec_new)
-        stop = findViewById<Button>(R.id.button_stop_new)
-
-        //stop.isEnabled = false
-        stop.visibility = View.GONE
-
-        //doPermissionsCheckWriteExternalStorage()
-
-        //realm = Realm.getDefaultInstance()
         async { OfflineUploader().queueInteractor(this@TestNavActivity) }
     }
 
-    private fun setListeners() {
+    private fun initializeListeners() {
         /*fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show()
         }*/
 
         button_new_jam_new.setOnClickListener {
-            doPermissionsCheckWriteExternalStorage()
-            //doPermissionsCheckRead()
-            //doPermissionsCheckWrite()
             clickNew()
         }
 
-        button_rec_new.setOnClickListener { view ->
-            filename = FileUtils().generateAndSaveFilename(this)
-            recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
-            clickRec(this, view, recorder)
-            rec.visibility = View.GONE
-            stop.visibility = View.VISIBLE
+        button_rec_new.setOnClickListener {
+            clickRec(it)
         }
 
-        button_stop_new.setOnClickListener { view ->
-            LogUtils.debug("Button Clicked", "Stop")
-            clickStop(this, view, recorder)
-            initiateOfflineUploader()
-            async { OfflineUploader().queueInteractor(this@TestNavActivity) }
-            rec.visibility = View.VISIBLE
-            stop.visibility = View.GONE
+        button_stop_new.setOnClickListener {
+            clickStop(this, recorder)
         }
 
         button_join_jam_new.setOnClickListener {
-            doPermissionsCheckWriteExternalStorage()
-            //doPermissionsCheckRead()
-            //doPermissionsCheckWrite()
             clickJoin()
         }
 
@@ -208,18 +182,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }
 
         jamPinView.setOnDragListener { view, event ->
-            if (event.action == MotionEvent.ACTION_UP) {
-                LogUtils.debug("Motion Event", "Action Up")
-                val intent = Intent(this, EditJamActivity::class.java)
-                intent.putExtra("jamID", PrefUtilsKt.Functions().retrieveJamID(this))
-                intent.putExtra("jamName", PrefUtilsKt.Functions().retrieveJamName(this))
-                intent.putExtra("jamLocation", "ActionSpot")
-                intent.putExtra("jamNotes", "hi") // edit later, maybe get from Realm
-                startActivity(intent)
-                return@setOnDragListener true
-            } else {
-                return@setOnDragListener false
-            }
+            return@setOnDragListener jamPinViewDragged(event)
         }
 
         /*button_test_auth.setOnClickListener {
@@ -232,28 +195,48 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         }*/
     }
 
+    private fun jamPinViewDragged(event: DragEvent): Boolean {
+        return if (event.action == MotionEvent.ACTION_UP) {
+            LogUtils.debug("Motion Event", "Action Up")
+            val intent = Intent(this, EditJamActivity::class.java)
+            intent.putExtra("jamID", PrefUtilsKt.Functions().retrieveJamID(this))
+            intent.putExtra("jamName", PrefUtilsKt.Functions().retrieveJamName(this))
+            intent.putExtra("jamLocation", "ActionSpot")
+            intent.putExtra("jamNotes", "hi") // edit later, maybe get from Realm
+            startActivity(intent)
+            true
+        } else {
+            false
+        }
+    }
+
     private fun initiateOfflineUploader() {
-        LogUtils.debug("Entering Function", "initiateOfflineUploader")
+        LogUtils.logEnteringFunction("initiateOfflineUploader")
+
         //endTime = Date()
         val jamID = PrefUtilsKt.Functions().retrieveJamID(this) // current jam id
         val jamName = PrefUtilsKt.Functions().retrieveFbName(this)
         //OfflineUploader().prepareUpload(realm, jamID, this, jamPinView, recorder, recorderUtils, view, chronometer_new, startTime, endTime)
-        OfflineUploader().addRecordingToQueue(realm, filename, jamID, jamName, startTime.toString(), endTime.toString())
+        val formattedStartTime = FileUtils().getFormattedDate(startTime)
+        val formattedEndTime = FileUtils().getFormattedDate(endTime)
+        OfflineUploader().addRecordingToQueue(realm, filename, jamID, jamName, formattedStartTime, formattedEndTime)
     } // driedSpaghetti
 
     private fun doPermissionsCheckWriteExternalStorage() {
+        LogUtils.logEnteringFunction("doPermissionsCheckWriteExternalStorage")
+
         // delay(300)
         val permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
         LogUtils.debug("Permission Check", "$permissionCheck")
-            showPermissionsDialog()
         if (permissionCheck != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+            showPermissionsDialog()
         }
         File("${Environment.getExternalStorageDirectory()}/test.txt").writeText("abc")
         File("${Environment.getExternalStorageDirectory()}/test.txt").delete()
     }
 
     private fun showPermissionsDialog() {
-        LogUtils.debug("Entering Function", "showPermissionsDialog")
+        LogUtils.logEnteringFunction("showPermissionsDialog")
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Please fix app permissions")
@@ -279,16 +262,22 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun doPermissionsCheckRead() {
+        LogUtils.logEnteringFunction("doPermissionsCheckRead")
+
         val read = isReadStoragePermissionGranted
         LogUtils.debug("Permission Code: ", "read: $read")
     }
 
     private fun doPermissionsCheckWrite() {
+        LogUtils.logEnteringFunction("doPermissionsCheckWrite")
+
         val write = isWriteStoragePermissionGranted
         LogUtils.debug("Permission Code: ", "write: $write")
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
+        LogUtils.logEnteringFunction("onTouchEvent")
+
         gestureDetector.onTouchEvent(event)
         return super.onTouchEvent(event)
         /*val action = MotionEventCompat.getActionMasked(event)
@@ -327,6 +316,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private suspend fun setUserView() {
         delay(1500) // this is here because it would cause the app to crash since it didn't retrieve the data from the server right away
         //val loginRoutineKt = LoginRoutineKt(buttons, this, this)
+        LogUtils.logEnteringFunction("setUserView")
 
         val accessToken = AccessToken.getCurrentAccessToken()
         val graphRequest = GraphRequest.newMeRequest(accessToken) { `object`, response ->
@@ -341,8 +331,25 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         graphRequest.executeAsync()
     }
 
+    /*private object InitialProcesses {
+
+    }
+
+    private object UIProcesses {
+        fun clickJoin() {
+            LogUtils.logEnteringFunction("clickJoin")
+
+            doPermissionsCheckWriteExternalStorage()
+            //doPermissionsCheckRead()
+            //doPermissionsCheckWrite()
+
+            HomeRoutineKt().joinJam(this, this, jam_pin_view)
+            updatePinView()
+        }
+    }*/
+
     private fun registerUser() {
-        LogUtils.debug("Registering User", "Done")
+        LogUtils.logEnteringFunction("registerUser")
 
         APIutilsKt.UserFunctions.performRegisterUser(this, this)
 
@@ -350,40 +357,74 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         LogUtils.debug("New UUID", PrefUtilsKt.Functions().retrieveUUID(this))
     }
 
-    private fun clickRec(context: Context, view: View, recorder: Recorder) {
+    private fun clickRec(view: View) {
+        LogUtils.logEnteringFunction("clickRec")
+
         updatePinView()
-        //if (button_rec_new.text == "Rec") {
+
+        if (activeJamPIN.length > 4) {
+            Snackbar.make(view, "Please create or join a jam", Snackbar.LENGTH_LONG).show()
+        } else {
             startTime = Date()
+            filename = FileUtils().generateAndSaveFilename(this, startTime)
+            recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
+
+            //if (button_rec_new.text == "Rec") {
+            //startTime = Date()
             // not confident about the order of events here
             HomeRoutineKt().clickRec(this, recorder, recorderUtils, chronometer_new) // no current jam, recorder button creates a new one
             ////button_rec_new.text = getString(R.string.stop_recording_text) // "Stop"
             // if is currently recording, new jam button stops recording, uploads it, and creates a new jam
             // use get active jam to tell if there is one currently
-        /*} else {
-            endTime = Date()
-            HomeRoutineKt().clickStop(recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
-            button_rec_new.text = getString(R.string.start_recording_text) // "Rec"
-            //homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
-        }*/
-        updatePinView()
+            /*} else {
+                endTime = Date()
+                HomeRoutineKt().clickStop(recorder, recorderUtils, context, view, chronometer_new, startTime, endTime)
+                button_rec_new.text = getString(R.string.start_recording_text) // "Rec"
+                //homeRoutine = HomeRoutine(buttons, this, this, Date().time.toString(), button_rec_new)
+            }*/
+
+            rec.visibility = View.GONE
+            stop.visibility = View.VISIBLE
+
+            updatePinView()
+        }
     }
 
-    private fun clickStop(context: Context, view: View, recorder: Recorder) {
-        updatePinView()
+    private fun clickStop(context: Context, recorder: Recorder) {
+        LogUtils.logEnteringFunction("clickStop")
 
         endTime = Date()
-        //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
+
+        updatePinView()
+
+        initiateOfflineUploader()
+        async { OfflineUploader().queueInteractor(this@TestNavActivity) }
+        rec.visibility = View.VISIBLE
+        stop.visibility = View.GONE
+
         HomeRoutineKt().clickStop(recorder, recorderUtils, context, chronometer_new)
 
         updatePinView()
     }
 
     private fun clickJoin() {
+        LogUtils.logEnteringFunction("clickJoin")
+
+        doPermissionsCheckWriteExternalStorage()
+        //doPermissionsCheckRead()
+        //doPermissionsCheckWrite()
+
         HomeRoutineKt().joinJam(this, this, jam_pin_view)
         updatePinView()
     }
 
     private fun clickNew() {
+        LogUtils.logEnteringFunction("clickNew")
+
+        doPermissionsCheckWriteExternalStorage()
+        //doPermissionsCheckRead()
+        //doPermissionsCheckWrite()
+
         HomeRoutineKt().createJam(this, jam_pin_view)
         updatePinView()
 
@@ -394,6 +435,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     private fun clickTestAuth() {
+        LogUtils.logEnteringFunction("clickTestAuth")
+
         APIutilsKt.UserFunctions.performRegisterUser(this, this)
         val text = PrefUtilsKt.Functions().retrieveUUID(this)
         if (text == "not working") {
@@ -407,6 +450,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     // TODO: add check uuid function, to prevent crashes, or just show snackbars or toasts when errors come up, so the app doesn't crash
 
     private fun updatePinView() {
+        LogUtils.logEnteringFunction("updatePinView")
+
         /*val pin = PrefUtilsKt.Functions().retrievePIN(this)
         val currentJamID = PrefUtilsKt.Functions().retrieveJamID(this)
         //val currentJamDetails = APIutilsKt.JamFunctions.getJamDetails(this, currentJamID)
@@ -416,7 +461,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         APIutilsKt.JamFunctions.performGetActiveJam(this)
         //val activeJamID = PrefUtilsKt.Functions().retrieveJamID(this)
-        val activeJamPIN = PrefUtilsKt.Functions().retrievePIN(this)
+        activeJamPIN = PrefUtilsKt.Functions().retrievePIN(this)
 
         if (activeJamPIN == "not working") {
             jamPinView.text = "No Jam PIN"
@@ -429,6 +474,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onBackPressed() {
+        LogUtils.logEnteringFunction("onBackPressed")
+
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
             realm.close()
@@ -439,12 +486,16 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        LogUtils.logEnteringFunction("onCreateOptionsMenu")
+
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.test_nav, menu)
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        LogUtils.logEnteringFunction("onOptionsItemSelected")
+
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -457,6 +508,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        LogUtils.logEnteringFunction("onNavigationItemSelected")
+
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_rec -> {
@@ -499,6 +552,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onStart() {
+        LogUtils.logEnteringFunction("onStart")
+
         locationUtils?.onStart(locationVars)
         super.onStart()
         /*if (jams.size == 0) {
@@ -507,28 +562,40 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     }
 
     override fun onStop() {
+        LogUtils.logEnteringFunction("onStop")
+
         locationUtils?.onStop(locationVars)
         //realm.close()
         super.onStop()
     }
 
     override fun onConnectionSuspended(p0: Int) {
+        LogUtils.logEnteringFunction("onConnectionSuspended")
+
         locationUtils?.onConnectionSuspended(locationVars, p0)
     }
 
    override fun onConnectionFailed(p0: ConnectionResult) {
+       LogUtils.logEnteringFunction("onConnectionFailed")
+
        locationUtils?.onConnectionFailed(p0)
     }
 
     override fun onLocationChanged(p0: Location?) {
+        LogUtils.logEnteringFunction("onLocationChanged")
+
         locationUtils?.onLocationChanged(this, p0)
     }
 
     override fun onConnected(p0: Bundle?) {
+        LogUtils.logEnteringFunction("onConnected")
+
         locationUtils?.onConnected(this, this, p0, locationVars)
     }
 
     private fun initializeLocationClient() {
+        LogUtils.logEnteringFunction("initializeLocationClient")
+
         locationUtils?.initializeLocationClient(this, this, this, locationVars)
     }
 

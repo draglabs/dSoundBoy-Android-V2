@@ -4,33 +4,32 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
+import android.Manifest.permission.READ_CONTACTS
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.content.pm.PackageManager
-import android.support.design.widget.Snackbar
-import android.support.v7.app.AppCompatActivity
 import android.app.LoaderManager.LoaderCallbacks
 import android.content.CursorLoader
 import android.content.Loader
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Build
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.support.design.widget.Snackbar
+import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
-import android.widget.TextView
-
-import java.util.ArrayList
-import android.Manifest.permission.READ_CONTACTS
 import android.widget.Button
+import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.R
-
 import kotlinx.android.synthetic.main.activity_email_login.*
+import java.util.*
 
 /**
  * A login screen that offers login via email/password.
@@ -60,14 +59,16 @@ class EmailLoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
         email_sign_in_button.setOnClickListener { attemptLogin() }
 
         val type = intent.getStringExtra("type")
-        if (type == "sign_up") {
-            this.title = "Create an Account"
-            signUpButton.text = "Sign Up"
-        } else if (type == "log_in") { // TODO: red led while recording
-            this.title = "Log In"
-            signUpButton.text = "Log In"
-        } else {
-            this.title = "Create an Account or Log In" // shouldn't happen
+        when (type) {
+            "sign_up" -> {
+                this.title = "Create an Account"
+                signUpButton.text = "Sign Up"
+            }
+            "log_in" -> { // TODO: red led while recording
+                this.title = "Log In"
+                signUpButton.text = "Log In"
+            }
+            else -> this.title = "Create an Account or Log In" // shouldn't happen
         }
     }
 
@@ -111,6 +112,7 @@ class EmailLoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
      * Set up the {@link android.app.ActionBar}, if the API is available.
      */
+    @SuppressLint("ObsoleteSdkInt")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     private fun setupActionBar() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -184,6 +186,7 @@ class EmailLoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**
      * Shows the progress UI and hides the login form.
      */
+    @SuppressLint("ObsoleteSdkInt")
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private fun showProgress(show: Boolean) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -269,6 +272,7 @@ class EmailLoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
      * Represents an asynchronous login/registration task used to authenticate
      * the user.
      */
+    @SuppressLint("StaticFieldLeak")
     inner class UserLoginTask internal constructor(private val mEmail: String, private val mPassword: String) : AsyncTask<Void, Void, Boolean>() {
 
         override fun doInBackground(vararg params: Void): Boolean? {

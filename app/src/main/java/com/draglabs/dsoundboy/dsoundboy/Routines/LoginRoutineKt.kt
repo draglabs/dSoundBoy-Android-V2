@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.view.View
-import android.widget.Button
 import android.widget.TextView
 import com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity
 import com.draglabs.dsoundboy.dsoundboy.R

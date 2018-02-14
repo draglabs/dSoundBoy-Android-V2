@@ -11,7 +11,6 @@ import com.draglabs.dsoundboy.dsoundboy.Models.UserModel
 import io.realm.Realm
 import io.realm.RealmChangeListener
 import io.realm.RealmResults
-import io.realm.kotlin.deleteFromRealm
 import java.io.File
 import java.util.*
 
@@ -296,10 +295,10 @@ class RealmUtils {
 
                 //Functions.closeRealm(realm)
 
-                if (user != null) {
-                    return user
+                return if (user != null) {
+                    user
                 } else {
-                    return UserModel()
+                    UserModel()
                 }
             }
         }
@@ -383,20 +382,20 @@ class RealmUtils {
 
                 val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
 
-                if (recording != null) {
+                return if (recording != null) {
                     val path = recording.filePath
                     val file = File(path)
                     if (file.exists()) {
                         realm.commitTransaction()
-                        return recording
+                        recording
                     } else {
                         recording.deleteFromRealm()
                         realm.commitTransaction()
-                        return RecordingModel()
+                        RecordingModel()
                     }
                 } else {
                     realm.commitTransaction()
-                    return RecordingModel() // return empty RecordingModel otherwise, so it's not null
+                    RecordingModel() // return empty RecordingModel otherwise, so it's not null
                 }
 
             }

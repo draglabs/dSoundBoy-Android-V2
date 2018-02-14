@@ -16,20 +16,20 @@ class PrefUtilsKt {
 
     private object Vars {
 
-        val fb_name             = StringsModelKt.FacebookUserDataParams.FB_NAME
-        val fb_email            = StringsModelKt.FacebookUserDataParams.FB_EMAIL
-        val fb_image            = StringsModelKt.FacebookUserDataParams.FB_IMAGE
-        val local_path          = StringsModelKt.FacebookUserDataParams.LOCAL_PATH
+        const val fb_name             = StringsModelKt.FacebookUserDataParams.FB_NAME
+        const val fb_email            = StringsModelKt.FacebookUserDataParams.FB_EMAIL
+        const val fb_image            = StringsModelKt.FacebookUserDataParams.FB_IMAGE
+        const val local_path          = StringsModelKt.FacebookUserDataParams.LOCAL_PATH
 
-        val jam_name            = StringsModelKt.JsonParsingKeys.JAM_NAME
-        val pin                 = StringsModelKt.JsonParsingKeys.PIN
-        val jam_id              = StringsModelKt.JsonParsingKeys.JAM_ID
-        val uuid                = StringsModelKt.JsonParsingKeys.UUID
-        val lat                 = StringsModelKt.JsonParsingKeys.LAT
-        val lng                 = StringsModelKt.JsonParsingKeys.LNG
-        val link                = StringsModelKt.JsonParsingKeys.LINK
+        const val jam_name            = StringsModelKt.JsonParsingKeys.JAM_NAME
+        const val pin                 = StringsModelKt.JsonParsingKeys.PIN
+        const val jam_id              = StringsModelKt.JsonParsingKeys.JAM_ID
+        const val uuid                = StringsModelKt.JsonParsingKeys.UUID
+        const val lat                 = StringsModelKt.JsonParsingKeys.LAT
+        const val lng                 = StringsModelKt.JsonParsingKeys.LNG
+        const val link                = StringsModelKt.JsonParsingKeys.LINK
 
-        val jams                = StringsModelKt.ViewJamData.JAMS
+        const val jams                = StringsModelKt.ViewJamData.JAMS
     }
 
     class Functions {

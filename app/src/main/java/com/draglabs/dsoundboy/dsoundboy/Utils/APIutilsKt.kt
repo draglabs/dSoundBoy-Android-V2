@@ -4,15 +4,20 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Utils
 
+import android.app.Activity
 import android.content.Context
-import android.support.design.widget.Snackbar
-import android.view.View
+import android.os.Environment
+import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
+import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Params.APIparamsKt
+import com.loopj.android.http.*
 import cz.msebera.android.httpclient.Header
 import cz.msebera.android.httpclient.HeaderElement
 import cz.msebera.android.httpclient.ParseException
+import io.realm.Realm
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import retrofit2.Call
@@ -21,14 +26,6 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
-import android.app.Activity
-import android.os.Environment
-import android.widget.Toast
-import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
-import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModelForList
-import com.loopj.android.http.*
-import io.realm.Realm
-import org.json.JSONArray
 
 
 /**
@@ -39,6 +36,9 @@ class APIutilsKt {
 
     object JamFunctions {
         fun performNewJam(context: Context, UUID: String, name: String, location: String, lat: Any, lng: Any, notes: String) {
+            val tag = "NewJam"
+            LogUtils.logEnteringFunction("perform$tag")
+
             val call = APIparamsKt().callNewJam(UUID, name, location, lat, lng, notes)
 
             call.enqueue(object: Callback<ResponseModelKt.JamFunctions.NewJam> {
@@ -58,19 +58,22 @@ class APIutilsKt {
                         LogUtils.debug("NewJam Response Body", result.toString())
                         LogUtils.debug("NewJam Response Message", "Code: $code; Message: $message")
                     } else {
-                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("Code", "" + response.code())
-                        LogUtils.debug("Message", response.message())
+                        LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseModelKt.JamFunctions.NewJam>, t: Throwable) {
                     LogUtils.logOnFailure(t)
+                    val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                    LogUtils.error("$tag onFailure Failed", error)
                 }
             })
         }
 
         fun performUpdateJam(jamID: String, jamName: String, jamLocation: String, jamNotes: String) {
+            val tag = "UpdateJam"
+            LogUtils.logEnteringFunction("perform$tag")
+
             val call = APIparamsKt().callUpdateJam(jamID, jamName, jamLocation, jamNotes)
 
             call.enqueue(object: Callback<ResponseModelKt.JamFunctions.UpdateJam> {
@@ -86,26 +89,25 @@ class APIutilsKt {
 
                         RealmUtils.JamViewModelUtils.Edit.editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse, jamPinResponse)
 
-                        LogUtils.debug("UpdateJam Response", response.toString())
-                        LogUtils.debug("UpdateJam Body", response.body().toString())
+                        LogUtils.debug("$tag Response", response.toString())
+                        LogUtils.debug("$tag Body", response.body().toString())
                     } else {
-                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("Code", "" + response.code())
-                        LogUtils.debug("Message", response.message())
-                        LogUtils.debug("Headers", response.headers().toString())
+                        LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UpdateJam>, t: Throwable) {
                     LogUtils.logOnFailure(t)
-                    LogUtils.debug("onFailure Call", call.toString())
-                    LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
-                    LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
+                    val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                    LogUtils.error("$tag onFailure Failed", error)
                 }
             })
         }
 
         fun performJoinJam(context: Context, pin: String, UUID: String) {
+            val tag = "JoinJam"
+            LogUtils.logEnteringFunction("perform$tag")
+
             val call = APIparamsKt().callJoinJam(pin, UUID)
 
             call.enqueue(object: Callback<ResponseModelKt.JamFunctions.JoinJam> {
@@ -119,19 +121,21 @@ class APIutilsKt {
                         PrefUtilsKt.Functions().storeJamID(context, jamID)
                         PrefUtilsKt.Functions().storeJamName(context, jamName)
                     } else {
-                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("Code", "" + response.code())
-                        LogUtils.debug("Message", response.message())
+                        LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseModelKt.JamFunctions.JoinJam>, t: Throwable) {
                     LogUtils.logOnFailure(t)
+                    val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                    LogUtils.error("$tag onFailure Failed", error)
                 }
             })
         }
 
         fun jamRecordingUpload(recording: RecordingModel, context: Context, notes: String) { // convert through binary data and multi-part upload
+            val tag = "JamRecordingUpload"
+            LogUtils.logEnteringFunction("jamRecordingUpload")
 
             val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
             //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
@@ -169,6 +173,9 @@ class APIutilsKt {
         }
 
         fun performGetActiveJam(context: Context) {
+            val tag = "GetActiveJam"
+            LogUtils.logEnteringFunction("perform$tag")
+
             val realm = Realm.getDefaultInstance()
             val uuid = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm).UUID
             realm.close()
@@ -192,22 +199,22 @@ class APIutilsKt {
                         LogUtils.debug("ActiveJam Response", response.toString())
                         LogUtils.debug("ActiveJam Body", result.toString())
                     } else {
-                        LogUtils.debug("ActiveJam Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("ActiveJam Code", "" + response.code())
-                        LogUtils.debug("ActiveJam Message", response.message())
-                        LogUtils.debug("ActiveJam Headers", response.headers().toString())
+                        LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
                 }
 
                 override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetActiveJam>, t: Throwable) {
                     LogUtils.logOnFailure(t)
-                    LogUtils.debug("ActiveJam onFailure Failed", "Canceled" + call.isCanceled.toString())
-                    LogUtils.debug("ActiveJam onFailure Failed", "Executed" + call.isExecuted.toString())
+                    val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                    LogUtils.error("$tag onFailure Failed", error)
                 }
             })
         }
 
         fun getJamDetails(context: Context, jamID: String) {
+            val tag = "GetJamDetails"
+            LogUtils.logEnteringFunction("getJamDetails")
+
             val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
             //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
@@ -241,6 +248,8 @@ class APIutilsKt {
         }
 
         private fun checkLink(link: String, jamID: String) {
+            LogUtils.logEnteringFunction("checkLink")
+
             if (link != null && link != "") {
                 RealmUtils.JamViewModelUtils.Edit.editJam(jamID, RealmUtils.JamVars.LINK, link)
                 LogUtils.debug("Realm'd Link", RealmUtils.JamViewModelUtils.Retrieve.retrieveJam(jamID).toString())
@@ -248,6 +257,9 @@ class APIutilsKt {
         }
 
         fun performCompressor(context: Context, jamID: String) {
+            val tag = "Compressor"
+            LogUtils.logEnteringFunction("perform$tag")
+
             val call = APIparamsKt().callCompressor(context, jamID)
 
             call.enqueue(object: Callback<ResponseModelKt.CompressorFunctions.Compressor> {
@@ -255,13 +267,10 @@ class APIutilsKt {
                     if (response.isSuccessful) {
                         val result = response.body()
 
-                        LogUtils.debug("Compressor Response Body", result.toString())
-                        LogUtils.debug("Compressor Response Message", "Code: ${response.code()}; Message: ${response.message()}")
+                        LogUtils.debug("$tag Response Body", result.toString())
+                        LogUtils.debug("$tag Response Message", "Code: ${response.code()}; Message: ${response.message()}")
                     } else {
-                        LogUtils.debug("Compressor Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("Compressor Code", "" + response.code())
-                        LogUtils.debug("Compressor Message", response.message())
-                        LogUtils.debug("Compressor Headers", response.headers().toString())
+                        LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
                 }
 
@@ -274,6 +283,9 @@ class APIutilsKt {
 
     object UserFunctions {
         fun performRegisterUser(activity: Activity, context: Context) {
+            val tag = "RegisterUser"
+            LogUtils.logEnteringFunction("perform$tag")
+
             val call = APIparamsKt().callRegisterUser(activity)
 
             call.enqueue(object : Callback<ResponseModelKt.UserFunctions.RegisterUser> {
@@ -290,20 +302,21 @@ class APIutilsKt {
                         LogUtils.debug("RegisterUser Response Body", result.toString())
                         LogUtils.debug("RegisterUser Response Message", "Code: $code; Message: $message")
                     } else {
-                        LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                        LogUtils.debug("Code", "" + response.code())
-                        LogUtils.debug("Message", response.message())
+                        LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
                 }
                 override fun onFailure(call: Call<ResponseModelKt.UserFunctions.RegisterUser>, t: Throwable) {
                     LogUtils.logOnFailure(t)
-                    LogUtils.debug("onFailure Failed", "Canceled" + call.isCanceled.toString())
-                    LogUtils.debug("onFailure Failed", "Executed" + call.isExecuted.toString())
+                    val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                    LogUtils.error("$tag onFailure Failed", error)
                 }
             })
         }
 
         fun getUserActivity(context: Context) {
+            val tag = "getUserActivity"
+            LogUtils.logEnteringFunction(tag)
+
             val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
 
             val headers = HttpFunctions.Headers.userIDHeaders(UUID)
@@ -355,6 +368,8 @@ class APIutilsKt {
     private object HttpFunctions {
         object Headers {
             fun userIDHeaders(UUID: String): Array<Header> {
+                LogUtils.logEnteringFunction("userIDHeaders")
+
                 return arrayOf(object : Header {
                     override fun getName(): String {
                         return "user_id"
@@ -372,6 +387,8 @@ class APIutilsKt {
             }
 
             fun standardHeader(UUID: String): Array<Header> {
+                LogUtils.logEnteringFunction("standardHeader")
+
                 return arrayOf(object : Header {
                     override fun getName(): String {
                         return "Content-Type"
@@ -382,7 +399,7 @@ class APIutilsKt {
 
                     @Throws(ParseException::class)
                     override fun getElements(): Array<HeaderElement?> {
-                        return arrayOfNulls<HeaderElement>(0)
+                        return arrayOfNulls(0)
                     }
 
                     override fun toString(): String {
@@ -399,7 +416,7 @@ class APIutilsKt {
 
                     @Throws(ParseException::class)
                     override fun getElements(): Array<HeaderElement?> {
-                        return arrayOfNulls<HeaderElement>(1)
+                        return arrayOfNulls(1)
                     }
 
                     override fun toString(): String {
@@ -415,13 +432,15 @@ class APIutilsKt {
                                                  location: String,
                                                  startTime: String,
                                                  endTime: String): RequestParams {
+                LogUtils.logEnteringFunction("jamRecordingUploadParams")
+
                 val requestParams = RequestParams()
                 requestParams.put("user_id", UUID)
                 requestParams.put("id", jamID)
                 //requestParams.put("location", location)
                 requestParams.put("start_time", startTime)
                 requestParams.put("end_time", endTime)
-                val testPath = "${Environment.getExternalStorageDirectory()}/Download/realm-java-4.3.3.zip"
+                val testPath = "${Environment.getExternalStorageDirectory()}/dSoundBoyRecordings/$path"
                 try {
                     requestParams.put("audioFile", File(testPath), "application/octet-stream")
                 } catch (e: FileNotFoundException) {
@@ -432,6 +451,8 @@ class APIutilsKt {
         }
         object Requests {
             fun get(context: Context, url: String, headers: Array<Header>, requestParams: RequestParams, asyncHttpResponseHandler: AsyncHttpResponseHandler): String {
+                LogUtils.logEnteringFunction("get")
+
                 val asyncHttpClient = AsyncHttpClient(true, 80, 433)
                 val requestHandle = asyncHttpClient.get(context, url, headers, requestParams, asyncHttpResponseHandler)
                 return if (requestHandle.isFinished) {
@@ -442,6 +463,8 @@ class APIutilsKt {
             }
 
             fun upload(context: Context, headers: Array<Header>, requestParams: RequestParams, filename: String, path: String, url: String, asyncHttpResponseHandler: AsyncHttpResponseHandler) {
+                LogUtils.logEnteringFunction("upload")
+
                 val asyncHttpClient = SyncHttpClient(true, 80, 433)
                 val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, "multipart/form-data; boundary=123456789", asyncHttpResponseHandler)
                 if (requestHandle.isFinished) {
@@ -455,6 +478,9 @@ class APIutilsKt {
 
     @Deprecated("Use getJamDetails() instead")
     fun performGetJamDetails(context: Context, jamID: String) {
+        val tag = "GetJamDetails"
+        LogUtils.logEnteringFunction("perform$tag")
+
         val call = APIparamsKt().callGetJamDetails(context, jamID)
 
         call.enqueue(object: Callback<ResponseModelKt.JamFunctions.GetJamDetails> {
@@ -466,25 +492,22 @@ class APIutilsKt {
                     PrefUtilsKt.Functions().storeLink(context, link)
                     LogUtils.debug("Gotten Link", link)
                 } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
-                    LogUtils.debug("Headers", response.headers().toString())
+                    LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
             }
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.GetJamDetails>, t: Throwable) {
-                LogUtils.logOnFailure(t)
-                LogUtils.debug("onFailure Call", call.toString())
-                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
+                val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                LogUtils.error("$tag onFailure Failed", error)
             }
         })
     }
 
     @Deprecated("Use jamRecordingUpload instead")
     fun performUploadJam(filepath: String, context: Context, location: String) {
-        LogUtils.debug("Entering Function", "performUploadJam")
+        val tag = "UploadJam"
+        LogUtils.logEnteringFunction("perform$tag")
+
         val realm = Realm.getDefaultInstance()
         val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
 
@@ -517,16 +540,14 @@ class APIutilsKt {
 
                     //newRealm.close()
                 } else {
-                    LogUtils.debug("performUploadJam Failed Response", "${response.errorBody()}")
-                    LogUtils.debug("performUploadJam Code", "${response.code()}")
-                    LogUtils.debug("performUploadJam Message", response.message())
-                    LogUtils.debug("performUploadJam Headers", response.headers().toString())
+                    LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
             }
 
             override fun onFailure(call: Call<ResponseModelKt.JamFunctions.UploadJam>, t: Throwable) {
-                LogUtils.debug("performUploadJam", "onFailure")
                 LogUtils.logOnFailure(t)
+                val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                LogUtils.error("$tag onFailure Failed", error)
             }
         })
         /*LogUtils.debug("performUploadJam Success?", "$success")
@@ -540,10 +561,12 @@ class APIutilsKt {
     }
 
     private fun deleteRecording(filepath: String, realm: Realm) {
+        LogUtils.logEnteringFunction("deleteRecording")
+
         if (!realm.isClosed) {
             realm.close()
         }
-        var newRealm = Realm.getDefaultInstance()
+        val newRealm = Realm.getDefaultInstance()
 
         val recording = realm.where(RecordingModel::class.java).equalTo("filePath", filepath).findFirst()
         File(filepath).delete()
@@ -556,6 +579,9 @@ class APIutilsKt {
 
     @Deprecated("Use getUserActivity instead")
     fun performGetUserActivity(context: Context) {
+        val tag = "GetUserActivity"
+        LogUtils.logEnteringFunction("perform$tag")
+
         val call = APIparamsKt().callGetUserActivity(context)
 
         call.enqueue(object: Callback<ResponseModelKt.UserFunctions.GetUserActivity> {
@@ -600,20 +626,22 @@ class APIutilsKt {
                         LogUtils.debug("Result", "Result is null")
                     }
                 } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
+                    LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
             }
             override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivity>, t: Throwable) {
                 LogUtils.logOnFailure(t)
-                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())            }
+                val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                LogUtils.error("$tag onFailure Failed", error)
+            }
         })
     }
 
     @Deprecated("Use getUserActivity instead")
     fun performGetUserActivityArray(context: Context) {
+        val tag = "GetUserActivity"
+        LogUtils.logEnteringFunction("perform${tag}Array")
+
         val call = APIparamsKt().callGetUserActivityArray(context)
 
         call.enqueue(object : Callback<ResponseModelKt.UserFunctions.GetUserActivityArray> {
@@ -643,20 +671,17 @@ class APIutilsKt {
                         RealmUtils.JamViewModelUtils.Store.storeJams(jams)
                     } else {
                         // TODO: no jams, account for something here
-                        LogUtils.debug("Result", "Result is null")
+                        LogUtils.debug("$tag Result", "Result is null")
                     }
                 } else {
-                    LogUtils.debug("Failed Response", response.errorBody()!!.toString())
-                    LogUtils.debug("Code", "" + response.code())
-                    LogUtils.debug("Message", response.message())
+                    LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
             }
 
             override fun onFailure(call: Call<ResponseModelKt.UserFunctions.GetUserActivityArray>, t: Throwable) {
                 LogUtils.logOnFailure(t)
-                LogUtils.debug("onFailure Call", call.toString())
-                LogUtils.debug("onFailure Failed", "Canceled: " + call.isCanceled.toString())
-                LogUtils.debug("onFailure Failed", "Executed: " + call.isExecuted.toString())
+                val error = "Call: $call\nCanceled: ${call.isCanceled}\nExecuted: ${call.isExecuted}"
+                LogUtils.error("$tag onFailure Failed", error)
             }
         })
     }

@@ -6,9 +6,7 @@ package com.draglabs.dsoundboy.dsoundboy.Params
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.util.ArrayMap
-import com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.ApiInterface
 import com.draglabs.dsoundboy.dsoundboy.Interfaces.RetrofitClient
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
@@ -17,9 +15,7 @@ import com.draglabs.dsoundboy.dsoundboy.Routines.MainRoutine
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
 import com.facebook.AccessToken
-import com.facebook.FacebookSdk
 import com.facebook.Profile
-import com.facebook.login.LoginResult
 import io.realm.Realm
 import okhttp3.MediaType
 import okhttp3.MultipartBody

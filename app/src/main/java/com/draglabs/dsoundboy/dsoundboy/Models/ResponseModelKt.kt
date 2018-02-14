@@ -4,10 +4,7 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Models
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import org.json.JSONArray
 
 /**
  * Created by davrukin on 12/30/2017.

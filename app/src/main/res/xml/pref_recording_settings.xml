@@ -1,0 +1,21 @@
+<!--
+  ~ Daniel Avrukin of Drag Labs. Copyright (c) 2016-2018. All Rights Reserved.
+  -->
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <ListPreference
+        android:defaultValue="1"
+        android:entries="@array/pref_recording_settings_values"
+        android:entryValues="@array/pref_recording_settings_values"
+        android:key="pref_recording_settings_qualities"
+        android:title="Recording Quality" />
+
+    <SwitchPreference
+        android:defaultValue="false"
+        android:disableDependentsState="true"
+        android:key="wifi_switch"
+        android:summary="Enable switch to enable WiFi-Only Uploads"
+        android:title="WiFi-Only Uploads" />
+
+</PreferenceScreen>

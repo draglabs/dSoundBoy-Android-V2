@@ -7,7 +7,6 @@ package com.draglabs.dsoundboy.dsoundboy
 import android.content.Context
 import android.support.multidex.MultiDex
 import android.support.multidex.MultiDexApplication
-import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
