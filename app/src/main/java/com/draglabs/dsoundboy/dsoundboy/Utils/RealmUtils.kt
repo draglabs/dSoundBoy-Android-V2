@@ -5,6 +5,7 @@
 package com.draglabs.dsoundboy.dsoundboy.Utils
 
 import android.content.Context
+import android.os.Environment
 import com.draglabs.dsoundboy.dsoundboy.Models.JamViewModel
 import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
 import com.draglabs.dsoundboy.dsoundboy.Models.UserModel
@@ -355,6 +356,7 @@ class RealmUtils {
                 }
 
                 realmNew.commitTransaction()
+                realmNew.close()
             }
 
             private fun createListener(recording: RecordingModel, realm: Realm) {
@@ -472,26 +474,49 @@ class RealmUtils {
             }
         }
 
-        fun collectGarbage(realm: Realm) {
-            val collectGarbage = "collectGarbage"
-            LogUtils.debug("Entering Function", collectGarbage)
+        fun collectGarbage() {
+            val realm = Realm.getDefaultInstance()
+
+            val tag = "collectGarbage"
+            LogUtils.logEnteringFunction(tag)
             val models = Retrieve.retrieveRecordingModels(realm)
             val size = models.size
 
-            LogUtils.debug("$collectGarbage Models", "$models")
-            LogUtils.debug("$collectGarbage Models Size", "$size")
+            LogUtils.debug("$tag Models", "$models")
+            LogUtils.debug("$tag Models Size", "$size")
+
+            val rootRecordingPath = "${Environment.getExternalStorageDirectory()}/dSoundBoyRecordings/"
+            val folder = File(rootRecordingPath)
+            LogUtils.debug(tag, "Root Folder: $folder")
+            folder.walk().forEach {
+                val model = realm.where(RecordingModel::class.java).equalTo("filePath", it.path).findFirst()
+                LogUtils.debug(tag, "Model Found: $model")
+                if (model != null) {
+                    val uploaded = model.didUpload
+                    LogUtils.debug(tag, "Model Did Upload? $uploaded")
+                    if (uploaded) {
+                        LogUtils.debug(tag, "Deleting File: $it")
+                        it.delete()
+                        LogUtils.debug(tag, "File Deleted")
+                        realm.executeTransaction { model.deleteFromRealm() }
+                        LogUtils.debug(tag, "Removed model from Realm")
+                    }
+                }
+            }
 
             for ((count, model) in models.withIndex()) {
                 val filepath = model.filePath
                 val file = File(filepath)
                 val exists = file.exists()
-                LogUtils.debug("$collectGarbage Model Exists?", "filepath: $file\nexists: $exists")
+                LogUtils.debug("$tag Model Exists?", "filepath: $file\nexists: $exists")
                 if (!exists) {
-                    LogUtils.debug("$collectGarbage Deleting Model", "count: $count\nfilepath: $filepath\nmodel: $model")
+                    LogUtils.debug("$tag Deleting Model", "count: $count\nfilepath: $filepath\nmodel: $model")
                     realm.executeTransaction { model.deleteFromRealm() }
-                    LogUtils.debug("$collectGarbage Model Deleted", "count: $count")
+                    LogUtils.debug("$tag Model Deleted", "count: $count")
                 }
             }
+
+            realm.close()
         }
     }
 

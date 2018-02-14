@@ -10,6 +10,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorDLBlue2"
+    android:screenOrientation="portrait"
     tools:context="com.draglabs.dsoundboy.dsoundboy.Activities.ListOfJamsActivity"
     tools:showIn="@layout/activity_list_of_jams"
     android:orientation="vertical">

@@ -64,16 +64,22 @@ object LogUtils {
 
     }
 
-    fun logSuccessResponse(statusCode: Int, headers: Array<Header>, response: JSONArray) {
-        info("Status Code: ", statusCode.toString() + "")
+    fun logSuccessResponse(tag: String, statusCode: Int, headers: Array<Header>, response: JSONArray) {
+        /*info("Status Code: ", statusCode.toString() + "")
         info("Headers: ", Arrays.toString(headers))
-        info("Response: ", response.toString())
+        info("Response: ", response.toString())*/
+        info("$tag Success Response", "Status Code: $statusCode\nHeaders: $headers\nResponse: $response")
     }
 
-    fun logSuccessResponse(statusCode: Int, headers: Array<Header>, response: JSONObject) {
-        info("Status Code: ", statusCode.toString() + "")
+    fun logSuccessResponse(tag: String, statusCode: Int, headers: Array<Header>, response: JSONObject) {
+        /*info("Status Code: ", statusCode.toString() + "")
         info("Headers: ", Arrays.toString(headers))
-        info("Response: ", response.toString())
+        info("Response: ", response.toString())*/
+        info("$tag Success Response", "Status Code: $statusCode\nHeaders: $headers\nResponse: $response")
+    }
+
+    fun logSuccessResponse(tag: String, code: String, body: String, message: String) {
+
     }
 
     fun logFailureResponse(statusCode: Int, headers: Array<Header>, throwable: Throwable, response: JSONObject) {
@@ -107,4 +113,8 @@ object LogUtils {
     fun logEnteringFunction(functionName: String) {
         info("Entering Function", functionName)
     }
+
+    /*fun logModel(action: String, model: String, vararg: String) {
+        info("$action $model", "")
+    }*/
 }

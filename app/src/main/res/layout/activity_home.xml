@@ -9,6 +9,7 @@
     android:fitsSystemWindows="true"
     android:theme="@style/DragLabsActionBar"
     android:visibility="visible"
+    android:screenOrientation="portrait"
     android:name="">
 
     <android.support.constraint.ConstraintLayout

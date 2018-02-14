@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
+    android:screenOrientation="portrait"
     android:theme="@style/DragLabs"
     tools:context=".Activities.NewLoginActivity">
 

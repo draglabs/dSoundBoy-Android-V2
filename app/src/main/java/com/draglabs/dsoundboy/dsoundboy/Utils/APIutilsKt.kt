@@ -55,8 +55,7 @@ class APIutilsKt {
 
                         val code = response.code()
                         val message = response.message()
-                        LogUtils.debug("NewJam Response Body", result.toString())
-                        LogUtils.debug("NewJam Response Message", "Code: $code; Message: $message")
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
@@ -89,8 +88,9 @@ class APIutilsKt {
 
                         RealmUtils.JamViewModelUtils.Edit.editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse, jamPinResponse)
 
-                        LogUtils.debug("$tag Response", response.toString())
-                        LogUtils.debug("$tag Body", response.body().toString())
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
@@ -120,6 +120,10 @@ class APIutilsKt {
                         LogUtils.debug("jamName", jamName)
                         PrefUtilsKt.Functions().storeJamID(context, jamID)
                         PrefUtilsKt.Functions().storeJamName(context, jamName)
+
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
@@ -149,7 +153,7 @@ class APIutilsKt {
 
             HttpFunctions.Requests.upload(context, headers, requestParams, "audioFile", recording.filePath, url, object: JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-                    LogUtils.logSuccessResponse(statusCode, headers!!, response!!)
+                    LogUtils.logSuccessResponse(tag, statusCode, headers!!, response!!)
                     try {
                         //val message = JsonUtils.INSTANCE.getJsonObject(StringsModel.JAM_RECORDING_UPLOAD, response, StringsModel.jsonTypes.MESSAGE.type())
                         LogUtils.debug("Response Message: ", response.toString())
@@ -196,8 +200,9 @@ class APIutilsKt {
                         PrefUtilsKt.Functions().storeJamID(context, jamIdResponse)
                         //RealmUtils.JamViewModelUtils.Edit.editJam(jamID, jamNameResponse, jamLocationResponse, jamLinkResponse, jamNotesResponse, jamPinResponse)
 
-                        LogUtils.debug("ActiveJam Response", response.toString())
-                        LogUtils.debug("ActiveJam Body", result.toString())
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
@@ -225,7 +230,7 @@ class APIutilsKt {
 
             HttpFunctions.Requests.get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
-                    LogUtils.logSuccessResponse(statusCode, headers!!, response!!)
+                    LogUtils.logSuccessResponse(tag, statusCode, headers!!, response!!)
                     try {
                         val link = response.getString("link")
                         val pin = response.getString("pin")
@@ -235,10 +240,11 @@ class APIutilsKt {
                         LogUtils.debug("Jam PIN: ", pin) // TODO: create an NPE checker for all these potential values
                         RealmUtils.JamViewModelUtils.Edit.editJam(jamID, RealmUtils.JamVars.PIN, pin)
                         //PrefUtils(activity).saveJamDetails(jamDetails) // TODO: enable later
+
+                        //LogUtils.logSuccessResponse(tag, statusCode, headers, response)
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
-
                 }
 
                 override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
@@ -267,8 +273,9 @@ class APIutilsKt {
                     if (response.isSuccessful) {
                         val result = response.body()
 
-                        LogUtils.debug("$tag Response Body", result.toString())
-                        LogUtils.debug("$tag Response Message", "Code: ${response.code()}; Message: ${response.message()}")
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
@@ -299,8 +306,7 @@ class APIutilsKt {
 
                         val code = response.code()
                         val message = response.message()
-                        LogUtils.debug("RegisterUser Response Body", result.toString())
-                        LogUtils.debug("RegisterUser Response Message", "Code: $code; Message: $message")
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                     }
@@ -327,7 +333,7 @@ class APIutilsKt {
             HttpFunctions.Requests.get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>, response: JSONArray) {
                     LogUtils.debug("Get User Activity", "Success")
-                    LogUtils.logSuccessResponse(statusCode, headers, response)
+                    LogUtils.logSuccessResponse(tag, statusCode, headers, response)
                     try {
                         val quantityOfJams = response.length()
                         var i = 0
@@ -491,6 +497,10 @@ class APIutilsKt {
                     val link = result!!.link
                     PrefUtilsKt.Functions().storeLink(context, link)
                     LogUtils.debug("Gotten Link", link)
+
+                    val code = response.code()
+                    val message = response.message()
+                    LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                 } else {
                     LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
@@ -522,9 +532,7 @@ class APIutilsKt {
                     val result = response.body()
                     val code = response.code()
                     val message = response.message()
-                    LogUtils.debug("performUploadJam Response Body", result.toString())
-                    LogUtils.debug("performUploadJam Response Message", "Code: $code; Message: $message")
-
+                    Toast.makeText(context, "Upload Complete", Toast.LENGTH_SHORT).show()
                     //RealmUtils.RecordingModelUtils.Edit.setRecordingAsUploaded(realm, recording.filePath)
                     //realm.close()
                     //val newRealm = Realm.getDefaultInstance()
@@ -535,10 +543,15 @@ class APIutilsKt {
 
                     //realm.executeTransaction { recording.deleteFromRealm() }
                     //deleteRecording(filepath, realm)
-                    File(filepath).delete()
+                    val file = File(filepath)
+                    if (file.exists()) {
+                        file.delete()
+                    }
                     LogUtils.debug("performUploadJam", "File Deleted")
 
                     //newRealm.close()
+
+                    LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                 } else {
                     LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
@@ -621,6 +634,10 @@ class APIutilsKt {
                         LogUtils.debug("Jams", jams.toString())
                         //PrefUtilsKt.Functions().storeJams(context, arrayList)
                         RealmUtils.JamViewModelUtils.Store.storeJams(jams)
+
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         // TODO: no jams, account for something here
                         LogUtils.debug("Result", "Result is null")
@@ -669,6 +686,10 @@ class APIutilsKt {
                         LogUtils.debug("Result", result.toString())
                         //PrefUtilsKt.Functions().storeJams(context, arrayList)
                         RealmUtils.JamViewModelUtils.Store.storeJams(jams)
+
+                        val code = response.code()
+                        val message = response.message()
+                        LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                     } else {
                         // TODO: no jams, account for something here
                         LogUtils.debug("$tag Result", "Result is null")

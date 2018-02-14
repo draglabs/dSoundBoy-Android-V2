@@ -38,6 +38,7 @@ import com.facebook.GraphRequest
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
+import com.instacart.library.truetime.TrueTime
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
@@ -47,6 +48,7 @@ import kotlinx.coroutines.experimental.delay
 import omrecorder.Recorder
 import java.io.File
 import java.util.*
+import kotlin.concurrent.thread
 
 /**
  * @author Daniel Avrukin
@@ -114,6 +116,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initializeListeners()
         initializeLocationClient()
 
+        initializeTrueTime()
+
         updatePinView()
     }
 
@@ -154,6 +158,10 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         async { OfflineUploader().queueInteractor(this@TestNavActivity) }
     }
 
+    private fun initializeTrueTime() {
+        thread { TrueTime.build().initialize() }
+    }
+
     private fun initializeListeners() {
         /*fab.setOnClickListener { view ->
             Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
@@ -162,6 +170,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         button_new_jam_new.setOnClickListener {
             clickNew()
+            clickRec(it)
         }
 
         button_rec_new.setOnClickListener {
@@ -174,6 +183,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         button_join_jam_new.setOnClickListener {
             clickJoin()
+            clickRec(it)
         }
 
         jamPinView.setOnClickListener {
@@ -365,7 +375,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         if (activeJamPIN.length > 4) {
             Snackbar.make(view, "Please create or join a jam", Snackbar.LENGTH_LONG).show()
         } else {
-            startTime = Date()
+            startTime = TrueTime.now()
             filename = FileUtils().generateAndSaveFilename(this, startTime)
             recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
 
@@ -393,7 +403,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun clickStop(context: Context, recorder: Recorder) {
         LogUtils.logEnteringFunction("clickStop")
 
-        endTime = Date()
+        endTime = TrueTime.now()
 
         updatePinView()
 

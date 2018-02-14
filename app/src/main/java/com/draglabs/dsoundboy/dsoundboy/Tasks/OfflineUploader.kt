@@ -74,10 +74,10 @@ class OfflineUploader {
 
         // go through queue of pending uploads
         //if (readyForUpload == true) {
-        val realm = Realm.getDefaultInstance()
-        RealmUtils.RecordingModelUtils.collectGarbage(realm)
+        RealmUtils.RecordingModelUtils.collectGarbage()
 
         if (readyForUpload) {
+            val realm = Realm.getDefaultInstance()
             val queue = RealmUtils.RecordingModelUtils.Retrieve.retrieveRecordingModelByUploadStatus(realm, false)
             //val queueList = ArrayList<RecordingModelForList>()
             /*for (item in queue) {
@@ -103,6 +103,7 @@ class OfflineUploader {
             } else {
                 LogUtils.debug("Upload Status", "Nothing to Upload")
             }
+            realm.close()
         }
         //newRealm.close()
             /*var index = 0

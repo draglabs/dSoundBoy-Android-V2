@@ -26,6 +26,7 @@ import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
 import com.facebook.login.LoginManager
+import com.instacart.library.truetime.TrueTime
 import io.realm.Realm
 import omrecorder.Recorder
 import java.util.*
@@ -274,7 +275,7 @@ class HomeRoutineKt {
 
     private fun generateJamName(context: Context): String {
         val name = PrefUtilsKt.Functions().retrieveFbName(context)
-        val dateTimeString = FileUtils().getFormattedDate(Date())
+        val dateTimeString = FileUtils().getFormattedDate(TrueTime.now())
 
         val generatedName = "$name $dateTimeString"
         LogUtils.debug("Generated Jam Name", generatedName)

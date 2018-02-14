@@ -98,7 +98,7 @@ class RecorderUtils(private val context: Context, private val activity: Activity
                 frequency = 48000
             }*/
             options[2] -> { // Studio
-                encoding = AudioFormat.ENCODING_PCM_FLOAT
+                encoding = AudioFormat.ENCODING_PCM_16BIT
                 frequency = 96000
             }
         }

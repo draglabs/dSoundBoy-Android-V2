@@ -26,7 +26,8 @@ open class RecordingModel(
     constructor() : this("", "", "", "", "", false)
 
     override fun toString(): String {
-        return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload\n"
+        return "filePath: $filePath\njamID: $jamID\njamName: $jamName\nstartTime: $startTime\nendTime: $endTime\ndidUpload: $didUpload\n"
+        //return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload\n"
     }
 }
 
@@ -41,6 +42,7 @@ data class RecordingModelForList(
     constructor() : this("", "", "", "", "", false)
 
     override fun toString(): String {
-        return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload\n"
+        return "filePath: $filePath\njamID: $jamID\njamName: $jamName\nstartTime: $startTime\nendTime: $endTime\ndidUpload: $didUpload\n"
+        //return "filePath: $filePath; jamID: $jamID; jamName: $jamName; startTime: $startTime; endTime: $endTime; didUpload: $didUpload\n"
     }
 }

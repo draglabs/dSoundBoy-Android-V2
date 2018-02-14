@@ -26,6 +26,7 @@ class MyApplication : MultiDexApplication() {
         super.onCreate()
         initializeFacebook()
         initializeRealm()
+        //initializeTrueTime()
     }
 
     private fun initializeFacebook() {

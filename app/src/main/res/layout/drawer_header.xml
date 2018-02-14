@@ -5,6 +5,7 @@
     android:layout_height="150dp"
     android:padding="16dp"
     android:theme="@style/DragLabs"
+    android:screenOrientation="portrait"
     android:gravity="bottom" >
 
     <TextView
