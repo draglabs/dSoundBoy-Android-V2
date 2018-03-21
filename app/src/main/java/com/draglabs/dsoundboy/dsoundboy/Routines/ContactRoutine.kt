@@ -9,6 +9,7 @@ import android.widget.Toast
 /**
  * Sends an email to accounts@draglabs.com
  * Created by davrukin on 11/1/17.
+ * @author Daniel Avrukin
  */
 class ContactRoutine {
 

@@ -122,7 +122,7 @@ interface ApiInterface {
     */
 
     //@FormUrlEncoded
-    @POST("jam/archive")
+    @POST("archive")
     fun compress(
         //@Field("user_id") userID: String,
         //@Field("jam_id") jamID: String
@@ -138,7 +138,7 @@ interface ApiInterface {
             val retrofit = Retrofit.Builder()
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl("http://api.draglabs.com/api/v2.0/")
+                .baseUrl("https://api.draglabs.com/api/v2.0/")
                 .build()
             return retrofit.create(ApiInterface::class.java)
         }
@@ -151,7 +151,7 @@ class RetrofitClient {
 
     fun getClient(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://api.draglabs.com/api/v2.0/")
+            .baseUrl("https://api.draglabs.com/api/v2.0/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }

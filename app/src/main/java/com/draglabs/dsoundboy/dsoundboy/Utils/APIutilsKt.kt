@@ -13,6 +13,7 @@ import com.draglabs.dsoundboy.dsoundboy.Models.RecordingModel
 import com.draglabs.dsoundboy.dsoundboy.Models.ResponseModelKt
 import com.draglabs.dsoundboy.dsoundboy.Params.APIparamsKt
 import com.loopj.android.http.*
+import com.mashape.unirest.http.Unirest
 import cz.msebera.android.httpclient.Header
 import cz.msebera.android.httpclient.HeaderElement
 import cz.msebera.android.httpclient.ParseException
@@ -26,6 +27,16 @@ import retrofit2.Response
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.*
+import cz.msebera.android.httpclient.client.methods.RequestBuilder.post
+import kotlinx.coroutines.experimental.async
+import okhttp3.MediaType
+import okhttp3.RequestBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import kotlin.concurrent.thread
+import cz.msebera.android.httpclient.client.methods.RequestBuilder.post
+
+
 
 
 /**
@@ -146,7 +157,7 @@ class APIutilsKt {
 
             val headers = HttpFunctions.Headers.standardHeader(UUID)
             val requestParams = HttpFunctions.Params.jamRecordingUploadParams(UUID, recording.jamID, recording.filePath, notes, recording.startTime, recording.endTime)
-            val url = "http://api.draglabs.com/api/v2.0/jam/upload"
+            val url = "https://api.draglabs.com/api/v2.0/jam/upload"
 
             LogUtils.debug("Headers being sent", "${headers[0]}, ${headers[1]}")
             LogUtils.debug("RequestParams for Upload", requestParams.toString())
@@ -223,7 +234,7 @@ class APIutilsKt {
             val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
             //val jamID = PrefUtilsKt.Functions().retrieveJamID(context)
 
-            val url = "http://api.draglabs.com/api/v2.0/jam/details/$jamID"
+            val url = "https://api.draglabs.com/api/v2.0/jam/details/$jamID"
 
             val requestParams = RequestParams()
             val headers = HttpFunctions.Headers.userIDHeaders(UUID)
@@ -264,11 +275,39 @@ class APIutilsKt {
 
         fun performCompressor(context: Context, jamID: String) {
             val tag = "Compressor"
-            LogUtils.logEnteringFunction("perform$tag")
+            LogUtils.logEnteringFunction("perform $tag")
 
             val call = APIparamsKt().callCompressor(context, jamID)
 
-            call.enqueue(object: Callback<ResponseModelKt.CompressorFunctions.Compressor> {
+            val UUID = PrefUtilsKt.Functions().retrieveUUID(context)
+            val url = "http://api.draglabs.com/api/v2.0/archive/"
+            val requestParams = RequestParams()
+            requestParams.put("user_id", UUID)
+            requestParams.put("jam_id", jamID)
+            val headers = HttpFunctions.Headers.userIDHeaders(UUID)
+
+            /*HttpFunctions.Requests.post(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
+                override fun onSuccess(statusCode: Int, headers: Array<Header>?, response: JSONObject?) {
+                    LogUtils.info("Compressor URL", url)
+                    LogUtils.logSuccessResponse(tag, statusCode, headers!!, response!!)
+                    try {
+                        LogUtils.debug("$tag Response", "Body: $response\nCode: $statusCode\nHeaders: $headers")
+                    } catch (e: JSONException) {
+                        e.printStackTrace()
+                    }
+                }
+
+                override fun onFailure(statusCode: Int, headers: Array<Header>?, throwable: Throwable, response: JSONObject?) {
+                    LogUtils.error("$tag onFailure", "Failed")
+                    LogUtils.logFailureResponse(statusCode, headers!!, throwable, response!!)
+                }
+            })*/
+
+            //val response = thread { testCompress(tag) }
+            val startTime = System.currentTimeMillis()
+            async { testCompressUnirest(tag, UUID, jamID, startTime) }
+
+            /*call.enqueue(object: Callback<ResponseModelKt.CompressorFunctions.Compressor> {
                 override fun onResponse(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, response: Response<ResponseModelKt.CompressorFunctions.Compressor>) {
                     if (response.isSuccessful) {
                         val result = response.body()
@@ -282,9 +321,56 @@ class APIutilsKt {
                 }
 
                 override fun onFailure(call: Call<ResponseModelKt.CompressorFunctions.Compressor>, t: Throwable) {
+                    LogUtils.error("$tag onFailure", "Failed")
                     LogUtils.logOnFailure(t)
                 }
-            })
+            })*/
+        }
+
+        private fun testCompress(tag: String): okhttp3.Response {
+            LogUtils.logEnteringFunction("testCompress")
+
+            val client = OkHttpClient()
+
+            val mediaType = MediaType.parse("application/json")
+            val body = RequestBody.create(mediaType, "{\n\t\"user_id\":\"5a14dd1abe307d2394fa4565\",\n\t\"jam_id\":\"5aa307496871330001afde02\"\n}")
+            val request = Request.Builder()
+                    .url("https://api.draglabs.com/api/v2.0/jam/archive")
+                    .post(body)
+                    .addHeader("Content-Type", "application/json")
+                    .addHeader("Cache-Control", "no-cache")
+                    .addHeader("Postman-Token", "a7ed8f00-7947-467c-8f32-fc8174d48f3e")
+                    .build()
+
+            val response = client.newCall(request).execute()
+
+            if (response.isSuccessful) {
+                val body = response.body().toString()
+                val code = response.code().toString()
+                val headers = response.headers()
+                val message = response.message()
+                LogUtils.logSuccessResponse("$tag Response", code, body, message)
+            } else {
+                LogUtils.info("$tag Response", "Failed")
+            }
+
+            return response
+        }
+
+        private fun testCompressUnirest(tag: String, UUID: String, jamID: String, startTime: Long) {
+            LogUtils.logEnteringFunction("testCompressUnirest")
+
+            val response = Unirest.post("https://api.draglabs.com/api/v2.0/jam/archive")
+                    .header("Content-Type", "application/json")
+                    .header("Cache-Control", "no-cache")
+                    .header("Postman-Token", "29f454d8-49e7-463d-80cb-d15baf01b0fe")
+                    .body("{\n\t\"user_id\":\"$UUID\",\n\t\"jam_id\":\"$jamID\"\n}")
+                    .asString()
+
+            val endTime = System.currentTimeMillis()
+            LogUtils.info("Compressor Run-Finish", "${endTime - startTime} ms")
+
+            LogUtils.info("$tag Response", response.body.toString())
         }
     }
 
@@ -328,7 +414,7 @@ class APIutilsKt {
             val headers = HttpFunctions.Headers.userIDHeaders(UUID)
             val requestParams = RequestParams()
 
-            val url = "http://api.draglabs.com/api/v2.0/user/activity"
+            val url = "https://api.draglabs.com/api/v2.0/user/activity"
 
             HttpFunctions.Requests.get(context, url, headers, requestParams, object: JsonHttpResponseHandler() {
                 override fun onSuccess(statusCode: Int, headers: Array<Header>, response: JSONArray) {
@@ -395,7 +481,7 @@ class APIutilsKt {
             fun standardHeader(UUID: String): Array<Header> {
                 LogUtils.logEnteringFunction("standardHeader")
 
-                return arrayOf(object : Header {
+                return arrayOf(object: Header {
                     override fun getName(): String {
                         return "Content-Type"
                     }
@@ -411,7 +497,7 @@ class APIutilsKt {
                     override fun toString(): String {
                         return "Name: $name; Value: $value; Elements: $elements"
                     }
-                }, object : Header {
+                }, object: Header {
                     override fun getName(): String {
                         return "user_id"
                     }
@@ -423,6 +509,62 @@ class APIutilsKt {
                     @Throws(ParseException::class)
                     override fun getElements(): Array<HeaderElement?> {
                         return arrayOfNulls(1)
+                    }
+
+                    override fun toString(): String {
+                        return "Name: $name; Value: $value; Elements: $elements"
+                    }
+                })
+            }
+
+            fun compressorHeaders(UUID: String, jamID: String): Array<Header> {
+                LogUtils.logEnteringFunction("compressorHeaders")
+
+                return arrayOf(object: Header {
+                    override fun getName(): String {
+                        return "Content-Type"
+                    }
+                    override fun getValue(): String {
+                        return "*/*"
+                    }
+
+                    @Throws(ParseException::class)
+                    override fun getElements(): Array<HeaderElement?> {
+                        return arrayOfNulls(0)
+                    }
+
+                    override fun toString(): String {
+                        return "Name: $name; Value: $value; Elements: $elements"
+                    }
+                }, object: Header {
+                    override fun getName(): String {
+                        return "user_id"
+                    }
+
+                    override fun getValue(): String {
+                        return UUID
+                    }
+
+                    @Throws(ParseException::class)
+                    override fun getElements(): Array<HeaderElement?> {
+                        return arrayOfNulls(1)
+                    }
+
+                    override fun toString(): String {
+                        return "Name: $name; Value: $value; Elements: $elements"
+                    }
+                }, object: Header {
+                    override fun getName(): String {
+                        return "jam_id"
+                    }
+
+                    override fun getValue(): String {
+                        return jamID
+                    }
+
+                    @Throws(ParseException::class)
+                    override fun getElements(): Array<HeaderElement?> {
+                        return arrayOfNulls(2)
                     }
 
                     override fun toString(): String {
@@ -460,7 +602,21 @@ class APIutilsKt {
                 LogUtils.logEnteringFunction("get")
 
                 val asyncHttpClient = AsyncHttpClient(true, 80, 433)
+                asyncHttpClient.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory())
                 val requestHandle = asyncHttpClient.get(context, url, headers, requestParams, asyncHttpResponseHandler)
+                return if (requestHandle.isFinished) {
+                    "Done with GET. Tag: " + requestHandle.tag
+                } else {
+                    "GET Failed. Tag: " + requestHandle.tag
+                }
+            }
+
+            fun post(context: Context, url: String, headers: Array<Header>, requestParams: RequestParams, asyncHttpResponseHandler: AsyncHttpResponseHandler): String {
+                LogUtils.logEnteringFunction("get")
+
+                val asyncHttpClient = AsyncHttpClient(true, 80, 433)
+                asyncHttpClient.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory())
+                val requestHandle = asyncHttpClient.post(context, url, headers, requestParams,"application/json" , asyncHttpResponseHandler)
                 return if (requestHandle.isFinished) {
                     "Done with GET. Tag: " + requestHandle.tag
                 } else {
@@ -472,6 +628,7 @@ class APIutilsKt {
                 LogUtils.logEnteringFunction("upload")
 
                 val asyncHttpClient = SyncHttpClient(true, 80, 433)
+                asyncHttpClient.setSSLSocketFactory(MySSLSocketFactory.getFixedSocketFactory())
                 val requestHandle = asyncHttpClient.post(context, url, headers, requestParams, "multipart/form-data; boundary=123456789", asyncHttpResponseHandler)
                 if (requestHandle.isFinished) {
                     LogUtils.debug("Upload Result: ", "Done with Upload. Tag: " + requestHandle.tag)
@@ -553,6 +710,7 @@ class APIutilsKt {
 
                     LogUtils.debug("$tag Response", "Body: $result\nCode: $code\nMessage: $message")
                 } else {
+                    LogUtils.error("$tag Failed", "Response Error")
                     LogUtils.logFailureResponse(tag, response.errorBody()!!.toString(), response.code(), response.message(), response.headers().toString())
                 }
             }

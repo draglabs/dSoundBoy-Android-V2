@@ -11,12 +11,14 @@ import com.draglabs.dsoundboy.dsoundboy.Utils.LogUtils
 import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.facebook.AccessToken
 
-
 /**
  * Main Activity which loads pertinent screen depending on access
  * @author Daniel Avrukin
  */
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var UUID: String
+    private lateinit var accessToken: AccessToken
 
     /**
      * onCreate method which redirects
@@ -36,9 +38,17 @@ class MainActivity : AppCompatActivity() {
 
         //val prefUtils = PrefUtils(this)
         //val UUID = prefUtils.uniqueUserID
-        val UUID = PrefUtilsKt.Functions().retrieveUUID(this)
-        val accessToken = AccessToken.getCurrentAccessToken()
 
+        getUserData()
+        launchNextActivity()
+    }
+
+    private fun getUserData() {
+        UUID = PrefUtilsKt.Functions().retrieveUUID(this)
+        accessToken = AccessToken.getCurrentAccessToken()
+    }
+
+    private fun launchNextActivity() {
         if ((UUID == "not working") && accessToken == null) {
             startLoginActivity()
         } else if (accessToken == null) {

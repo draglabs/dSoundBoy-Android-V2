@@ -9,7 +9,7 @@ import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.R
 
 /**
- * Allows band to enter info about itself
+ * Allows band to enter info about itself. Not currently used.
  */
 class EnterInfoActivity : AppCompatActivity() {
 

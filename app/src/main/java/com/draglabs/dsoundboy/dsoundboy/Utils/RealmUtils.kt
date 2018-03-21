@@ -489,7 +489,9 @@ class RealmUtils {
             val folder = File(rootRecordingPath)
             LogUtils.debug(tag, "Root Folder: $folder")
             folder.walk().forEach {
-                val model = realm.where(RecordingModel::class.java).equalTo("filePath", it.path).findFirst()
+                val itsPath = it.path
+                LogUtils.debug("$tag File Info", "Source File Path: $itsPath")
+                val model = realm.where(RecordingModel::class.java).equalTo("filePath", itsPath).findFirst()
                 LogUtils.debug(tag, "Model Found: $model")
                 if (model != null) {
                     val uploaded = model.didUpload
@@ -501,6 +503,9 @@ class RealmUtils {
                         realm.executeTransaction { model.deleteFromRealm() }
                         LogUtils.debug(tag, "Removed model from Realm")
                     }
+                } else {
+                    it.delete()
+                    LogUtils.debug(tag, "File Deleted")
                 }
             }
 

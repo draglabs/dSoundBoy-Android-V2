@@ -23,7 +23,7 @@ import java.util.*
 
 /**
  * The new and improved login activity, with just a single button!
- * @author  ---------
+ * @author Daniel Avrukin
  */
 class NewLoginActivity : AppCompatActivity() {
 

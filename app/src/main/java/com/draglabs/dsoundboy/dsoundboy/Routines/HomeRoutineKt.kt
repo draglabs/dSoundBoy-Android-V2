@@ -14,10 +14,7 @@ import android.os.SystemClock
 import android.support.design.widget.Snackbar
 import android.util.Log
 import android.view.View
-import android.widget.Chronometer
-import android.widget.EditText
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import com.draglabs.dsoundboy.dsoundboy.Activities.AboutActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.ContactActivity
 import com.draglabs.dsoundboy.dsoundboy.Activities.EnterInfoActivity
@@ -26,7 +23,6 @@ import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
 import com.facebook.AccessToken
 import com.facebook.login.LoginManager
-import com.instacart.library.truetime.TrueTime
 import io.realm.Realm
 import omrecorder.Recorder
 import java.util.*
@@ -215,6 +211,15 @@ class HomeRoutineKt {
     /**
      * Joins a jam, shows dialog to enter a jam PIN
      */
+    fun joinJam(context: Context, activity: Activity, jam_pin_view: TextView, rec: Button, stop: Button, recorder: Recorder, recorderUtils: RecorderUtils, chronometer: Chronometer) {
+        showEnterJamPinDialog(context, activity, rec, stop, recorder, recorderUtils, chronometer) // doesn't show keyboard automatically right away, it should
+        LogUtils.debug("entered pin", PrefUtilsKt.Functions().retrievePIN(context))
+        jam_pin_view.text = PrefUtilsKt.Functions().retrievePIN(context)
+    }
+
+    /**
+     * Joins a jam, shows dialog to enter a jam PIN
+     */
     fun joinJam(context: Context, activity: Activity, jam_pin_view: TextView) {
         showEnterJamPinDialog(context, activity) // doesn't show keyboard automatically right away, it should
         LogUtils.debug("entered pin", PrefUtilsKt.Functions().retrievePIN(context))
@@ -240,7 +245,7 @@ class HomeRoutineKt {
      * @param context the app context
      */
     @SuppressLint("InflateParams")
-    private fun showEnterJamPinDialog(context: Context, activity: Activity) {
+    private fun showEnterJamPinDialog(context: Context, activity: Activity, rec: Button, stop: Button, recorder: Recorder, recorderUtils: RecorderUtils, chronometer: Chronometer) {
         val inflater = activity.layoutInflater
         val alertLayout = inflater.inflate(R.layout.layout_join_jam_dialog, null)
         val joinJamPin = alertLayout.findViewById<EditText>(R.id.join_jam_enter_pin_text)
@@ -250,7 +255,14 @@ class HomeRoutineKt {
         builder.setView(alertLayout)
         builder.setCancelable(false)
         builder.setNegativeButton("Cancel") { _, _ ->
-            Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show() }
+            Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show()
+
+            rec.visibility = View.VISIBLE
+            stop.visibility = View.GONE
+
+            recorderUtils.stopRecording(recorder)
+            chronometer.stop()
+        }
         builder.setPositiveButton("Done") { _, _ ->
             val jamPinEntered = joinJamPin.text.toString()
             PrefUtilsKt.Functions().storePIN(context, jamPinEntered)
@@ -273,9 +285,52 @@ class HomeRoutineKt {
         // TODO: enter jam pin here and return it
     }
 
+    /**
+     * Creates the dialog to enter the new jam PIN
+     * @param context the app context
+     */
+    @SuppressLint("InflateParams")
+    private fun showEnterJamPinDialog(context: Context, activity: Activity) {
+        val inflater = activity.layoutInflater
+        val alertLayout = inflater.inflate(R.layout.layout_join_jam_dialog, null)
+        val joinJamPin = alertLayout.findViewById<EditText>(R.id.join_jam_enter_pin_text)
+
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Enter a Jam PIN")
+        builder.setView(alertLayout)
+        builder.setCancelable(false)
+        builder.setNegativeButton("Cancel") { _, _ ->
+            Toast.makeText(context, "Cancel clicked", Toast.LENGTH_LONG).show()
+        }
+        builder.setPositiveButton("Done") { _, _ ->
+            val jamPinEntered = joinJamPin.text.toString()
+            PrefUtilsKt.Functions().storePIN(context, jamPinEntered)
+            LogUtils.debug("Jam Pin Entered", jamPinEntered)
+
+            //Log.d("Jam PIN Entered: ", prefUtils!!.jamPIN)
+            //val UUID = checkUUID(PrefUtils(activity), activity, context)
+            //APIutils.joinJam(activity, context, jamPinEntered, UUID) // TODO: show error if incorrect
+
+            APIutilsKt.JamFunctions.performJoinJam(context, jamPinEntered, PrefUtilsKt.Functions().retrieveUUID(context)) // TODO: setup checker inside of the retriever to see if there is one
+        }
+
+        val dialog = builder.create()
+
+        if (dialog != null && dialog.isShowing) {
+            dialog.dismiss()
+        }
+
+        dialog.setOnShowListener {
+            //val inputMethodManager = InputMethodManager().
+        }
+
+        dialog.show()
+        // TODO: enter jam pin here and return it
+    }
+
     private fun generateJamName(context: Context): String {
         val name = PrefUtilsKt.Functions().retrieveFbName(context)
-        val dateTimeString = FileUtils().getFormattedDate(TrueTime.now())
+        val dateTimeString = FileUtils().getFormattedDate(Date())
 
         val generatedName = "$name $dateTimeString"
         LogUtils.debug("Generated Jam Name", generatedName)

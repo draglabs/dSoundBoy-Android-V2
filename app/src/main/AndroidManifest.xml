@@ -39,10 +39,29 @@
         android:screenOrientation="portrait"
         android:supportsRtl="true"
         android:theme="@style/DragLabsNew"
-        tools:targetApi="m">
+        tools:targetApi="m"
+        tools:replace="android:icon,android:theme">
+
         <service
             android:name=".Services.LocationTrackingService"
-            android:process=":location_tracking_service" />
+            android:process=":location_tracking_service"
+            android:enabled="true"/>
+
+        <service
+            android:name=".Services.AudioRecordingService"
+            android:process=":audio_recording_service"
+            android:enabled="true" />
+        
+        <receiver
+            android:name=".Services.AudioRecordingReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:label="RestartServiceWhenStopped" >
+            <intent-filter>
+                 <action
+                     android:name=".Services.RestartAudioRecordingService" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationID"
@@ -110,7 +129,6 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
             android:parentActivityName=".Activities.NewLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

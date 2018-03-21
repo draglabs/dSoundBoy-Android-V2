@@ -16,11 +16,17 @@ import com.draglabs.dsoundboy.dsoundboy.Utils.PrefUtilsKt
 import com.draglabs.dsoundboy.dsoundboy.Utils.RealmUtils
 
 /**
+ * Implementation of all calls that occur when buttons in Jams view are clicked
  * Created by davrukin on 1/18/18.
  * @author Daniel Avrukin
  */
 class CustomAdapterRoutine {
 
+    /**
+     * Launches the EditJam Activity. Shows in it the current jam information, and then in the activity allows the user to update it.
+     * @param context the app's context
+     * @param jam the current jam being edited
+     */
     fun clickEdit(context: Context, jam: JamViewModel) {
         Toast.makeText(context, "Edit Button Clicked", Toast.LENGTH_LONG).show()
         val intent = Intent(context, EditJamActivity::class.java)
@@ -35,6 +41,12 @@ class CustomAdapterRoutine {
         // TODO: run edit jam api function
     }
 
+    /**
+     * Gets the jam's details (Jam ID, User ID) and calls Compressor. Then retrieves the link from the call.
+     * @param context the app's context
+     * @param jamID the jam ID
+     * @param link: the old export link
+     */
     fun clickExport(context: Context, jamID: String, link: String) {
         Toast.makeText(context, "Export Button Clicked", Toast.LENGTH_LONG).show()
         // TODO: calls the Compressor API to generate a link if this one is "not working", otherwise send that link, maybe append extra info text to is
@@ -57,6 +69,11 @@ class CustomAdapterRoutine {
         Toast.makeText(context, "Email sent!", Toast.LENGTH_LONG).show()
     }
 
+    /**
+     * Calls Compressor and lets the user share the link via SMS
+     * @param context the app's context
+     * @param jam the current jam
+     */
     fun clickShare(context: Context, jam: JamViewModel) {
         Toast.makeText(context, "Share Button Clicked", Toast.LENGTH_LONG).show()
         // TODO: add a share menu where I can share to multiple apps
@@ -78,6 +95,13 @@ class CustomAdapterRoutine {
         context.startActivity(sendIntent)
     }
 
+    /**
+     * Checks the link, and if it doesn't exist, calls Compressor for a new one
+     * @param context the app's context
+     * @param jamID the jam's ID
+     * @param link the link to be tested
+     * @return link as a String
+     */
     private fun checkLink(context: Context, jamID: String, link: String): String {
         return if (link == "not working") {
             // TODO: run it through the get jam details for the appropriate jam and extract that link
@@ -93,6 +117,13 @@ class CustomAdapterRoutine {
         }
     }
 
+    /**
+     * Performs the calls as triggered in checkLink
+     * @param context the app's context
+     * @param jamID the jam's ID
+     * @param instance the counter of the times it took to refresh the link
+     * @return link as a String
+     */
     private fun performApiCalls(context: Context, jamID: String, instance: Int): String {
         APIutilsKt.JamFunctions.getJamDetails(context, jamID)
         val newLink = PrefUtilsKt.Functions().retrieveLink(context) // add suspend & async

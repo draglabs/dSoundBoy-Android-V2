@@ -13,6 +13,9 @@ import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Utils.APIutilsKt
 
 /**
+ * Shows a page the user can use to edit the current jam.
+ * Editable fields include the jam's name, location, and notes.
+ * Changes are synchronized with the dlsAPI and with the local Realm database.
  * @author Daniel Avrukin
  */
 class EditJamActivity : AppCompatActivity() {

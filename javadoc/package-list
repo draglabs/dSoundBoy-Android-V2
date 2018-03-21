@@ -1,8 +1,3 @@
 com.draglabs.dsoundboy.dsoundboy
-com.draglabs.dsoundboy.dsoundboy.Activities
-com.draglabs.dsoundboy.dsoundboy.Activities.Old_Activities
-com.draglabs.dsoundboy.dsoundboy.Interfaces
 com.draglabs.dsoundboy.dsoundboy.Models
-com.draglabs.dsoundboy.dsoundboy.Params
-com.draglabs.dsoundboy.dsoundboy.Routines
-com.draglabs.dsoundboy.dsoundboy.Utils
+com.draglabs.dsoundboy.dsoundboy.Test

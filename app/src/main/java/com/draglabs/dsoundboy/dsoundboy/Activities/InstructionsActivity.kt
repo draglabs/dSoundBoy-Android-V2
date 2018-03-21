@@ -10,6 +10,9 @@ import android.support.v7.app.AppCompatActivity
 import com.draglabs.dsoundboy.dsoundboy.R
 import kotlinx.android.synthetic.main.activity_instructions.*
 
+/** Shows the user how to use the app.
+ * @author Daniel Avrukin
+ */
 class InstructionsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

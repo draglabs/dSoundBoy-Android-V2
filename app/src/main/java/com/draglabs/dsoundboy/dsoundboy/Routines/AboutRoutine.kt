@@ -5,7 +5,9 @@ import android.text.method.LinkMovementMethod
 import android.widget.TextView
 
 /**
+ * Shows DragLabs About information
  * Created by davrukin on 11/1/17.
+ * @author Daniel Avrukin
  */
 class AboutRoutine {
 

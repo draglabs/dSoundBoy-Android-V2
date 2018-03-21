@@ -5,7 +5,9 @@
 package com.draglabs.dsoundboy.dsoundboy.Activities
 
 import android.Manifest
+import android.annotation.TargetApi
 import android.app.AlertDialog
+import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,6 +17,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.Settings
 import android.support.design.widget.NavigationView
 import android.support.design.widget.Snackbar
@@ -30,6 +33,8 @@ import android.widget.Toast
 import com.draglabs.dsoundboy.dsoundboy.R
 import com.draglabs.dsoundboy.dsoundboy.Routines.HomeRoutineKt
 import com.draglabs.dsoundboy.dsoundboy.Routines.LoginRoutineKt
+import com.draglabs.dsoundboy.dsoundboy.Routines.TestNavRoutine
+import com.draglabs.dsoundboy.dsoundboy.Services.AudioRecordingService
 import com.draglabs.dsoundboy.dsoundboy.Services.LocationTrackingService
 import com.draglabs.dsoundboy.dsoundboy.Tasks.OfflineUploader
 import com.draglabs.dsoundboy.dsoundboy.Utils.*
@@ -38,7 +43,6 @@ import com.facebook.GraphRequest
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationRequest
-import com.instacart.library.truetime.TrueTime
 import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
@@ -96,6 +100,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
     private lateinit var activeJamPIN: String
 
+    private lateinit var audioRecordingService: AudioRecordingService
+    private lateinit var audioRecordingServiceIntent: Intent
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_test_nav)
@@ -116,7 +123,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         initializeListeners()
         initializeLocationClient()
 
-        initializeTrueTime()
+        //initializeTrueTime()
 
         updatePinView()
     }
@@ -149,6 +156,17 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         realm = Realm.getDefaultInstance()
         var locationService = startService(Intent(this, LocationTrackingService::class.java))
         recorderUtils = RecorderUtils(this, this)
+
+        //initializeRecordingService() // should this start here or only when recording?
+    }
+
+    private fun initializeRecordingService() {
+        audioRecordingService = AudioRecordingService()
+        audioRecordingServiceIntent = Intent(this, audioRecordingService.javaClass)
+        if (!TestNavRoutine().isServiceRunning(audioRecordingService.javaClass, this)) {
+            startService(audioRecordingServiceIntent)
+            LogUtils.info("AudioRecordingService Status", "Started")
+        }
     }
 
     private fun initializeTasks() {
@@ -156,11 +174,23 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
 
         async { setUserView() }
         async { OfflineUploader().queueInteractor(this@TestNavActivity) }
+
+        val updatePinViewHandler = Handler()
+        val runnableCode = object : Runnable {
+            override fun run() {
+                LogUtils.debug("Handlers", "Called on main thread, updating PIN view")
+
+                updatePinView()
+
+                updatePinViewHandler.postDelayed(this, 2000)
+            }
+        }
+        updatePinViewHandler.post(runnableCode)
     }
 
-    private fun initializeTrueTime() {
+    /*private fun initializeTrueTime() {
         thread { TrueTime.build().initialize() }
-    }
+    }*/
 
     private fun initializeListeners() {
         /*fab.setOnClickListener { view ->
@@ -375,7 +405,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         if (activeJamPIN.length > 4) {
             Snackbar.make(view, "Please create or join a jam", Snackbar.LENGTH_LONG).show()
         } else {
-            startTime = TrueTime.now()
+            startTime = Date()
             filename = FileUtils().generateAndSaveFilename(this, startTime)
             recorder = recorderUtils.setupRecorder(filename, findViewById(R.id.image_mic))
 
@@ -397,13 +427,15 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
             stop.visibility = View.VISIBLE
 
             updatePinView()
+            initializeRecordingService()
         }
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
     private fun clickStop(context: Context, recorder: Recorder) {
         LogUtils.logEnteringFunction("clickStop")
 
-        endTime = TrueTime.now()
+        endTime = Date() // not TrueTime.now()
 
         updatePinView()
 
@@ -415,6 +447,9 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         HomeRoutineKt().clickStop(recorder, recorderUtils, context, chronometer_new)
 
         updatePinView()
+        //audioRecordingService.stopForeground(Service.STOP_FOREGROUND_DETACH)
+        //audioRecordingService.stopService(audioRecordingServiceIntent)
+        stopService(audioRecordingServiceIntent)
     }
 
     private fun clickJoin() {
@@ -424,6 +459,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         //doPermissionsCheckRead()
         //doPermissionsCheckWrite()
 
+        //HomeRoutineKt().joinJam(this, this, jam_pin_view, rec, stop, recorder, recorderUtils, chronometer_new)
         HomeRoutineKt().joinJam(this, this, jam_pin_view)
         updatePinView()
     }
@@ -469,7 +505,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         val newPIN = RealmUtils.JamViewModelUtils.Retrieve.retrieveJamPinWithID(currentJamID)
         LogUtils.debug("UpdatePinView", "newPIN $newPIN")*/ // TODO: actually do GetActiveJam
 
-        APIutilsKt.JamFunctions.performGetActiveJam(this)
+        //APIutilsKt.JamFunctions.performGetActiveJam(this) // add this back in later maybe
         //val activeJamID = PrefUtilsKt.Functions().retrieveJamID(this)
         activeJamPIN = PrefUtilsKt.Functions().retrievePIN(this)
 
@@ -577,6 +613,14 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         locationUtils?.onStop(locationVars)
         //realm.close()
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        //if (this@TestNavActivity::audioRecordingServiceIntent.isInitialized) {
+          //  stopService(audioRecordingServiceIntent)
+        //}
+        LogUtils.info("AudioRecordingService Status", "Stopped")
+        super.onDestroy()
     }
 
     override fun onConnectionSuspended(p0: Int) {

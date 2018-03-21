@@ -4,12 +4,6 @@
 
 package com.draglabs.dsoundboy.dsoundboy.Services
 
-/**
- * Created by davrukin on 1/29/2018.
- * https://gist.github.com/gentra/45cc639d8ff518fa8b4ff86ace6bc79b
- * http://stackoverflow.com/a/28535885/1441324
- * @author Daniel Avrukin
- */
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -18,6 +12,12 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 
+/**
+ * Created by davrukin on 1/29/2018.
+ * https://gist.github.com/gentra/45cc639d8ff518fa8b4ff86ace6bc79b
+ * http://stackoverflow.com/a/28535885/1441324
+ * @author Daniel Avrukin
+ */
 class LocationTrackingService : Service() {
 
     var locationManager: LocationManager? = null
@@ -26,6 +26,7 @@ class LocationTrackingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+        onCreate()
         return START_STICKY
     }
 

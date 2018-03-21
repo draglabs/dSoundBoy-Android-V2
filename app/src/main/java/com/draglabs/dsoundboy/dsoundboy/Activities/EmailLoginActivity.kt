@@ -32,7 +32,8 @@ import kotlinx.android.synthetic.main.activity_email_login.*
 import java.util.*
 
 /**
- * A login screen that offers login via email/password.
+ * A login screen that offers login via email/password. Not currently used.
+ * @author Daniel Avrukin
  */
 class EmailLoginActivity : AppCompatActivity(), LoaderCallbacks<Cursor> {
     /**

@@ -21,7 +21,11 @@ import io.realm.Realm
 import io.realm.RealmResults
 import java.util.*
 
-  class ListOfJamsActivity : AppCompatActivity() {
+/**
+ * Shows the cards for all the jams
+ * @author Daniel Avrukin
+ */
+class ListOfJamsActivity : AppCompatActivity() {
 
     // TODO: use kotlin coroutine to run getJams() async and await response in order to populate the cards
 
@@ -40,21 +44,11 @@ import java.util.*
         setContentView(R.layout.content_list_of_jams)
         //setSupportActionBar(toolbar)
 
-        val listOfJams = getJams(realm) // show the view, populate data as it shows
-        //val listOfJams = prepareList(jams)
+        //val listOfJams = getJams(realm) // show the view, populate data as it shows
 
-        recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
-        linearLayoutManager = LinearLayoutManager(this)
-        recyclerView.layoutManager = linearLayoutManager
-        swipeRefreshLayout = SwipeRefreshLayout(this)
-        swipeRefreshLayout.setOnRefreshListener { refreshItems(realm) }
-
-        customAdapter = CustomAdapter(this, listOfJams!!)
-        recyclerView.adapter = customAdapter
-
-        val usersName = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm).fbName
-        LogUtils.debug("User's Name in Jams View", usersName)
-        this.title = "$usersName's Jams"
+        setLayouts()
+        setAdapters()
+        setActivityTitle()
 
         /*val cardView = findViewById<RecyclerView>(R.id.card_view) // type error here, CardView vs. RecyclerView; perform more research
 
@@ -73,20 +67,41 @@ import java.util.*
         }*/
     }
 
-    private fun refreshItems(realm: Realm) {
+
+    private fun setLayouts() {
+        recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+        linearLayoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = linearLayoutManager
+        swipeRefreshLayout = SwipeRefreshLayout(this)
+        swipeRefreshLayout.setOnRefreshListener { refreshItems() }
+    }
+
+    private fun setAdapters() {
+        val listOfJams = getJams(realm)
+        customAdapter = CustomAdapter(this, listOfJams!!)
+        recyclerView.adapter = customAdapter
+    }
+
+    private fun setActivityTitle() {
+        val usersName = RealmUtils.UserModelUtils.Retrieve.retrieveUser(realm).fbName
+        LogUtils.debug("User's Name in Jams View", usersName)
+        this.title = "$usersName's Jams"
+    }
+
+    private fun refreshItems() {
         // load items
-        val listOfJams = getJams(realm) // show the view, populate data as it shows
+        // show the view, populate data as it shows
         //val listOfJams = prepareList(jams)
 
         recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
         linearLayoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = linearLayoutManager // TODO: doesn't refresh, does it indefinitely
 
-        customAdapter = CustomAdapter(this, listOfJams!!)
-        recyclerView.adapter = customAdapter
+        setAdapters()
         // load complete
         onItemsLoadComplete()
     }
+
 
     private fun onItemsLoadComplete() {
         // update the adapter and notify data set changed
