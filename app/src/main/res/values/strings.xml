@@ -274,6 +274,7 @@
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="stop_recording_text">Stop</string>
     <string name="start_recording_text">Rec</string>
+    <string name="start_recording_settings_menu">Record</string>
 
     <string name="activity_name_edit_jam">Edit Jam</string>
     <string name="title_activity_instructions">Instructions</string>
