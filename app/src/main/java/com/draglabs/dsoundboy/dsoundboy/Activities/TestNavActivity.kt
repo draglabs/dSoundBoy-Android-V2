@@ -47,8 +47,9 @@ import io.realm.Realm
 import kotlinx.android.synthetic.main.activity_test_nav.*
 import kotlinx.android.synthetic.main.app_bar_test_nav.*
 import kotlinx.android.synthetic.main.content_test_nav.*
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import omrecorder.Recorder
 import java.io.File
 import java.util.*
@@ -172,8 +173,8 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
     private fun initializeTasks() {
         LogUtils.logEnteringFunction("initializeTasks")
 
-        async { setUserView() }
-        async { OfflineUploader().queueInteractor(this@TestNavActivity) }
+        GlobalScope.launch { setUserView() }
+        GlobalScope.launch { OfflineUploader().queueInteractor(this@TestNavActivity) }
 
         val updatePinViewHandler = Handler()
         val runnableCode = object : Runnable {
@@ -440,7 +441,7 @@ class TestNavActivity : AppCompatActivity(), NavigationView.OnNavigationItemSele
         updatePinView()
 
         initiateOfflineUploader()
-        async { OfflineUploader().queueInteractor(this@TestNavActivity) }
+        GlobalScope.launch { OfflineUploader().queueInteractor(this@TestNavActivity) }
         rec.visibility = View.VISIBLE
         stop.visibility = View.GONE
 

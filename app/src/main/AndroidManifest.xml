@@ -3,11 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.draglabs.dsoundboy.dsoundboy">
 
-    <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="27"
-        tools:ignore="GradleOverrides" />
-
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
