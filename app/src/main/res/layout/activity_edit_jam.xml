@@ -10,7 +10,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:screenOrientation="portrait"
-    tools:context="com.draglabs.dsoundboy.dsoundboy.Activities.EditJamActivity">
+    tools:context="com.draglabs.dsoundboy.dsoundboy.activities.EditJamActivity">
 
     <Space
         android:layout_width="match_parent"

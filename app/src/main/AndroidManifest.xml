@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    package="com.draglabs.dsoundboy.dsoundboy">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-sdk
-        android:minSdkVersion="21"
-        android:targetSdkVersion="27"
         tools:ignore="GradleOverrides" />
 
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -68,7 +68,8 @@
             android:value="@string/com.facebook.sdk.ApplicationId" />
 
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".activities.MainActivity"
+            android:exported="true"
             android:theme="@style/DragLabsNew">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -77,42 +78,43 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activities.AboutActivity"
+            android:name=".activities.AboutActivity"
             android:label="@string/title_activity_about"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity">
 
             <!-- This meta-data tag is required if you support API level 15 and lower -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.ContactActivity"
+            android:name=".activities.ContactActivity"
             android:label="@string/title_activity_contact"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.MainActivity">
+            android:parentActivityName=".activities.MainActivity">
 
             <!--  -->
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.EnterInfoActivity"
+            android:name=".activities.EnterInfoActivity"
             android:label="@string/title_activity_enter_info"
-            android:parentActivityName=".Activities.MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/DragLabsActionBarNew"
             android:screenOrientation="portrait" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" />
+                android:value=".activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.NewLoginActivity"
+            android:name=".activities.NewLoginActivity"
             android:label="@string/title_activity_login"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.MainActivity">
+            android:exported="true"
+            android:parentActivityName=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -120,7 +122,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.MainActivity" />
+                android:value=".activities.MainActivity" />
             <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
                 android:value="@string/com.facebook.sdk.ApplicationId" />
@@ -129,7 +131,8 @@
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
             android:label="@string/app_name"
-            android:parentActivityName=".Activities.NewLoginActivity">
+            android:exported="true"
+            android:parentActivityName=".activities.NewLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -137,7 +140,7 @@
             </intent-filter>
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.NewLoginActivity" />
+                android:value=".activities.NewLoginActivity" />
             <meta-data
                 android:name="com.facebook.sdk.ApplicationId"
                 android:value="@string/com.facebook.sdk.ApplicationId" />
@@ -146,7 +149,7 @@
             android:name="com.facebook.CustomTabActivity"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.NewLoginActivity">
+            android:parentActivityName=".activities.NewLoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -162,64 +165,64 @@
             android:authorities="com.facebook.app.FacebookContentProvider147689855771285"
             android:exported="false" />
         <activity
-            android:name=".Activities.TestNavActivity"
+            android:name=".activities.TestNavActivity"
             android:label="@string/title_activity_test_nav"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/DragLabsNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity" />
+                android:value="com.draglabs.dsoundboy.dsoundboy.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.ListOfJamsActivity"
+            android:name=".activities.ListOfJamsActivity"
             android:label="@string/title_activity_list_of_jams"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.TestNavActivity"
+            android:parentActivityName=".activities.TestNavActivity"
             android:theme="@style/DragLabsActionBarNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.TestNavActivity" />
+                android:value=".activities.TestNavActivity" />
         </activity>
         <activity
-            android:name=".Activities.SettingsActivity"
+            android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.MainActivity"
+            android:parentActivityName=".activities.MainActivity"
             android:theme="@style/DragLabsActionBarNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.draglabs.dsoundboy.dsoundboy.Activities.MainActivity" />
+                android:value="com.draglabs.dsoundboy.dsoundboy.activities.MainActivity" />
         </activity>
         <activity
-            android:name=".Activities.EditJamActivity"
+            android:name=".activities.EditJamActivity"
             android:label="@string/activity_name_edit_jam"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.ListOfJamsActivity"
+            android:parentActivityName=".activities.ListOfJamsActivity"
             android:theme="@style/DragLabsActionBarNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".Activities.ListOfJamsActivity" />
+                android:value=".activities.ListOfJamsActivity" />
         </activity>
         <activity
-            android:name=".Activities.InstructionsActivity"
+            android:name=".activities.InstructionsActivity"
             android:label="@string/title_activity_instructions"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.TestNavActivity"
+            android:parentActivityName=".activities.TestNavActivity"
             android:theme="@style/DragLabsNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.draglabs.dsoundboy.dsoundboy.Activities.TestNavActivity" />
+                android:value="com.draglabs.dsoundboy.dsoundboy.activities.TestNavActivity" />
         </activity>
         <activity
-            android:name=".Activities.EmailLoginActivity"
+            android:name=".activities.EmailLoginActivity"
             android:label="@string/title_activity_email_login"
             android:screenOrientation="portrait"
-            android:parentActivityName=".Activities.NewLoginActivity"
+            android:parentActivityName=".activities.NewLoginActivity"
             android:theme="@style/DragLabsActionBarNew">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.draglabs.dsoundboy.dsoundboy.Activities.NewLoginActivity" />
+                android:value="com.draglabs.dsoundboy.dsoundboy.activities.NewLoginActivity" />
         </activity>
     </application>
 </manifest>

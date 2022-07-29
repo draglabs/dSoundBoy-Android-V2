@@ -5,8 +5,8 @@
 package com.draglabs.dsoundboy.dsoundboy
 
 import android.content.Context
-import android.support.multidex.MultiDex
-import android.support.multidex.MultiDexApplication
+import androidx.multidex.MultiDex
+import androidx.multidex.MultiDexApplication
 import com.facebook.FacebookSdk
 import com.facebook.LoggingBehavior
 import com.facebook.appevents.AppEventsLogger
@@ -33,10 +33,10 @@ class MyApplication : MultiDexApplication() {
         FacebookSdk.setApplicationId(getString(R.string.com_facebook_sdk_ApplicationId))
         @Suppress("DEPRECATION")
         FacebookSdk.sdkInitialize(applicationContext)
-        if (BuildConfig.DEBUG) {
+        //if (BuildConfig.DEBUG) {
             FacebookSdk.setIsDebugEnabled(true)
             FacebookSdk.addLoggingBehavior(LoggingBehavior.INCLUDE_ACCESS_TOKENS)
-        }
+        //}
         AppEventsLogger.activateApp(this)
     }
 
@@ -58,10 +58,10 @@ class MyApplication : MultiDexApplication() {
     }
 
     class MyMigration: RealmMigration {
-        override fun migrate(realm: DynamicRealm?, oldVersion: Long, newVersion: Long) {
-            val schema = realm!!.schema
+        override fun migrate(realm: DynamicRealm, oldVersion: Long, newVersion: Long) {
+            val schema = realm.schema
 
-            if (oldVersion.equals(0)) {
+            if (oldVersion == 0L) {
                 schema.create("JamViewModel")
                     .addField("notes", String::class.java)
                 //oldVersion++

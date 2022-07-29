@@ -8,7 +8,7 @@
     android:orientation="vertical"
     android:screenOrientation="portrait"
     android:theme="@style/DragLabs"
-    tools:context=".Activities.NewLoginActivity">
+    tools:context=".activities.NewLoginActivity">
 
     <ImageView
         android:id="@+id/login_screen_background"

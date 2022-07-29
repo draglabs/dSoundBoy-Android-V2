@@ -12,7 +12,7 @@
         android:title="@string/pref_header_general" /> -->
 
     <header
-        android:fragment="com.draglabs.dsoundboy.dsoundboy.Activities.SettingsActivity$RecordingPreferenceFragment"
+        android:fragment="com.draglabs.dsoundboy.dsoundboy.activities.SettingsActivity$RecordingPreferenceFragment"
         android:icon="@drawable/recording"
         android:title="Recording Settings"
         />
